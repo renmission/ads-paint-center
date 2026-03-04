@@ -1,36 +1,85 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ADS Paint Center
 
-## Getting Started
+**Integrated Management System With SMS Notification**
+A modern, feature-based web application for retail operations, inventory management, point-of-sale, and customer communications.
 
-First, run the development server:
+## 🚀 Tech Stack
 
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS v4 + Shadcn UI
+- **Database**: NeonDB (Serverless Postgres) + Drizzle ORM
+- **Auth**: NextAuth v5 (Auth.js)
+- **Data Fetching**: TanStack Query
+- **Validation**: Zod + React Hook Form
+- **SMS Integration**: iPROGSMS
+
+## 📦 Features
+
+- **Point of Sale (POS)**: Walk-in & online order processing
+- **Customer Management**: Profiles, history, and contact info
+- **Inventory Tracking**: Stock monitoring, low-stock alerts, and logging
+- **Payment Processing**: Multi-payment support (Downpayment, Full, Balance)
+- **SMS Notifications**: Automated SMS for order confirmations, pickups, and payments
+
+## 🛠️ Local Development Setup
+
+### 1. Prerequisites
+- Node.js 20+
+- pnpm 10+
+- NeonDB Account
+- iPROGSMS API Key
+
+### 2. Environment Variables
+Copy the example environment file and fill in your keys:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+cp .env.example .env.local
+```
+Update `.env.local` with your:
+- `DATABASE_URL` (NeonDB connection string)
+- `AUTH_SECRET` (Use `openssl rand -base64 32` to generate a new secret)
+- `IPROGSMS_API_KEY` (iPROGSMS student account key)
+
+### 3. Install Dependencies
+```bash
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Database Setup
+Push the Drizzle schema to your NeonDB instance:
+```bash
+pnpm db:push
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 5. Start the Server
+```bash
+pnpm dev
+```
+Navigate to `http://localhost:3000`. You will be redirected to the `/login` page.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🗄️ Project Structure (Feature-Based)
 
-## Learn More
+```text
+src/
+├── app/                 # Next.js App Router (pages & API routes)
+├── components/          # Shared layout & UI components (Shadcn)
+├── config/              # App-wide config (navigation, status colors)
+├── features/            # Feature modules (auth, dashboard, pos, inventory...)
+│   └── [feature]/
+│       ├── components/  # Feature-specific React components
+│       ├── hooks/       # Custom React hooks
+│       ├── queries/     # TanStack query definitions
+│       ├── server/      # Server Actions
+│       └── types.ts     # Feature-specific types
+├── lib/                 # Core utilities (DB, Auth, SMS, validations)
+└── types/               # Global TypeScript types & NextAuth overrides
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📜 Built For
+This system was developed as a thesis project for Tanauan Institute, Inc. (B.S. Computer Science).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Developers**:
+- Bautista, George C.
+- Lacorte, John Lyndon S.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*(2025-2026)*
