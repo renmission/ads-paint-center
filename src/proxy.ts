@@ -28,6 +28,13 @@ export default auth((req) => {
   ) {
     return Response.redirect(new URL("/dashboard", req.url));
   }
+
+  if (
+    pathname.startsWith("/staff") &&
+    req.auth?.user?.role !== "administrator"
+  ) {
+    return Response.redirect(new URL("/dashboard", req.url));
+  }
 });
 
 export const config = {
