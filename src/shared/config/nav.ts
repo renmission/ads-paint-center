@@ -3,6 +3,7 @@ import {
   Package,
   Users,
   ShoppingCart,
+  History,
   ClipboardList,
   UserCog,
   Settings,
@@ -36,9 +37,15 @@ export const navItems: NavItem[] = [
     roles: ["administrator", "staff"],
   },
   {
-    title: "POS / Sales",
-    href: "/sales",
+    title: "POS",
+    href: "/pos",
     icon: ShoppingCart,
+    roles: ["administrator", "staff"],
+  },
+  {
+    title: "Sales History",
+    href: "/sales",
+    icon: History,
     roles: ["administrator", "staff"],
   },
   {
