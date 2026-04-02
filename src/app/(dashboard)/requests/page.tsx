@@ -1,8 +1,13 @@
+import { RequestsTable } from "@/features/requests/components/requests-table";
+
 export default function RequestsPage() {
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-bold">Requests</h1>
-      <p className="text-muted-foreground">Coming soon — Phase 4.</p>
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold tracking-tight">Requests</h1>
+        <p className="text-muted-foreground">Manage customer product requests.</p>
+      </div>
+      <RequestsTable />
     </div>
   );
 }
