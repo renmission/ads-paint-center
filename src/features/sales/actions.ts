@@ -8,7 +8,7 @@ import {
   customers,
   users,
 } from "@/shared/lib/db/schema";
-import { completeSaleSchema, voidSaleSchema } from "./schemas";
+import { completeSaleSchema, voidSaleSchema, markCreditPaymentSchema } from "./schemas";
 import { auth } from "@/shared/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -27,7 +27,7 @@ export async function completeSaleAction(
   const parsed = completeSaleSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  const { cartJson: items, customerId, discountAmount, paymentMethod, amountTendered, notes } = parsed.data;
+  const { cartJson: items, customerId, discountAmount, paymentMethod, amountTendered, notes, dueDate } = parsed.data;
 
   // Validate stock for all items before writing anything
   for (const item of items) {
@@ -69,6 +69,8 @@ export async function completeSaleAction(
       amountTendered: tendered.toFixed(2),
       changeAmount: change.toFixed(2),
       paymentMethod,
+      amountPaid: paymentMethod === "credit" ? "0.00" : total.toFixed(2),
+      dueDate: paymentMethod === "credit" && dueDate ? dueDate : null,
       status: "completed",
       notes: notes || null,
     })
@@ -185,4 +187,50 @@ export async function voidSaleAction(
   revalidatePath("/sales");
   revalidatePath("/inventory");
   return { success: `Transaction ${txn.transactionNumber} voided and inventory restored.` };
+}
+
+export async function markCreditPaymentAction(
+  _prevState: ActionResult | undefined,
+  formData: FormData
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user) return { error: "Unauthorized" };
+  if (session.user.role !== "administrator") {
+    return { error: "Only administrators can record credit payments." };
+  }
+
+  const raw = Object.fromEntries(formData);
+  const parsed = markCreditPaymentSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const txn = await db.query.salesTransactions.findFirst({
+    where: eq(salesTransactions.id, parsed.data.transactionId),
+  });
+
+  if (!txn) return { error: "Transaction not found." };
+  if (txn.status === "voided") return { error: "Cannot record payment on a voided transaction." };
+  if (txn.paymentMethod !== "credit") {
+    return { error: "This transaction is not a credit sale." };
+  }
+
+  const currentPaid = parseFloat(txn.amountPaid ?? "0");
+  const total = parseFloat(txn.totalAmount);
+  const payment = parseFloat(parsed.data.paymentAmount);
+  const newPaid = Math.min(currentPaid + payment, total);
+
+  await db
+    .update(salesTransactions)
+    .set({ amountPaid: newPaid.toFixed(2) })
+    .where(eq(salesTransactions.id, txn.id));
+
+  revalidatePath("/sales");
+  revalidatePath(`/sales/${txn.id}`);
+
+  const balance = total - newPaid;
+  return {
+    success:
+      balance <= 0
+        ? `Payment recorded. Transaction ${txn.transactionNumber} is now fully paid.`
+        : `Payment of ₱${payment.toFixed(2)} recorded. Remaining balance: ₱${balance.toFixed(2)}.`,
+  };
 }

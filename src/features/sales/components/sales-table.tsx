@@ -16,6 +16,8 @@ export type SalesRow = {
   totalAmount: string;
   amountTendered: string | null;
   changeAmount: string | null;
+  amountPaid: string | null;
+  dueDate: string | null;
   paymentMethod: "cash" | "gcash" | "credit" | "other";
   status: "pending" | "completed" | "voided";
   notes: string | null;
@@ -43,6 +45,8 @@ export async function SalesTable() {
       totalAmount: salesTransactions.totalAmount,
       amountTendered: salesTransactions.amountTendered,
       changeAmount: salesTransactions.changeAmount,
+      amountPaid: salesTransactions.amountPaid,
+      dueDate: salesTransactions.dueDate,
       paymentMethod: salesTransactions.paymentMethod,
       status: salesTransactions.status,
       notes: salesTransactions.notes,
@@ -60,6 +64,8 @@ export async function SalesTable() {
     ...r,
     customerName: r.customerName ?? null,
     itemCount: Number(r.itemCount),
+    amountPaid: r.amountPaid ?? null,
+    dueDate: r.dueDate ?? null,
   }));
 
   // Today's stats (completed transactions only)

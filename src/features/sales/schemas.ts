@@ -36,6 +36,17 @@ export const completeSaleSchema = z.object({
       message: "Amount tendered must be a non-negative number",
     }),
   notes: z.string().optional().or(z.literal("")),
+  dueDate: z.string().optional().or(z.literal("")),
+});
+
+export const markCreditPaymentSchema = z.object({
+  transactionId: z.string().uuid("Invalid transaction ID"),
+  paymentAmount: z
+    .string()
+    .refine((v) => !isNaN(parseFloat(v)) && parseFloat(v) > 0, {
+      message: "Payment amount must be greater than 0",
+    }),
+  paymentMethod: z.enum(["cash", "gcash", "credit", "other"]),
 });
 
 export const voidSaleSchema = z.object({
@@ -44,4 +55,5 @@ export const voidSaleSchema = z.object({
 
 export type CartItem = z.infer<typeof cartItemSchema>;
 export type CompleteSaleInput = z.infer<typeof completeSaleSchema>;
+export type MarkCreditPaymentInput = z.infer<typeof markCreditPaymentSchema>;
 export type VoidSaleInput = z.infer<typeof voidSaleSchema>;

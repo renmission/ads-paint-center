@@ -78,6 +78,7 @@ export function PosPageClient({ products, customers }: Props) {
   const [paymentMethod, setPaymentMethod] = useState<"cash" | "gcash" | "credit" | "other">("cash");
   const [amountTendered, setAmountTendered] = useState("0");
   const [notes, setNotes] = useState("");
+  const [dueDate, setDueDate] = useState("");
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -88,6 +89,7 @@ export function PosPageClient({ products, customers }: Props) {
     setPaymentMethod("cash");
     setAmountTendered("0");
     setNotes("");
+    setDueDate("");
     setSearch("");
     setActiveCategory("all");
   }, []);
@@ -162,6 +164,7 @@ export function PosPageClient({ products, customers }: Props) {
         <input type="hidden" name="paymentMethod" value={paymentMethod} />
         <input type="hidden" name="amountTendered" value={amountTendered} />
         <input type="hidden" name="notes" value={notes} />
+        <input type="hidden" name="dueDate" value={dueDate} />
       </form>
 
       {/* ── LEFT PANEL: Product Catalog ─────────────────────── */}
@@ -434,6 +437,22 @@ export function PosPageClient({ products, customers }: Props) {
               </button>
             ))}
           </div>
+
+          {paymentMethod === "credit" && (
+            <div className="rounded-lg bg-muted/40 p-3 space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-muted-foreground w-24 shrink-0">Due Date</span>
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="flex-1 h-7 rounded-md border border-input bg-background px-2 text-xs"
+                  min={new Date().toISOString().split("T")[0]}
+                  aria-label="Due date"
+                />
+              </div>
+            </div>
+          )}
 
           {paymentMethod === "cash" && (
             <div className="rounded-lg bg-muted/40 p-3 space-y-2">
