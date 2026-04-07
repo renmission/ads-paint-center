@@ -37,6 +37,14 @@ export const requestStatusEnum = pgEnum("request_status", [
 
 export const deliveryTypeEnum = pgEnum("delivery_type", ["pickup", "delivery"]);
 
+export const appointmentStatusEnum = pgEnum("appointment_status", [
+  "scheduled",
+  "confirmed",
+  "in_progress",
+  "completed",
+  "cancelled",
+]);
+
 export const transactionStatusEnum = pgEnum("transaction_status", [
   "pending",
   "completed",
@@ -145,6 +153,42 @@ export const salesTransactionItems = pgTable("sales_transaction_items", {
   quantity: integer("quantity").notNull(),
   unitPrice: numeric("unit_price", { precision: 10, scale: 2 }).notNull(),
   lineTotal: numeric("line_total", { precision: 10, scale: 2 }).notNull(),
+});
+
+// ─── Services ─────────────────────────────────────────────────────────────────
+
+export const services = pgTable("services", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+  price: numeric("price", { precision: 10, scale: 2 }).notNull(),
+  duration: integer("duration").notNull().default(60),
+  category: varchar("category", { length: 100 }).notNull().default("other"),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// ─── Appointments ─────────────────────────────────────────────────────────────
+
+export const appointments = pgTable("appointments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  appointmentNumber: varchar("appointment_number", { length: 50 }).notNull().unique(),
+  customerId: uuid("customer_id")
+    .notNull()
+    .references(() => customers.id, { onDelete: "cascade" }),
+  serviceId: uuid("service_id").references(() => services.id, {
+    onDelete: "set null",
+  }),
+  staffId: uuid("staff_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  scheduledAt: timestamp("scheduled_at").notNull(),
+  status: appointmentStatusEnum("status").notNull().default("scheduled"),
+  notes: text("notes"),
+  address: text("address"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // ─── Payments ─────────────────────────────────────────────────────────────────
@@ -258,6 +302,25 @@ export const salesTransactionItemsRelations = relations(
     }),
   })
 );
+
+export const servicesRelations = relations(services, ({ many }) => ({
+  appointments: many(appointments),
+}));
+
+export const appointmentsRelations = relations(appointments, ({ one }) => ({
+  customer: one(customers, {
+    fields: [appointments.customerId],
+    references: [customers.id],
+  }),
+  service: one(services, {
+    fields: [appointments.serviceId],
+    references: [services.id],
+  }),
+  staff: one(users, {
+    fields: [appointments.staffId],
+    references: [users.id],
+  }),
+}));
 
 export const requestsRelations = relations(requests, ({ one }) => ({
   customer: one(customers, {

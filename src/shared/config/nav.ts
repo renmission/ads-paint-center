@@ -2,6 +2,8 @@ import {
   LayoutDashboard,
   Package,
   Users,
+  Wrench,
+  CalendarDays,
   ShoppingCart,
   History,
   ClipboardList,
@@ -34,6 +36,18 @@ export const navItems: NavItem[] = [
     title: "Customers",
     href: "/customers",
     icon: Users,
+    roles: ["administrator", "staff"],
+  },
+  {
+    title: "Services",
+    href: "/services",
+    icon: Wrench,
+    roles: ["administrator", "staff"],
+  },
+  {
+    title: "Appointments",
+    href: "/appointments",
+    icon: CalendarDays,
     roles: ["administrator", "staff"],
   },
   {
