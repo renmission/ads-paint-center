@@ -23,6 +23,7 @@ import {
 import { ShoppingCart, XCircle, Search, TrendingUp, Receipt, BarChart3, FileText } from "lucide-react";
 import type { SalesRow, DailyStats } from "./sales-table";
 import { VoidSaleDialog } from "./void-sale-dialog";
+import { AddPaymentDialog } from "./add-payment-dialog";
 
 interface Props {
   initialData: SalesRow[];
@@ -52,6 +53,7 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
   const [statusFilter, setStatusFilter] = useState("all");
   const [methodFilter, setMethodFilter] = useState("all");
   const [voidTarget, setVoidTarget] = useState<SalesRow | null>(null);
+  const [paymentTarget, setPaymentTarget] = useState<SalesRow | null>(null);
 
   const filtered = useMemo(() => {
     return initialData.filter((row) => {
@@ -119,6 +121,7 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
               <SelectItem value="completed">Completed</SelectItem>
+              <SelectItem value="pending">Pending Payment</SelectItem>
               <SelectItem value="voided">Voided</SelectItem>
             </SelectContent>
           </Select>
@@ -210,6 +213,16 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
                               Invoice
                             </Link>
                           </Button>
+                          {row.status === "pending" && row.paymentMethod !== "credit" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-amber-600 hover:text-amber-600"
+                              onClick={() => setPaymentTarget(row)}
+                            >
+                              Add Payment
+                            </Button>
+                          )}
                           {row.status === "completed" && (
                             <Button
                               variant="ghost"
@@ -236,6 +249,11 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
         open={!!voidTarget}
         onOpenChange={(o) => { if (!o) setVoidTarget(null); }}
         transaction={voidTarget}
+      />
+      <AddPaymentDialog
+        open={!!paymentTarget}
+        onOpenChange={(o) => { if (!o) setPaymentTarget(null); }}
+        transaction={paymentTarget}
       />
     </div>
   );

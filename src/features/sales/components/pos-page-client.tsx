@@ -79,6 +79,7 @@ export function PosPageClient({ products, customers }: Props) {
   const [amountTendered, setAmountTendered] = useState("0");
   const [notes, setNotes] = useState("");
   const [dueDate, setDueDate] = useState("");
+  const [isPartialPayment, setIsPartialPayment] = useState(false);
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
 
@@ -90,6 +91,7 @@ export function PosPageClient({ products, customers }: Props) {
     setAmountTendered("0");
     setNotes("");
     setDueDate("");
+    setIsPartialPayment(false);
     setSearch("");
     setActiveCategory("all");
   }, []);
@@ -454,10 +456,29 @@ export function PosPageClient({ products, customers }: Props) {
             </div>
           )}
 
-          {paymentMethod === "cash" && (
+          {paymentMethod !== "credit" && (
+            <button
+              type="button"
+              onClick={() => { setIsPartialPayment(!isPartialPayment); setAmountTendered("0"); }}
+              className={`flex items-center justify-between w-full px-3 py-1.5 rounded-lg border text-xs transition-colors ${
+                isPartialPayment
+                  ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/30 dark:border-amber-700 dark:text-amber-300"
+                  : "border-border text-muted-foreground hover:bg-muted"
+              }`}
+            >
+              <span className="font-medium">Partial Payment / Down Payment</span>
+              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPartialPayment ? "bg-amber-200 dark:bg-amber-800" : "bg-muted"}`}>
+                {isPartialPayment ? "ON" : "OFF"}
+              </span>
+            </button>
+          )}
+
+          {paymentMethod !== "credit" && (
             <div className="rounded-lg bg-muted/40 p-3 space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground w-24 shrink-0">Amount Tendered</span>
+                <span className="text-xs text-muted-foreground w-24 shrink-0">
+                  {isPartialPayment ? "Down Payment" : "Amount Tendered"}
+                </span>
                 <div className="flex items-center gap-1 flex-1">
                   <span className="text-xs text-muted-foreground">₱</span>
                   <Input
@@ -470,13 +491,19 @@ export function PosPageClient({ products, customers }: Props) {
                   />
                 </div>
               </div>
-              {tendered > 0 && (
+              {!isPartialPayment && paymentMethod === "cash" && tendered > 0 && (
                 <div className="flex justify-between text-sm font-semibold pt-1 border-t border-border/50">
                   <span className="text-muted-foreground">Change</span>
                   <span className={`tabular-nums ${change < 0 ? "text-destructive" : "text-green-600 dark:text-green-400"}`}>
                     ₱{fmt(Math.abs(change))}
                     {change < 0 && " short"}
                   </span>
+                </div>
+              )}
+              {isPartialPayment && tendered > 0 && (
+                <div className="flex justify-between text-sm pt-1 border-t border-border/50 text-amber-600 dark:text-amber-400">
+                  <span>Remaining Balance</span>
+                  <span className="tabular-nums font-semibold">₱{fmt(Math.max(0, total - tendered))}</span>
                 </div>
               )}
             </div>
