@@ -8,6 +8,7 @@ import {
   boolean,
   integer,
   numeric,
+  date,
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
@@ -29,9 +30,12 @@ export const productCategoryEnum = pgEnum("product_category", [
 export const requestStatusEnum = pgEnum("request_status", [
   "pending",
   "approved",
+  "out_for_delivery",
   "rejected",
   "fulfilled",
 ]);
+
+export const deliveryTypeEnum = pgEnum("delivery_type", ["pickup", "delivery"]);
 
 export const transactionStatusEnum = pgEnum("transaction_status", [
   "pending",
@@ -159,6 +163,12 @@ export const requests = pgTable("requests", {
   handledBy: uuid("handled_by").references(() => users.id, {
     onDelete: "set null",
   }),
+  deliveryType: deliveryTypeEnum("delivery_type"),
+  deliveryAddress: text("delivery_address"),
+  deliveryDate: date("delivery_date"),
+  driverId: uuid("driver_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
   smsNotified: boolean("sms_notified").notNull().default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -168,7 +178,8 @@ export const requests = pgTable("requests", {
 
 export const usersRelations = relations(users, ({ many }) => ({
   handledTransactions: many(salesTransactions),
-  handledRequests: many(requests),
+  handledRequests: many(requests, { relationName: "request_handler" }),
+  drivenRequests: many(requests, { relationName: "request_driver" }),
 }));
 
 export const customersRelations = relations(customers, ({ many }) => ({
@@ -230,5 +241,11 @@ export const requestsRelations = relations(requests, ({ one }) => ({
   handler: one(users, {
     fields: [requests.handledBy],
     references: [users.id],
+    relationName: "request_handler",
+  }),
+  driver: one(users, {
+    fields: [requests.driverId],
+    references: [users.id],
+    relationName: "request_driver",
   }),
 }));
