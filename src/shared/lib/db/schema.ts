@@ -147,6 +147,22 @@ export const salesTransactionItems = pgTable("sales_transaction_items", {
   lineTotal: numeric("line_total", { precision: 10, scale: 2 }).notNull(),
 });
 
+// ─── Payments ─────────────────────────────────────────────────────────────────
+
+export const payments = pgTable("payments", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  transactionId: uuid("transaction_id")
+    .notNull()
+    .references(() => salesTransactions.id, { onDelete: "cascade" }),
+  amount: numeric("amount", { precision: 10, scale: 2 }).notNull(),
+  paymentMethod: paymentMethodEnum("payment_method").notNull(),
+  notes: text("notes"),
+  recordedBy: uuid("recorded_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  paidAt: timestamp("paid_at").notNull().defaultNow(),
+});
+
 // ─── Requests ─────────────────────────────────────────────────────────────────
 
 export const requests = pgTable("requests", {
@@ -214,8 +230,20 @@ export const salesTransactionsRelations = relations(
       references: [users.id],
     }),
     items: many(salesTransactionItems),
+    payments: many(payments),
   })
 );
+
+export const paymentsRelations = relations(payments, ({ one }) => ({
+  transaction: one(salesTransactions, {
+    fields: [payments.transactionId],
+    references: [salesTransactions.id],
+  }),
+  recorder: one(users, {
+    fields: [payments.recordedBy],
+    references: [users.id],
+  }),
+}));
 
 export const salesTransactionItemsRelations = relations(
   salesTransactionItems,

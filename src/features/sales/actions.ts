@@ -4,11 +4,12 @@ import { db } from "@/shared/lib/db";
 import {
   salesTransactions,
   salesTransactionItems,
+  payments,
   inventory,
   customers,
   users,
 } from "@/shared/lib/db/schema";
-import { completeSaleSchema, voidSaleSchema, markCreditPaymentSchema } from "./schemas";
+import { completeSaleSchema, voidSaleSchema, markCreditPaymentSchema, addPaymentSchema } from "./schemas";
 import { auth } from "@/shared/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -69,9 +70,14 @@ export async function completeSaleAction(
       amountTendered: tendered.toFixed(2),
       changeAmount: change.toFixed(2),
       paymentMethod,
-      amountPaid: paymentMethod === "credit" ? "0.00" : total.toFixed(2),
+      amountPaid:
+        paymentMethod === "credit"
+          ? "0.00"
+          : tendered < total
+            ? tendered.toFixed(2)
+            : total.toFixed(2),
       dueDate: paymentMethod === "credit" && dueDate ? dueDate : null,
-      status: "completed",
+      status: paymentMethod !== "credit" && tendered < total ? "pending" : "completed",
       notes: notes || null,
     })
     .returning({ id: salesTransactions.id });
@@ -85,6 +91,17 @@ export async function completeSaleAction(
       lineTotal: item.lineTotal.toFixed(2),
     }))
   );
+
+  // Record initial payment row for partial/full non-credit payments
+  if (paymentMethod !== "credit" && tendered > 0) {
+    await db.insert(payments).values({
+      transactionId: txn.id,
+      amount: Math.min(tendered, total).toFixed(2),
+      paymentMethod,
+      notes: tendered < total ? "Down payment" : null,
+      recordedBy: session.user.id!,
+    });
+  }
 
   // Deduct inventory for each item
   for (const item of items) {
@@ -232,5 +249,58 @@ export async function markCreditPaymentAction(
       balance <= 0
         ? `Payment recorded. Transaction ${txn.transactionNumber} is now fully paid.`
         : `Payment of ₱${payment.toFixed(2)} recorded. Remaining balance: ₱${balance.toFixed(2)}.`,
+  };
+}
+
+export async function addPaymentAction(
+  _prevState: ActionResult | undefined,
+  formData: FormData
+): Promise<ActionResult> {
+  const session = await auth();
+  if (!session?.user?.id) return { error: "Unauthorized" };
+
+  const raw = Object.fromEntries(formData);
+  const parsed = addPaymentSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  const txn = await db.query.salesTransactions.findFirst({
+    where: eq(salesTransactions.id, parsed.data.transactionId),
+  });
+
+  if (!txn) return { error: "Transaction not found." };
+  if (txn.status !== "pending") {
+    return { error: "Payments can only be added to pending transactions." };
+  }
+
+  const payment = parseFloat(parsed.data.paymentAmount);
+  const currentPaid = parseFloat(txn.amountPaid ?? "0");
+  const total = parseFloat(txn.totalAmount);
+  const newPaid = Math.min(currentPaid + payment, total);
+  const isNowComplete = newPaid >= total;
+
+  await db.insert(payments).values({
+    transactionId: txn.id,
+    amount: payment.toFixed(2),
+    paymentMethod: parsed.data.paymentMethod,
+    notes: parsed.data.notes || null,
+    recordedBy: session.user.id!,
+  });
+
+  await db
+    .update(salesTransactions)
+    .set({
+      amountPaid: newPaid.toFixed(2),
+      status: isNowComplete ? "completed" : "pending",
+    })
+    .where(eq(salesTransactions.id, txn.id));
+
+  revalidatePath("/sales");
+  revalidatePath(`/sales/${txn.id}`);
+
+  const balance = total - newPaid;
+  return {
+    success: isNowComplete
+      ? `Payment recorded. Transaction ${txn.transactionNumber} is now fully paid.`
+      : `Payment of ₱${payment.toFixed(2)} recorded. Remaining balance: ₱${balance.toFixed(2)}.`,
   };
 }
