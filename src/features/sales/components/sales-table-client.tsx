@@ -20,7 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
-import { ShoppingCart, XCircle, Search, TrendingUp, Receipt, BarChart3 } from "lucide-react";
+import { ShoppingCart, XCircle, Search, TrendingUp, Receipt, BarChart3, FileText } from "lucide-react";
 import type { SalesRow, DailyStats } from "./sales-table";
 import { VoidSaleDialog } from "./void-sale-dialog";
 
@@ -185,7 +185,17 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
                     <TableCell>{row.staffName}</TableCell>
                     <TableCell className="text-center">{row.itemCount}</TableCell>
                     <TableCell className="text-right font-medium tabular-nums">
-                      ₱{parseFloat(row.totalAmount).toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+                      <div>₱{parseFloat(row.totalAmount).toLocaleString("en-PH", { minimumFractionDigits: 2 })}</div>
+                      {row.paymentMethod === "credit" && row.amountPaid !== null && (
+                        (() => {
+                          const balance = parseFloat(row.totalAmount) - parseFloat(row.amountPaid);
+                          return balance > 0 ? (
+                            <div className="text-xs text-amber-600 font-medium tabular-nums">
+                              ₱{balance.toLocaleString("en-PH", { minimumFractionDigits: 2 })} due
+                            </div>
+                          ) : null;
+                        })()
+                      )}
                     </TableCell>
                     <TableCell>{METHOD_LABELS[row.paymentMethod] ?? row.paymentMethod}</TableCell>
                     <TableCell>
@@ -193,17 +203,25 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
                     </TableCell>
                     {userRole === "administrator" && (
                       <TableCell className="text-right">
-                        {row.status === "completed" && (
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="text-destructive hover:text-destructive"
-                            onClick={() => setVoidTarget(row)}
-                          >
-                            <XCircle className="mr-1 h-4 w-4" />
-                            Void
+                        <div className="flex items-center justify-end gap-1">
+                          <Button variant="ghost" size="sm" asChild>
+                            <Link href={`/sales/${row.id}`}>
+                              <FileText className="mr-1 h-4 w-4" />
+                              Invoice
+                            </Link>
                           </Button>
-                        )}
+                          {row.status === "completed" && (
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive hover:text-destructive"
+                              onClick={() => setVoidTarget(row)}
+                            >
+                              <XCircle className="mr-1 h-4 w-4" />
+                              Void
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                     )}
                   </TableRow>

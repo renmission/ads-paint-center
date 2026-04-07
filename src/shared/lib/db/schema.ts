@@ -126,6 +126,8 @@ export const salesTransactions = pgTable("sales_transactions", {
   totalAmount: numeric("total_amount", { precision: 10, scale: 2 }).notNull(),
   amountTendered: numeric("amount_tendered", { precision: 10, scale: 2 }),
   changeAmount: numeric("change_amount", { precision: 10, scale: 2 }),
+  amountPaid: numeric("amount_paid", { precision: 10, scale: 2 }),
+  dueDate: date("due_date"),
   paymentMethod: paymentMethodEnum("payment_method").notNull().default("cash"),
   status: transactionStatusEnum("status").notNull().default("completed"),
   notes: text("notes"),
