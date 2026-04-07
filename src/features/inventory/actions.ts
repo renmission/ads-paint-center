@@ -1,15 +1,16 @@
 "use server";
 
 import { db } from "@/shared/lib/db";
-import { products, inventory } from "@/shared/lib/db/schema";
+import { products, inventory, users } from "@/shared/lib/db/schema";
 import {
   createProductSchema,
   updateProductSchema,
   adjustStockSchema,
   toggleProductActiveSchema,
 } from "./schemas";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { sendSMS } from "@/shared/lib/sms";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -122,6 +123,7 @@ export async function adjustStockAction(
 
   const current = await db.query.inventory.findFirst({
     where: eq(inventory.id, parsed.data.inventoryId),
+    with: { product: { columns: { name: true, unit: true } } },
   });
 
   await db
@@ -134,6 +136,22 @@ export async function adjustStockAction(
       updatedAt: new Date(),
     })
     .where(eq(inventory.id, parsed.data.inventoryId));
+
+  // SMS: alert admins if new quantity is at or below the threshold
+  if (newQty <= threshold && current?.product) {
+    const admins = await db.query.users.findMany({
+      where: and(eq(users.role, "administrator"), eq(users.isActive, true)),
+      columns: { phone: true },
+    });
+    for (const admin of admins) {
+      if (admin.phone) {
+        await sendSMS(
+          admin.phone,
+          `[ADS Paint Center] Low stock alert: "${current.product.name}" has been set to ${newQty} ${current.product.unit}(s) — at or below the threshold of ${threshold}.`
+        );
+      }
+    }
+  }
 
   revalidatePath("/inventory");
   return { success: "Stock updated successfully." };

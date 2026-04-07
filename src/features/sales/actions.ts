@@ -5,11 +5,14 @@ import {
   salesTransactions,
   salesTransactionItems,
   inventory,
+  customers,
+  users,
 } from "@/shared/lib/db/schema";
 import { completeSaleSchema, voidSaleSchema } from "./schemas";
 import { auth } from "@/shared/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
+import { sendSMS } from "@/shared/lib/sms";
 
 type ActionResult = { error?: string; success?: string };
 
@@ -99,6 +102,45 @@ export async function completeSaleAction(
 
   revalidatePath("/sales");
   revalidatePath("/inventory");
+
+  // SMS: receipt confirmation to customer
+  if (customerId) {
+    const customer = await db.query.customers.findFirst({
+      where: eq(customers.id, customerId),
+      columns: { phone: true, name: true },
+    });
+    if (customer?.phone) {
+      await sendSMS(
+        customer.phone,
+        `Hi ${customer.name}! Your purchase of P${total.toFixed(2)} (Ref: ${transactionNumber}) at ADS Paint Center has been completed. Thank you!`
+      );
+    }
+  }
+
+  // SMS: alert admins for any item that dropped to/below its low-stock threshold
+  const admins = await db.query.users.findMany({
+    where: and(eq(users.role, "administrator"), eq(users.isActive, true)),
+    columns: { phone: true },
+  });
+  const adminPhones = admins.map((a) => a.phone).filter(Boolean) as string[];
+
+  if (adminPhones.length > 0) {
+    for (const item of items) {
+      const inv = await db.query.inventory.findFirst({
+        where: eq(inventory.productId, item.productId),
+        with: { product: { columns: { name: true, unit: true } } },
+      });
+      if (inv && inv.quantityOnHand <= inv.lowStockThreshold) {
+        for (const phone of adminPhones) {
+          await sendSMS(
+            phone,
+            `[ADS Paint Center] Low stock alert: "${inv.product.name}" now has ${inv.quantityOnHand} ${inv.product.unit}(s) remaining (threshold: ${inv.lowStockThreshold}).`
+          );
+        }
+      }
+    }
+  }
+
   return { success: `Sale ${transactionNumber} completed successfully.` };
 }
 
