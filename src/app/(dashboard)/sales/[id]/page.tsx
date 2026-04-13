@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Separator } from "@/shared/components/ui/separator";
 import { Badge } from "@/shared/components/ui/badge";
-import { ArrowLeft, Printer, AlertCircle } from "lucide-react";
+import { ArrowLeft, AlertCircle } from "lucide-react";
 import { InvoicePrintButton } from "./invoice-print-button";
 import { MarkCreditPaymentDialog } from "./mark-credit-payment-dialog";
 
@@ -109,7 +109,7 @@ export default async function InvoicePage({
             {isCredit && balance > 0 && session?.user?.role === "administrator" && (
               <MarkCreditPaymentDialog transactionId={txn.id} balance={balance} />
             )}
-            <InvoicePrintButton />
+            <InvoicePrintButton id={txn.id} transactionNumber={txn.transactionNumber} />
           </div>
         </div>
 

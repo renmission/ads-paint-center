@@ -9,6 +9,7 @@ import {
   ClipboardList,
   UserCog,
   Settings,
+  Landmark,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -67,6 +68,12 @@ export const navItems: NavItem[] = [
     href: "/requests",
     icon: ClipboardList,
     roles: ["administrator", "staff"],
+  },
+  {
+    title: "Receivables",
+    href: "/ar",
+    icon: Landmark,
+    roles: ["administrator"],
   },
   {
     title: "Staff",
