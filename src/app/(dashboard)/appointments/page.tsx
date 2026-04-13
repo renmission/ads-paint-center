@@ -5,7 +5,9 @@ export default async function AppointmentsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Appointments</h1>
-        <p className="text-muted-foreground">Schedule and manage service appointments.</p>
+        <p className="text-muted-foreground">
+          Schedule and manage service appointments.
+        </p>
       </div>
       <AppointmentsTable />
     </div>

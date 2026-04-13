@@ -4,13 +4,14 @@ Hybrid search combines semantic (vector) search with keyword search for better r
 
 ## Why Hybrid Search?
 
-| Search Type | Strengths | Weaknesses |
-|-------------|-----------|------------|
-| **Semantic** | Understands meaning, synonyms | May miss exact terms |
-| **Keyword** | Precise term matching | No semantic understanding |
-| **Hybrid** | Best of both | More complex |
+| Search Type  | Strengths                     | Weaknesses                |
+| ------------ | ----------------------------- | ------------------------- |
+| **Semantic** | Understands meaning, synonyms | May miss exact terms      |
+| **Keyword**  | Precise term matching         | No semantic understanding |
+| **Hybrid**   | Best of both                  | More complex              |
 
 **Example:** Query "PostgreSQL 17.2 release notes"
+
 - Semantic: Finds "database version updates" (related meaning)
 - Keyword: Finds exact "PostgreSQL 17.2" matches
 - Hybrid: Finds both, ranks appropriately
@@ -32,6 +33,7 @@ ORDER BY ts_rank(to_tsvector('simple', content), plainto_tsquery('simple', 'sear
 ```
 
 **Language options:**
+
 - `'simple'`: No stemming, basic tokenization. Good for mixed languages.
 - `'english'`: English stemming. "running" matches "run".
 - `'finnish'`: Finnish stemming. "karttoja" matches "kartta".
@@ -60,6 +62,7 @@ ORDER BY score DESC;
 ```
 
 **BM25 vs ts_rank:**
+
 - BM25 considers corpus statistics (IDF)
 - Better for varying document lengths
 - Generally more accurate relevance
@@ -105,6 +108,7 @@ combined_score = w_semantic * semantic_score + w_keyword * keyword_score
 ```
 
 **Typical weights:**
+
 - Semantic-heavy: 0.7 / 0.3
 - Balanced: 0.5 / 0.5
 - Keyword-heavy: 0.3 / 0.7
@@ -131,6 +135,7 @@ ORDER BY combined DESC;
 ### FTS + RRF (No extra extensions)
 
 See `scripts/hybrid_search_fts.sql`:
+
 - `hybrid_search_fts()` - Basic hybrid with RRF
 - `hybrid_search_weighted()` - With tunable weights
 - `hybrid_search_fallback()` - Graceful degradation
@@ -138,6 +143,7 @@ See `scripts/hybrid_search_fts.sql`:
 ### BM25 + RRF (With pg_search)
 
 See `scripts/hybrid_search_bm25.sql`:
+
 - `hybrid_search_bm25()` - Basic BM25 hybrid
 - `hybrid_search_bm25_highlighted()` - With snippet highlighting
 - `hybrid_search_chunks_bm25()` - For RAG with chunks
@@ -190,6 +196,7 @@ Query type?
 For comprehensive Elasticsearch-like features including BM25 ranking, faceted search, highlighting, fuzzy search, and aggregations, see [paradedb.md](paradedb.md).
 
 ParadeDB is ideal when you need:
+
 - Production-grade BM25 ranking (better than ts_rank)
 - Built-in highlighting with `pdb.snippet()`
 - Faceted queries with `pdb.agg()`

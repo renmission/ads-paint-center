@@ -14,10 +14,6 @@
       "Bash(npx vitest:*)",
       "Bash(npx playwright test:*)"
     ],
-    "ask": [
-      "WebFetch",
-      "WebSearch",
-      "Bash"
-    ]
+    "ask": ["WebFetch", "WebSearch", "Bash"]
   }
 }

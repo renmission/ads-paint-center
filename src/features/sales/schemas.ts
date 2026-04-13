@@ -12,14 +12,23 @@ export const completeSaleSchema = z.object({
   cartJson: z.string().transform((val, ctx) => {
     try {
       const parsed = JSON.parse(val);
-      const result = z.array(cartItemSchema).min(1, "Cart must have at least one item").safeParse(parsed);
+      const result = z
+        .array(cartItemSchema)
+        .min(1, "Cart must have at least one item")
+        .safeParse(parsed);
       if (!result.success) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: result.error.issues[0].message });
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: result.error.issues[0].message,
+        });
         return z.NEVER;
       }
       return result.data;
     } catch {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Invalid cart data" });
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Invalid cart data",
+      });
       return z.NEVER;
     }
   }),

@@ -148,11 +148,11 @@ result = await Runner.run(agent, "My SSN is 123-45-6789", session=session)
 
 ## Session Comparison
 
-| Session Type | Storage | Use Case |
-|--------------|---------|----------|
-| Manual (to_input_list) | Memory | Simple, single-request |
-| SQLiteSession | Local file | Single-server apps |
-| RedisSession | Redis | Distributed systems |
-| OpenAISession | OpenAI | Using OpenAI memory |
-| CompactionSession | Wrapper | Long conversations |
-| EncryptedSession | Wrapper | Sensitive data |
+| Session Type           | Storage    | Use Case               |
+| ---------------------- | ---------- | ---------------------- |
+| Manual (to_input_list) | Memory     | Simple, single-request |
+| SQLiteSession          | Local file | Single-server apps     |
+| RedisSession           | Redis      | Distributed systems    |
+| OpenAISession          | OpenAI     | Using OpenAI memory    |
+| CompactionSession      | Wrapper    | Long conversations     |
+| EncryptedSession       | Wrapper    | Sensitive data         |

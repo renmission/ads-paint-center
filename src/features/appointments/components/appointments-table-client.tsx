@@ -37,18 +37,45 @@ interface Props {
 }
 
 const STATUS_CONFIG = {
-  scheduled:    { label: "Scheduled",    className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" },
-  confirmed:    { label: "Confirmed",    className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
-  in_progress:  { label: "In Progress",  className: "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300" },
-  completed:    { label: "Completed",    className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-  cancelled:    { label: "Cancelled",    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
+  scheduled: {
+    label: "Scheduled",
+    className:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  },
+  confirmed: {
+    label: "Confirmed",
+    className:
+      "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  },
+  in_progress: {
+    label: "In Progress",
+    className:
+      "bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300",
+  },
+  completed: {
+    label: "Completed",
+    className:
+      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  },
+  cancelled: {
+    label: "Cancelled",
+    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  },
 } as const;
 
 function fmt(n: string | number) {
-  return parseFloat(String(n)).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  return parseFloat(String(n)).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+  });
 }
 
-export function AppointmentsTableClient({ initialData, customers, servicesList, staffList, userRole }: Props) {
+export function AppointmentsTableClient({
+  initialData,
+  customers,
+  servicesList,
+  staffList,
+  userRole,
+}: Props) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [createOpen, setCreateOpen] = useState(false);
@@ -119,7 +146,10 @@ export function AppointmentsTableClient({ initialData, customers, servicesList, 
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={7}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   {initialData.length === 0
                     ? "No appointments yet. Click 'New Appointment' to schedule one."
                     : "No results match your filters."}
@@ -130,27 +160,38 @@ export function AppointmentsTableClient({ initialData, customers, servicesList, 
                 const statusCfg = STATUS_CONFIG[row.status];
                 return (
                   <TableRow key={row.id}>
-                    <TableCell className="font-mono text-sm font-medium">{row.appointmentNumber}</TableCell>
+                    <TableCell className="font-mono text-sm font-medium">
+                      {row.appointmentNumber}
+                    </TableCell>
                     <TableCell className="text-sm whitespace-nowrap">
-                      <div>{new Date(row.scheduledAt).toLocaleDateString("en-PH", {
-                        month: "short", day: "numeric", year: "numeric",
-                      })}</div>
+                      <div>
+                        {new Date(row.scheduledAt).toLocaleDateString("en-PH", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric",
+                        })}
+                      </div>
                       <div className="text-xs text-muted-foreground">
                         {new Date(row.scheduledAt).toLocaleTimeString("en-PH", {
-                          hour: "2-digit", minute: "2-digit",
+                          hour: "2-digit",
+                          minute: "2-digit",
                         })}
                       </div>
                     </TableCell>
                     <TableCell>
                       <div>{row.customerName}</div>
-                      <div className="text-xs text-muted-foreground">{row.customerPhone}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {row.customerPhone}
+                      </div>
                     </TableCell>
                     <TableCell>
                       {row.serviceName ? (
                         <div>
                           <div className="text-sm">{row.serviceName}</div>
                           {row.servicePrice && (
-                            <div className="text-xs text-muted-foreground">₱{fmt(row.servicePrice)}</div>
+                            <div className="text-xs text-muted-foreground">
+                              ₱{fmt(row.servicePrice)}
+                            </div>
                           )}
                         </div>
                       ) : (
@@ -159,19 +200,29 @@ export function AppointmentsTableClient({ initialData, customers, servicesList, 
                       {row.address && (
                         <div className="flex items-center gap-0.5 text-xs text-muted-foreground mt-0.5">
                           <MapPin className="h-2.5 w-2.5" />
-                          <span className="truncate max-w-24">{row.address}</span>
+                          <span className="truncate max-w-24">
+                            {row.address}
+                          </span>
                         </div>
                       )}
                     </TableCell>
                     <TableCell>
-                      {row.staffName ?? <span className="text-muted-foreground">—</span>}
+                      {row.staffName ?? (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </TableCell>
                     <TableCell>
-                      <Badge className={statusCfg.className}>{statusCfg.label}</Badge>
+                      <Badge className={statusCfg.className}>
+                        {statusCfg.label}
+                      </Badge>
                     </TableCell>
                     <TableCell className="text-right">
                       {canUpdate(row) && (
-                        <Button variant="outline" size="sm" onClick={() => setUpdateTarget(row)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setUpdateTarget(row)}
+                        >
                           Update
                         </Button>
                       )}
@@ -193,7 +244,9 @@ export function AppointmentsTableClient({ initialData, customers, servicesList, 
       />
       <UpdateAppointmentDialog
         open={!!updateTarget}
-        onOpenChange={(o) => { if (!o) setUpdateTarget(null); }}
+        onOpenChange={(o) => {
+          if (!o) setUpdateTarget(null);
+        }}
         appointment={updateTarget}
         staffList={staffList}
       />

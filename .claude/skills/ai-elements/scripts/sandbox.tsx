@@ -2,7 +2,10 @@
 
 import type { ToolUIPart } from "ai";
 
-import { CodeBlock, CodeBlockCopyButton } from "@/components/ai-elements/code-block";
+import {
+  CodeBlock,
+  CodeBlockCopyButton,
+} from "@/components/ai-elements/code-block";
 import {
   Sandbox,
   SandboxContent,
@@ -86,7 +89,7 @@ const StateButton = memo(
         {s}
       </Button>
     );
-  }
+  },
 );
 
 StateButton.displayName = "StateButton";

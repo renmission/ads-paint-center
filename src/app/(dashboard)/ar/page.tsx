@@ -9,8 +9,12 @@ export default async function ArPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">Accounts Receivable</h1>
-        <p className="text-muted-foreground">Outstanding credit invoices with unpaid balances.</p>
+        <h1 className="text-2xl font-bold tracking-tight">
+          Accounts Receivable
+        </h1>
+        <p className="text-muted-foreground">
+          Outstanding credit invoices with unpaid balances.
+        </p>
       </div>
       <ArTable />
     </div>

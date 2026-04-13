@@ -54,7 +54,10 @@ interface InnerProps {
 }
 
 function EditServiceDialogInner({ open, onOpenChange, service }: InnerProps) {
-  const [state, formAction, isPending] = useActionState(editServiceAction, undefined);
+  const [state, formAction, isPending] = useActionState(
+    editServiceAction,
+    undefined,
+  );
 
   const form = useForm<EditServiceInput>({
     resolver: zodResolver(editServiceSchema),
@@ -119,7 +122,13 @@ function EditServiceDialogInner({ open, onOpenChange, service }: InnerProps) {
                   <FormItem>
                     <FormLabel>Price (₱)</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" step="0.01" {...field} name="price" />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        {...field}
+                        name="price"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -154,7 +163,9 @@ function EditServiceDialogInner({ open, onOpenChange, service }: InnerProps) {
                     </FormControl>
                     <SelectContent>
                       {SERVICE_CATEGORIES.map((c) => (
-                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.label}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -163,8 +174,16 @@ function EditServiceDialogInner({ open, onOpenChange, service }: InnerProps) {
               )}
             />
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button type="submit" disabled={isPending}>{isPending ? "Saving…" : "Save Changes"}</Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Saving…" : "Save Changes"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>
@@ -175,5 +194,11 @@ function EditServiceDialogInner({ open, onOpenChange, service }: InnerProps) {
 
 export function EditServiceDialog({ open, onOpenChange, service }: Props) {
   if (!service) return null;
-  return <EditServiceDialogInner open={open} onOpenChange={onOpenChange} service={service} />;
+  return (
+    <EditServiceDialogInner
+      open={open}
+      onOpenChange={onOpenChange}
+      service={service}
+    />
+  );
 }

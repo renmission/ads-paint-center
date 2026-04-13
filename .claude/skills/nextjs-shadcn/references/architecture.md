@@ -65,17 +65,21 @@ ai/
 
 ```ts
 export interface Model {
-  id: string
-  label: string
-  description: string
+  id: string;
+  label: string;
+  description: string;
 }
 
 export const models: Model[] = [
-  { id: "gpt-5.4-mini", label: "GPT 5.4 mini", description: "Fast, lightweight tasks" },
+  {
+    id: "gpt-5.4-mini",
+    label: "GPT 5.4 mini",
+    description: "Fast, lightweight tasks",
+  },
   { id: "gpt-5.4", label: "GPT 5.4", description: "Complex, multi-step tasks" },
-]
+];
 
-export const DEFAULT_MODEL_NAME = "gpt-5.4-mini"
+export const DEFAULT_MODEL_NAME = "gpt-5.4-mini";
 ```
 
 **Cookie-based model storage:**
@@ -109,10 +113,10 @@ export default async function Page() {
 Always accept and merge `className`:
 
 ```tsx
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 interface CardProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "default" | "outline"
+  variant?: "default" | "outline";
 }
 
 export function Card({ className, variant = "default", ...props }: CardProps) {
@@ -121,11 +125,11 @@ export function Card({ className, variant = "default", ...props }: CardProps) {
       className={cn(
         "rounded-lg p-4",
         variant === "outline" && "border",
-        className
+        className,
       )}
       {...props}
     />
-  )
+  );
 }
 ```
 
@@ -137,8 +141,8 @@ Fetch data directly in Server Components:
 
 ```tsx
 export default async function Page() {
-  const data = await fetchData()
-  return <Component data={data} />
+  const data = await fetchData();
+  return <Component data={data} />;
 }
 ```
 
@@ -149,10 +153,10 @@ Use `'use cache'` for reusable cached queries:
 ```tsx
 // data/products.ts
 export async function getProducts() {
-  "use cache"
-  cacheTag("products")
-  cacheLife("hours")
-  return await db.products.findMany()
+  "use cache";
+  cacheTag("products");
+  cacheLife("hours");
+  return await db.products.findMany();
 }
 ```
 
@@ -163,21 +167,21 @@ Pass promises to Client Components for streaming:
 ```tsx
 // Server Component
 export default function Page() {
-  const dataPromise = fetchData() // Don't await
+  const dataPromise = fetchData(); // Don't await
   return (
     <Suspense fallback={<Loading />}>
       <ClientDisplay dataPromise={dataPromise} />
     </Suspense>
-  )
+  );
 }
 
 // Client Component
-"use client"
-import { use } from "react"
+("use client");
+import { use } from "react";
 
 export function ClientDisplay({ dataPromise }: { dataPromise: Promise<Data> }) {
-  const data = use(dataPromise) // Suspends until resolved
-  return <Chart data={data} />
+  const data = use(dataPromise); // Suspends until resolved
+  return <Chart data={data} />;
 }
 ```
 
@@ -186,14 +190,18 @@ export function ClientDisplay({ dataPromise }: { dataPromise: Promise<Data> }) {
 Use `connection()` to explicitly defer to request time without accessing runtime APIs:
 
 ```tsx
-import { connection } from "next/server"
-import { Suspense } from "react"
+import { connection } from "next/server";
+import { Suspense } from "react";
 
 async function UniqueContent() {
-  await connection() // Defer to request time
-  const uuid = crypto.randomUUID()
-  const timestamp = Date.now()
-  return <div>{uuid} - {timestamp}</div>
+  await connection(); // Defer to request time
+  const uuid = crypto.randomUUID();
+  const timestamp = Date.now();
+  return (
+    <div>
+      {uuid} - {timestamp}
+    </div>
+  );
 }
 
 export default function Page() {
@@ -201,18 +209,18 @@ export default function Page() {
     <Suspense fallback={<Loading />}>
       <UniqueContent />
     </Suspense>
-  )
+  );
 }
 ```
 
 **When to use `connection()`:**
 
-| Scenario | Use connection()? |
-|----------|-------------------|
-| Need unique values per request | ✅ Yes |
-| Using `Math.random()`, `Date.now()`, `crypto.randomUUID()` | ✅ Yes |
-| Already using `cookies()` or `headers()` | ❌ No (not needed) |
-| Data is cacheable | ❌ No (use `'use cache'`) |
+| Scenario                                                   | Use connection()?         |
+| ---------------------------------------------------------- | ------------------------- |
+| Need unique values per request                             | ✅ Yes                    |
+| Using `Math.random()`, `Date.now()`, `crypto.randomUUID()` | ✅ Yes                    |
+| Already using `cookies()` or `headers()`                   | ❌ No (not needed)        |
+| Data is cacheable                                          | ❌ No (use `'use cache'`) |
 
 ## Routing
 
@@ -237,13 +245,14 @@ app/
 
 ### Layout vs Template
 
-| Aspect | layout.tsx | template.tsx |
-|--------|------------|--------------|
-| State | Persists across navigation | Resets on navigation |
-| Effects | Run once | Run on every navigation |
+| Aspect   | layout.tsx                  | template.tsx                     |
+| -------- | --------------------------- | -------------------------------- |
+| State    | Persists across navigation  | Resets on navigation             |
+| Effects  | Run once                    | Run on every navigation          |
 | Use when | Shared chrome (nav, footer) | Analytics, animations that reset |
 
 **Decision tree:**
+
 ```
 State/effects should reset on navigation?
 ├── Yes → template.tsx
@@ -258,14 +267,14 @@ export default async function Page({
   params,
   searchParams,
 }: {
-  params: Promise<{ slug: string }>
-  searchParams: Promise<{ page?: string }>
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 }) {
-  const { slug } = await params
-  const { page = "1" } = await searchParams
+  const { slug } = await params;
+  const { page = "1" } = await searchParams;
 
-  const data = await fetchData(slug, parseInt(page))
-  return <Content data={data} />
+  const data = await fetchData(slug, parseInt(page));
+  return <Content data={data} />;
 }
 ```
 
@@ -286,31 +295,34 @@ Multiple independent slow sections?
 ### Patterns
 
 **loading.tsx** - Entire route fallback:
+
 ```tsx
 // app/dashboard/loading.tsx
 export default function Loading() {
-  return <DashboardSkeleton />
+  return <DashboardSkeleton />;
 }
 ```
 
 **Suspense** - Granular streaming:
+
 ```tsx
 export default function Page() {
   return (
     <>
-      <Header />  {/* Renders immediately */}
+      <Header /> {/* Renders immediately */}
       <Suspense fallback={<StatsSkeleton />}>
-        <SlowStats />  {/* Streams when ready */}
+        <SlowStats /> {/* Streams when ready */}
       </Suspense>
       <Suspense fallback={<ChartSkeleton />}>
-        <SlowChart />  {/* Streams independently */}
+        <SlowChart /> {/* Streams independently */}
       </Suspense>
     </>
-  )
+  );
 }
 ```
 
 **Skeleton pattern** - Create a skeleton component for each loadable content:
+
 ```tsx
 // components/skeletons.tsx
 export function CardSkeleton() {
@@ -319,7 +331,7 @@ export function CardSkeleton() {
       <div className="h-4 bg-muted rounded w-3/4 mb-2" />
       <div className="h-4 bg-muted rounded w-1/2" />
     </div>
-  )
+  );
 }
 
 export function TableSkeleton({ rows = 5 }: { rows?: number }) {
@@ -329,25 +341,26 @@ export function TableSkeleton({ rows = 5 }: { rows?: number }) {
         <div key={i} className="h-10 bg-muted rounded animate-pulse" />
       ))}
     </div>
-  )
+  );
 }
 ```
 
 **Passing promises to client**:
+
 ```tsx
 // Server Component
 export default function Page() {
-  const dataPromise = fetchData()  // Start fetch, don't await
-  return <ClientChart dataPromise={dataPromise} />
+  const dataPromise = fetchData(); // Start fetch, don't await
+  return <ClientChart dataPromise={dataPromise} />;
 }
 
 // Client Component
-"use client"
-import { use } from "react"
+("use client");
+import { use } from "react";
 
 export function ClientChart({ dataPromise }) {
-  const data = use(dataPromise)  // Suspends until resolved
-  return <Chart data={data} />
+  const data = use(dataPromise); // Suspends until resolved
+  return <Chart data={data} />;
 }
 ```
 
@@ -358,11 +371,11 @@ export function ClientChart({ dataPromise }) {
 Wrap non-urgent UI updates to keep interactions smooth:
 
 ```tsx
-"use client"
-import { useTransition } from "react"
+"use client";
+import { useTransition } from "react";
 
 function SubmitButton({ action }: { action: () => Promise<void> }) {
-  const [isPending, startTransition] = useTransition()
+  const [isPending, startTransition] = useTransition();
 
   return (
     <button
@@ -371,11 +384,12 @@ function SubmitButton({ action }: { action: () => Promise<void> }) {
     >
       {isPending ? "Saving..." : "Save"}
     </button>
-  )
+  );
 }
 ```
 
 **Guidelines:**
+
 - Use `isPending` for feedback (disable buttons, show spinners)
 - Don't wrap controlled input state in transitions
 - After `await` inside transition, wrap subsequent `setState` in another `startTransition`
@@ -387,20 +401,20 @@ function SubmitButton({ action }: { action: () => Promise<void> }) {
 Function-level caching:
 
 ```tsx
-"use cache"
+"use cache";
 
 export async function getProducts() {
-  const products = await db.query.products.findMany()
-  return products
+  const products = await db.query.products.findMany();
+  return products;
 }
 
 // With cache tags
-import { cacheTag } from "next/cache"
+import { cacheTag } from "next/cache";
 
 export async function getProduct(id: string) {
-  "use cache"
-  cacheTag(`product-${id}`)
-  return db.query.products.findFirst({ where: eq(products.id, id) })
+  "use cache";
+  cacheTag(`product-${id}`);
+  return db.query.products.findFirst({ where: eq(products.id, id) });
 }
 ```
 
@@ -447,24 +461,24 @@ Replaces middleware for request interception. Place at project root (same level 
 
 ```tsx
 // proxy.ts (project root)
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
-import { cookies } from "next/headers"
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
+import { cookies } from "next/headers";
 
 export async function proxy(request: NextRequest) {
-  const cookieStore = await cookies()
-  const session = cookieStore.get("session")
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session");
 
   if (!session && request.nextUrl.pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/login", request.url))
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  return NextResponse.next()
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*', '/api/:path*'],
-}
+  matcher: ["/dashboard/:path*", "/api/:path*"],
+};
 ```
 
 ### Request APIs
@@ -472,12 +486,12 @@ export const config = {
 All request APIs are async in Next.js 16:
 
 ```tsx
-import { cookies, headers, draftMode } from "next/headers"
+import { cookies, headers, draftMode } from "next/headers";
 
 export default async function Page() {
-  const cookieStore = await cookies()
-  const headersList = await headers()
-  const { isEnabled } = await draftMode()
+  const cookieStore = await cookies();
+  const headersList = await headers();
+  const { isEnabled } = await draftMode();
 }
 ```
 

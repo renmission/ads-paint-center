@@ -8,14 +8,17 @@ allowed-tools: Read, Grep, Glob, Bash
 Review the current project changes with a senior-engineer mindset.
 
 ## Arguments
+
 `$ARGUMENTS`
 
 If arguments are provided, treat them as extra review focus areas. If no arguments are provided, review all current unstaged, staged, and recently changed work that is visible in the repository.
 
 ## Review goals
+
 Produce a concise, high-signal review that finds real issues before merge.
 
 Focus on:
+
 1. Correctness and regressions.
 2. Security issues and unsafe data handling.
 3. API contract mismatches and edge-case behavior.
@@ -26,6 +29,7 @@ Focus on:
 8. Violations of project rules in `.claude/rules/`, especially testing and API conventions.
 
 ## Process
+
 1. Read the relevant project rules in `.claude/rules/` before reviewing code.
 2. Inspect git status and recent diffs to determine the review target.
 3. Read changed files fully when practical; do not rely only on snippets.
@@ -33,14 +37,18 @@ Focus on:
 5. Prefer fewer high-confidence findings over many speculative comments.
 
 ## Output format
+
 Return these sections in order:
 
 ### Verdict
+
 One short paragraph with the overall assessment.
 
 ### Findings
+
 Use bullets ordered by severity.
 For each finding, include:
+
 - Severity: `high`, `medium`, or `low`
 - File path and, if practical, line or section reference
 - What is wrong
@@ -48,12 +56,15 @@ For each finding, include:
 - The concrete fix
 
 ### Test gaps
+
 List missing or weak tests tied to the changed behavior.
 
 ### Nice-to-have
+
 Optional small improvements only if they are clearly lower priority than the main findings.
 
 ## Review style
+
 - Be direct and specific.
 - Do not praise for the sake of praise.
 - Do not invent issues.
@@ -61,6 +72,7 @@ Optional small improvements only if they are clearly lower priority than the mai
 - Prefer comments that a developer can act on immediately.
 
 ## Special checks for Next.js projects
+
 - Check whether server-only code leaked into client components.
 - Check whether route handlers validate params, query, and body.
 - Check status codes and response shape consistency.
@@ -69,6 +81,7 @@ Optional small improvements only if they are clearly lower priority than the mai
 - Check whether new features changed contracts without corresponding tests or docs.
 
 ## Special checks for tests
+
 - Confirm tests assert behavior rather than implementation details.
 - Flag over-mocking, missing unhappy-path coverage, and brittle selectors.
 - Ensure critical user flows or endpoint contracts have proportional coverage.

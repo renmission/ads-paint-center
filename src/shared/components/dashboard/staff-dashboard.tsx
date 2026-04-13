@@ -1,9 +1,5 @@
 import { db } from "@/shared/lib/db";
-import {
-  salesTransactions,
-  requests,
-  inventory,
-} from "@/shared/lib/db/schema";
+import { salesTransactions, requests, inventory } from "@/shared/lib/db/schema";
 import { eq, lte, sql, and, gte } from "drizzle-orm";
 import { StatCard } from "./stat-card";
 import { ShoppingCart, ClipboardList, AlertTriangle } from "lucide-react";
@@ -17,7 +13,12 @@ import {
 } from "@/shared/components/ui/table";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import Link from "next/link";
 
 async function getStaffStats(staffId: string) {
@@ -26,14 +27,17 @@ async function getStaffStats(staffId: string) {
 
   const [myTodaySales, pendingRequests, lowStockCount] = await Promise.all([
     db
-      .select({ count: sql<number>`count(*)`, total: sql<string>`coalesce(sum(total_amount), 0)` })
+      .select({
+        count: sql<number>`count(*)`,
+        total: sql<string>`coalesce(sum(total_amount), 0)`,
+      })
       .from(salesTransactions)
       .where(
         and(
           eq(salesTransactions.staffId, staffId),
           eq(salesTransactions.status, "completed"),
-          gte(salesTransactions.createdAt, today)
-        )
+          gte(salesTransactions.createdAt, today),
+        ),
       ),
     db
       .select({ count: sql<number>`count(*)` })
@@ -67,7 +71,10 @@ interface StaffDashboardProps {
   userName: string;
 }
 
-export async function StaffDashboard({ userId, userName }: StaffDashboardProps) {
+export async function StaffDashboard({
+  userId,
+  userName,
+}: StaffDashboardProps) {
   const [stats, pendingReqs] = await Promise.all([
     getStaffStats(userId),
     getRecentPendingRequests(),

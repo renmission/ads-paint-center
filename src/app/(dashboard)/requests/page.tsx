@@ -5,7 +5,9 @@ export default function RequestsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Requests</h1>
-        <p className="text-muted-foreground">Manage customer product requests.</p>
+        <p className="text-muted-foreground">
+          Manage customer product requests.
+        </p>
       </div>
       <RequestsTable />
     </div>

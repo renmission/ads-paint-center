@@ -173,7 +173,9 @@ export const services = pgTable("services", {
 
 export const appointments = pgTable("appointments", {
   id: uuid("id").primaryKey().defaultRandom(),
-  appointmentNumber: varchar("appointment_number", { length: 50 }).notNull().unique(),
+  appointmentNumber: varchar("appointment_number", { length: 50 })
+    .notNull()
+    .unique(),
   customerId: uuid("customer_id")
     .notNull()
     .references(() => customers.id, { onDelete: "cascade" }),
@@ -187,6 +189,7 @@ export const appointments = pgTable("appointments", {
   status: appointmentStatusEnum("status").notNull().default("scheduled"),
   notes: text("notes"),
   address: text("address"),
+  remindedAt: timestamp("reminded_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -275,7 +278,7 @@ export const salesTransactionsRelations = relations(
     }),
     items: many(salesTransactionItems),
     payments: many(payments),
-  })
+  }),
 );
 
 export const paymentsRelations = relations(payments, ({ one }) => ({
@@ -300,7 +303,7 @@ export const salesTransactionItemsRelations = relations(
       fields: [salesTransactionItems.productId],
       references: [products.id],
     }),
-  })
+  }),
 );
 
 export const servicesRelations = relations(services, ({ many }) => ({

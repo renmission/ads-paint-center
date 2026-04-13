@@ -22,7 +22,7 @@ async function requireAdmin(): Promise<string | null> {
 
 export async function createStaffAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const denied = await requireAdmin();
   if (denied) return { error: denied };
@@ -51,7 +51,7 @@ export async function createStaffAction(
 
 export async function updateStaffAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const denied = await requireAdmin();
   if (denied) return { error: denied };
@@ -76,10 +76,11 @@ export async function updateStaffAction(
 
 export async function toggleStaffActiveAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
-  if (!session || session.user.role !== "administrator") return { error: "Unauthorized" };
+  if (!session || session.user.role !== "administrator")
+    return { error: "Unauthorized" };
 
   const id = formData.get("id") as string;
   if (!id) return { error: "Invalid staff ID." };
@@ -104,7 +105,7 @@ export async function toggleStaffActiveAction(
 
 export async function changeStaffPasswordAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const denied = await requireAdmin();
   if (denied) return { error: denied };

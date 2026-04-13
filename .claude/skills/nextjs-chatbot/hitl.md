@@ -65,7 +65,10 @@ if (part.type === "tool-myApprovalTool") {
   };
 
   // Loading
-  if (toolPart.state === "input-streaming" || toolPart.state === "input-available") {
+  if (
+    toolPart.state === "input-streaming" ||
+    toolPart.state === "input-available"
+  ) {
     return <Shimmer>Finding options...</Shimmer>;
   }
 
@@ -77,10 +80,24 @@ if (part.type === "tool-myApprovalTool") {
           Open a contact form about <strong>{toolPart.input?.topic}</strong>?
         </p>
         <div className="flex gap-2">
-          <button onClick={() => addToolApprovalResponse?.({ id: toolPart.approval!.id, approved: true })}>
+          <button
+            onClick={() =>
+              addToolApprovalResponse?.({
+                id: toolPart.approval!.id,
+                approved: true,
+              })
+            }
+          >
             Approve
           </button>
-          <button onClick={() => addToolApprovalResponse?.({ id: toolPart.approval!.id, approved: false })}>
+          <button
+            onClick={() =>
+              addToolApprovalResponse?.({
+                id: toolPart.approval!.id,
+                approved: false,
+              })
+            }
+          >
             Deny
           </button>
         </div>
@@ -100,12 +117,18 @@ if (part.type === "tool-myApprovalTool") {
 
   // User denied
   if (toolPart.state === "output-denied") {
-    return <div className="text-muted-foreground text-sm">Request cancelled.</div>;
+    return (
+      <div className="text-muted-foreground text-sm">Request cancelled.</div>
+    );
   }
 
   // Tool error
   if (toolPart.state === "output-error") {
-    return <div className="text-destructive text-sm">Error: {toolPart.errorText}</div>;
+    return (
+      <div className="text-destructive text-sm">
+        Error: {toolPart.errorText}
+      </div>
+    );
   }
 
   return null;
@@ -122,4 +145,3 @@ If the user denies the approval, do not retry. Acknowledge the cancellation.
 IMPORTANT: Do NOT list expert names in your text — the form already shows them.
 Tell the user to fill in the form below. Keep it to 1-2 sentences.
 ```
-

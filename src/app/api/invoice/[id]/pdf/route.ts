@@ -3,21 +3,32 @@ export const runtime = "nodejs";
 import { NextRequest } from "next/server";
 import { renderToBuffer } from "@react-pdf/renderer";
 import { db } from "@/shared/lib/db";
-import { salesTransactions, salesTransactionItems, customers, users, products } from "@/shared/lib/db/schema";
+import {
+  salesTransactions,
+  salesTransactionItems,
+  customers,
+  users,
+  products,
+} from "@/shared/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/shared/lib/auth";
 import { InvoicePdfDocument } from "@/features/sales/components/invoice-pdf-document";
 
 export async function GET(
   _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await auth();
   if (!session?.user) {
-    return new Response(JSON.stringify({ error: { code: "UNAUTHORIZED", message: "Authentication required." } }), {
-      status: 401,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        error: { code: "UNAUTHORIZED", message: "Authentication required." },
+      }),
+      {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const { id } = await params;
@@ -50,10 +61,15 @@ export async function GET(
     .then((r) => r[0] ?? null);
 
   if (!txn) {
-    return new Response(JSON.stringify({ error: { code: "NOT_FOUND", message: "Invoice not found." } }), {
-      status: 404,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({
+        error: { code: "NOT_FOUND", message: "Invoice not found." },
+      }),
+      {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 
   const items = await db

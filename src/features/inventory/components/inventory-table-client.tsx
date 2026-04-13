@@ -131,7 +131,9 @@ export function InventoryTableClient({ initialData }: Props) {
                   colSpan={9}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {search || categoryFilter !== "all" || statusFilter !== "active"
+                  {search ||
+                  categoryFilter !== "all" ||
+                  statusFilter !== "active"
                     ? "No products match your filters."
                     : "No products in catalog yet."}
                 </TableCell>
@@ -173,7 +175,10 @@ export function InventoryTableClient({ initialData }: Props) {
                       {row.product.isActive ? (
                         <Badge variant="secondary">Active</Badge>
                       ) : (
-                        <Badge variant="outline" className="text-muted-foreground">
+                        <Badge
+                          variant="outline"
+                          className="text-muted-foreground"
+                        >
                           Inactive
                         </Badge>
                       )}

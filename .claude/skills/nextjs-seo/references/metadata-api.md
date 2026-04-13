@@ -10,11 +10,11 @@ Use when metadata is known at build time:
 
 ```typescript
 // app/layout.tsx or app/page.tsx
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: 'Page Title',
-  description: 'Page description',
+  title: "Page Title",
+  description: "Page description",
 };
 ```
 
@@ -24,7 +24,7 @@ Use when metadata depends on route params or external data:
 
 ```typescript
 // app/products/[id]/page.tsx
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -47,29 +47,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 ## Complete Metadata Object
 
 ```typescript
-import type { Metadata } from 'next';
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   // Base URL for relative paths
-  metadataBase: new URL('https://your-site.com'),
+  metadataBase: new URL("https://your-site.com"),
 
   // Title configuration
   title: {
-    default: 'Default Title',        // Used when no page title
-    template: '%s | Site Name',      // Template for child pages
-    absolute: 'Override All',        // Ignores template
+    default: "Default Title", // Used when no page title
+    template: "%s | Site Name", // Template for child pages
+    absolute: "Override All", // Ignores template
   },
 
   // Description (150-160 characters recommended)
-  description: 'Compelling meta description with target keywords',
+  description: "Compelling meta description with target keywords",
 
   // Keywords (less important now, but still used)
-  keywords: ['keyword1', 'keyword2', 'long-tail keyword'],
+  keywords: ["keyword1", "keyword2", "long-tail keyword"],
 
   // Author information
-  authors: [{ name: 'Author Name', url: 'https://author.com' }],
-  creator: 'Creator Name',
-  publisher: 'Publisher Name',
+  authors: [{ name: "Author Name", url: "https://author.com" }],
+  creator: "Creator Name",
+  publisher: "Publisher Name",
 
   // Robots directives
   robots: {
@@ -79,72 +79,72 @@ export const metadata: Metadata = {
     googleBot: {
       index: true,
       follow: true,
-      'max-video-preview': -1,
-      'max-image-preview': 'large',
-      'max-snippet': -1,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
     },
   },
 
   // Canonical and alternates
   alternates: {
-    canonical: '/',
+    canonical: "/",
     languages: {
-      'en-US': '/en-US',
-      'fi-FI': '/fi-FI',
+      "en-US": "/en-US",
+      "fi-FI": "/fi-FI",
     },
   },
 
   // Open Graph (Facebook, LinkedIn)
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://your-site.com',
-    siteName: 'Site Name',
-    title: 'Open Graph Title',
-    description: 'Open Graph description',
+    type: "website",
+    locale: "en_US",
+    url: "https://your-site.com",
+    siteName: "Site Name",
+    title: "Open Graph Title",
+    description: "Open Graph description",
     images: [
       {
-        url: '/og-image.png',
+        url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: 'Image alt text',
-        type: 'image/png',
+        alt: "Image alt text",
+        type: "image/png",
       },
     ],
   },
 
   // Twitter Cards
   twitter: {
-    card: 'summary_large_image',  // or 'summary' for square images
-    site: '@username',
-    creator: '@creator',
-    title: 'Twitter Title',
-    description: 'Twitter description',
-    images: ['/twitter-image.png'],
+    card: "summary_large_image", // or 'summary' for square images
+    site: "@username",
+    creator: "@creator",
+    title: "Twitter Title",
+    description: "Twitter description",
+    images: ["/twitter-image.png"],
   },
 
   // Icons
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
+    icon: "/favicon.ico",
+    shortcut: "/favicon-16x16.png",
+    apple: "/apple-touch-icon.png",
   },
 
   // Verification tags
   verification: {
-    google: 'google-verification-code',
-    yandex: 'yandex-verification-code',
+    google: "google-verification-code",
+    yandex: "yandex-verification-code",
   },
 
   // App links
   appLinks: {
     ios: {
-      url: 'https://app.example.com/ios',
-      app_store_id: 'app_store_id',
+      url: "https://app.example.com/ios",
+      app_store_id: "app_store_id",
     },
     android: {
-      package: 'com.example.app',
-      app_name: 'App Name',
+      package: "com.example.app",
+      app_name: "App Name",
     },
   },
 
@@ -156,7 +156,7 @@ export const metadata: Metadata = {
   },
 
   // Category
-  category: 'technology',
+  category: "technology",
 };
 ```
 
@@ -165,19 +165,19 @@ export const metadata: Metadata = {
 **Important:** In Next.js 14+, viewport must be a separate export:
 
 ```typescript
-import type { Viewport } from 'next';
+import type { Viewport } from "next";
 
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
-  viewportFit: 'cover',
+  viewportFit: "cover",
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
-  colorScheme: 'light dark',
+  colorScheme: "light dark",
 };
 ```
 
@@ -193,21 +193,21 @@ app/layout.tsx (base metadata)
 
 ## Open Graph Image Sizes
 
-| Platform | Recommended Size |
-|----------|------------------|
-| Facebook | 1200 x 630 px |
-| Twitter (large) | 1200 x 628 px |
-| Twitter (summary) | 512 x 512 px |
-| LinkedIn | 1200 x 627 px |
+| Platform          | Recommended Size |
+| ----------------- | ---------------- |
+| Facebook          | 1200 x 630 px    |
+| Twitter (large)   | 1200 x 628 px    |
+| Twitter (summary) | 512 x 512 px     |
+| LinkedIn          | 1200 x 627 px    |
 
 ## Twitter Card Types
 
-| Card Type | Image Size | Use Case |
-|-----------|------------|----------|
-| `summary` | 1:1 (min 144x144) | Square logos, icons |
-| `summary_large_image` | 2:1 (min 300x157) | Articles, products |
-| `player` | Video embed | Video content |
-| `app` | App store link | Mobile apps |
+| Card Type             | Image Size        | Use Case            |
+| --------------------- | ----------------- | ------------------- |
+| `summary`             | 1:1 (min 144x144) | Square logos, icons |
+| `summary_large_image` | 2:1 (min 300x157) | Articles, products  |
+| `player`              | Video embed       | Video content       |
+| `app`                 | App store link    | Mobile apps         |
 
 ## Streaming Metadata
 
@@ -215,7 +215,7 @@ Next.js streams metadata after sending the initial UI by default. This improves 
 
 ```typescript
 // next.config.ts - Control which bots get blocking metadata
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const config: NextConfig = {
   // Bots matching this regex get blocking (non-streaming) metadata

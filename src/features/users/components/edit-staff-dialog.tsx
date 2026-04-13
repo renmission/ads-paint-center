@@ -56,11 +56,11 @@ export function EditStaffDialog({
 }: Props) {
   const [updateState, updateFormAction, isUpdatePending] = useActionState(
     updateStaffAction,
-    undefined
+    undefined,
   );
   const [toggleState, toggleFormAction, isTogglePending] = useActionState(
     toggleStaffActiveAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<UpdateStaffInput>({
@@ -132,7 +132,9 @@ export function EditStaffDialog({
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="administrator">Administrator</SelectItem>
+                        <SelectItem value="administrator">
+                          Administrator
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
@@ -171,12 +173,17 @@ export function EditStaffDialog({
         {/* Toggle Active — separate form */}
         {!isSelf && (
           <div className="border-t pt-4">
-            <form action={toggleFormAction} className="flex items-center justify-between">
+            <form
+              action={toggleFormAction}
+              className="flex items-center justify-between"
+            >
               <input type="hidden" name="id" value={staff.id} />
               <div className="space-y-0.5">
                 <p className="text-sm font-medium">Account Status</p>
                 <p className="text-xs text-muted-foreground">
-                  {staff.isActive ? "Account is active" : "Account is deactivated"}
+                  {staff.isActive
+                    ? "Account is active"
+                    : "Account is deactivated"}
                 </p>
               </div>
               <button type="submit" disabled={isTogglePending}>

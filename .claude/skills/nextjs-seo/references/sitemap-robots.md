@@ -6,20 +6,20 @@
 
 ```typescript
 // app/sitemap.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://your-site.com',
+      url: "https://your-site.com",
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: "weekly",
       priority: 1,
     },
     {
-      url: 'https://your-site.com/about',
+      url: "https://your-site.com/about",
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 0.8,
     },
   ];
@@ -30,17 +30,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 ```typescript
 // app/sitemap.ts
-import type { MetadataRoute } from 'next';
-import { getAllPosts } from '@/lib/posts';
+import type { MetadataRoute } from "next";
+import { getAllPosts } from "@/lib/posts";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://your-site.com';
+  const baseUrl = "https://your-site.com";
   const posts = await getAllPosts();
 
   const postUrls = posts.map((post) => ({
     url: `${baseUrl}/blog/${post.slug}`,
     lastModified: post.updatedAt,
-    changeFrequency: 'weekly' as const,
+    changeFrequency: "weekly" as const,
     priority: 0.7,
   }));
 
@@ -48,7 +48,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'daily',
+      changeFrequency: "daily",
       priority: 1,
     },
     ...postUrls,
@@ -60,21 +60,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
 ```typescript
 // app/sitemap.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://your-site.com';
+  const baseUrl = "https://your-site.com";
 
   return [
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: "weekly",
       priority: 1,
-      images: [
-        `${baseUrl}/og-image.png`,
-        `${baseUrl}/hero-image.jpg`,
-      ],
+      images: [`${baseUrl}/og-image.png`, `${baseUrl}/hero-image.jpg`],
     },
   ];
 }
@@ -84,18 +81,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 ```typescript
 // app/sitemap.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://your-site.com/video-page',
+      url: "https://your-site.com/video-page",
       lastModified: new Date(),
       videos: [
         {
-          title: 'Video Title',
-          thumbnail_loc: 'https://your-site.com/thumbnail.jpg',
-          description: 'Video description',
+          title: "Video Title",
+          thumbnail_loc: "https://your-site.com/thumbnail.jpg",
+          description: "Video description",
         },
       ],
     },
@@ -107,7 +104,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 ```typescript
 // app/sitemap.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export async function generateSitemaps() {
   // Return array of sitemap IDs
@@ -135,18 +132,18 @@ export default async function sitemap(props: {
 
 ```typescript
 // app/sitemap.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
-      url: 'https://your-site.com',
+      url: "https://your-site.com",
       lastModified: new Date(),
       alternates: {
         languages: {
-          en: 'https://your-site.com/en',
-          fi: 'https://your-site.com/fi',
-          sv: 'https://your-site.com/sv',
+          en: "https://your-site.com/en",
+          fi: "https://your-site.com/fi",
+          sv: "https://your-site.com/sv",
         },
       },
     },
@@ -160,17 +157,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
 ```typescript
 // app/robots.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/api/', '/admin/'],
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/api/", "/admin/"],
       // Never disallow /_next/ — crawlers need render-critical CSS/JS
     },
-    sitemap: 'https://your-site.com/sitemap.xml',
+    sitemap: "https://your-site.com/sitemap.xml",
   };
 }
 ```
@@ -179,28 +176,28 @@ export default function robots(): MetadataRoute.Robots {
 
 ```typescript
 // app/robots.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/api/', '/admin/'],
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
       },
       {
-        userAgent: 'Googlebot',
-        allow: '/',
-        disallow: '/admin/',
+        userAgent: "Googlebot",
+        allow: "/",
+        disallow: "/admin/",
       },
       {
-        userAgent: 'GPTBot',
-        disallow: '/', // Block AI crawlers
+        userAgent: "GPTBot",
+        disallow: "/", // Block AI crawlers
       },
     ],
-    sitemap: 'https://your-site.com/sitemap.xml',
-    host: 'https://your-site.com',
+    sitemap: "https://your-site.com/sitemap.xml",
+    host: "https://your-site.com",
   };
 }
 ```
@@ -209,26 +206,26 @@ export default function robots(): MetadataRoute.Robots {
 
 ```typescript
 // app/robots.ts
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'https://your-site.com';
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://your-site.com";
 
   // Block indexing on non-production
-  if (process.env.NODE_ENV !== 'production') {
+  if (process.env.NODE_ENV !== "production") {
     return {
       rules: {
-        userAgent: '*',
-        disallow: '/',
+        userAgent: "*",
+        disallow: "/",
       },
     };
   }
 
   return {
     rules: {
-      userAgent: '*',
-      allow: '/',
-      disallow: ['/api/', '/admin/'],
+      userAgent: "*",
+      allow: "/",
+      disallow: ["/api/", "/admin/"],
     },
     sitemap: `${baseUrl}/sitemap.xml`,
   };
@@ -237,13 +234,13 @@ export default function robots(): MetadataRoute.Robots {
 
 ## Sitemap Best Practices
 
-| Guideline | Recommendation |
-|-----------|----------------|
-| Max URLs per sitemap | 50,000 |
-| Max file size | 50 MB |
-| Update frequency | Match actual content changes |
-| Priority values | 0.0 to 1.0 (homepage = 1.0) |
-| Include only | Canonical, 200-status pages |
+| Guideline            | Recommendation               |
+| -------------------- | ---------------------------- |
+| Max URLs per sitemap | 50,000                       |
+| Max file size        | 50 MB                        |
+| Update frequency     | Match actual content changes |
+| Priority values      | 0.0 to 1.0 (homepage = 1.0)  |
+| Include only         | Canonical, 200-status pages  |
 
 ## Robots.txt Best Practices
 

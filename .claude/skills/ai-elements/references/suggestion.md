@@ -112,34 +112,36 @@ See `scripts/suggestion-input.tsx` for this example.
 Display AI-generated follow-up suggestions after the last assistant message:
 
 ```tsx
-import { Suggestion, Suggestions } from '@/components/ai-elements/suggestion';
-import { Loader } from '@/components/ai-elements/loader';
+import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
+import { Loader } from "@/components/ai-elements/loader";
 
 // After your message list in ConversationContent:
-{!isGenerating && (isLoadingSuggestions || suggestions.length > 0) && (
-  <div className="pt-2">
-    {isLoadingSuggestions ? (
-      <div className="flex items-center gap-2 text-xs text-muted-foreground">
-        <Loader size={12} />
-        <span>Loading suggestions…</span>
-      </div>
-    ) : (
-      <Suggestions>
-        {suggestions.map((s, i) => (
-          <Suggestion
-            key={i}
-            suggestion={s}
-            onClick={(suggestion) => {
-              sendMessage({ text: suggestion });
-            }}
-          >
-            {s}
-          </Suggestion>
-        ))}
-      </Suggestions>
-    )}
-  </div>
-)}
+{
+  !isGenerating && (isLoadingSuggestions || suggestions.length > 0) && (
+    <div className="pt-2">
+      {isLoadingSuggestions ? (
+        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <Loader size={12} />
+          <span>Loading suggestions…</span>
+        </div>
+      ) : (
+        <Suggestions>
+          {suggestions.map((s, i) => (
+            <Suggestion
+              key={i}
+              suggestion={s}
+              onClick={(suggestion) => {
+                sendMessage({ text: suggestion });
+              }}
+            >
+              {s}
+            </Suggestion>
+          ))}
+        </Suggestions>
+      )}
+    </div>
+  );
+}
 ```
 
 See the `/ai-app` skill's [chatbot.md](../../ai-app/references/chatbot.md) for the full suggestions flow including the API route and `useSuggestions` hook.
@@ -148,14 +150,14 @@ See the `/ai-app` skill's [chatbot.md](../../ai-app/references/chatbot.md) for t
 
 ### `<Suggestions />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `...props` | `React.ComponentProps<typeof ScrollArea>` | - | Any other props are spread to the underlying ScrollArea component. |
+| Prop       | Type                                      | Default | Description                                                        |
+| ---------- | ----------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `...props` | `React.ComponentProps<typeof ScrollArea>` | -       | Any other props are spread to the underlying ScrollArea component. |
 
 ### `<Suggestion />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `suggestion` | `string` | Required | The suggestion string to display and emit on click. |
-| `onClick` | `(suggestion: string) => void` | - | Callback fired when the suggestion is clicked. |
-| `...props` | `Omit<React.ComponentProps<typeof Button>, ` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+| Prop         | Type                                         | Default  | Description                                                              |
+| ------------ | -------------------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `suggestion` | `string`                                     | Required | The suggestion string to display and emit on click.                      |
+| `onClick`    | `(suggestion: string) => void`               | -        | Callback fired when the suggestion is clicked.                           |
+| `...props`   | `Omit<React.ComponentProps<typeof Button>, ` | -        | Any other props are spread to the underlying shadcn/ui Button component. |

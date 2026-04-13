@@ -38,12 +38,14 @@ export function StaffTableClient({ initialData }: Props) {
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<StaffMember | null>(null);
-  const [passwordTarget, setPasswordTarget] = useState<StaffMember | null>(null);
+  const [passwordTarget, setPasswordTarget] = useState<StaffMember | null>(
+    null,
+  );
 
   const filtered = initialData.filter(
     (s) =>
       s.name.toLowerCase().includes(search.toLowerCase()) ||
-      s.email.toLowerCase().includes(search.toLowerCase())
+      s.email.toLowerCase().includes(search.toLowerCase()),
   );
 
   const currentUserId = session?.user?.id ?? "";
@@ -85,14 +87,18 @@ export function StaffTableClient({ initialData }: Props) {
                   colSpan={6}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {search ? "No staff members match your search." : "No staff members found."}
+                  {search
+                    ? "No staff members match your search."
+                    : "No staff members found."}
                 </TableCell>
               </TableRow>
             ) : (
               filtered.map((staff) => (
                 <TableRow key={staff.id}>
                   <TableCell className="font-medium">{staff.name}</TableCell>
-                  <TableCell className="text-muted-foreground">{staff.email}</TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {staff.email}
+                  </TableCell>
                   <TableCell>
                     <Badge
                       variant={

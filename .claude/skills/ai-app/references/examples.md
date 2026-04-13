@@ -12,8 +12,8 @@ The simplest possible chatbot implementation.
 
 ```typescript
 // app/api/chat/route.ts
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 
 export const maxDuration = 30;
 
@@ -21,7 +21,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    model: anthropic('claude-sonnet-4-6'),
+    model: anthropic("claude-sonnet-4-6"),
     messages: await convertToModelMessages(messages),
   });
 
@@ -33,18 +33,18 @@ export async function POST(req: Request) {
 
 ```tsx
 // app/page.tsx
-'use client';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+"use client";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import {
   Conversation,
   ConversationContent,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputBody,
@@ -52,19 +52,19 @@ import {
   PromptInputFooter,
   PromptInputSubmit,
   type PromptInputMessage,
-} from '@/components/ai-elements/prompt-input';
-import { useState } from 'react';
+} from "@/components/ai-elements/prompt-input";
+import { useState } from "react";
 
 export default function ChatPage() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (!message.text.trim()) return;
     sendMessage({ text: message.text });
-    setInput('');
+    setInput("");
   };
 
   return (
@@ -75,7 +75,7 @@ export default function ChatPage() {
             <Message key={message.id} from={message.role}>
               <MessageContent>
                 {message.parts
-                  .filter((p) => p.type === 'text')
+                  .filter((p) => p.type === "text")
                   .map((part, i) => (
                     <MessageResponse key={i}>{part.text}</MessageResponse>
                   ))}
@@ -113,8 +113,8 @@ Chatbot with reasoning, sources, and file attachments.
 
 ```typescript
 // app/api/chat/route.ts
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 
 export const maxDuration = 30;
 
@@ -122,7 +122,7 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    model: anthropic('claude-sonnet-4-6'),
+    model: anthropic("claude-sonnet-4-6"),
     messages: await convertToModelMessages(messages),
     system: `You are a helpful AI assistant. When appropriate:
 - Use extended thinking to reason through complex problems
@@ -131,7 +131,7 @@ export async function POST(req: Request) {
     providerOptions: {
       anthropic: {
         thinking: {
-          type: 'enabled',
+          type: "enabled",
           budgetTokens: 10000,
         },
       },
@@ -149,20 +149,20 @@ export async function POST(req: Request) {
 
 ```tsx
 // app/page.tsx
-'use client';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+"use client";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
   MessageAttachment,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputBody,
@@ -172,32 +172,32 @@ import {
   PromptInputFileDropdown,
   PromptInputAttachments,
   type PromptInputMessage,
-} from '@/components/ai-elements/prompt-input';
+} from "@/components/ai-elements/prompt-input";
 import {
   Reasoning,
   ReasoningTrigger,
   ReasoningContent,
-} from '@/components/ai-elements/reasoning';
+} from "@/components/ai-elements/reasoning";
 import {
   Sources,
   SourcesTrigger,
   SourcesContent,
   Source,
-} from '@/components/ai-elements/sources';
-import { Loader } from '@/components/ai-elements/loader';
-import { useState } from 'react';
+} from "@/components/ai-elements/sources";
+import { Loader } from "@/components/ai-elements/loader";
+import { useState } from "react";
 
 export default function ChatPage() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [files, setFiles] = useState<File[]>([]);
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (!message.text.trim() && message.files.length === 0) return;
     sendMessage({ text: message.text, files: message.files });
-    setInput('');
+    setInput("");
     setFiles([]);
   };
 
@@ -210,7 +210,7 @@ export default function ChatPage() {
           {messages.map((message) => (
             <div key={message.id} className="flex flex-col gap-2">
               {/* User attachments */}
-              {message.role === 'user' && message.attachments?.length > 0 && (
+              {message.role === "user" && message.attachments?.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {message.attachments.map((att, i) => (
                     <MessageAttachment key={i} attachment={att} />
@@ -220,7 +220,7 @@ export default function ChatPage() {
 
               {message.parts.map((part, i) => {
                 switch (part.type) {
-                  case 'text':
+                  case "text":
                     return (
                       <Message key={i} from={message.role}>
                         <MessageContent>
@@ -229,12 +229,12 @@ export default function ChatPage() {
                       </Message>
                     );
 
-                  case 'reasoning':
+                  case "reasoning":
                     return (
                       <Reasoning
                         key={i}
                         isStreaming={
-                          status === 'streaming' && isLastMessage(message.id)
+                          status === "streaming" && isLastMessage(message.id)
                         }
                       >
                         <ReasoningTrigger />
@@ -242,7 +242,7 @@ export default function ChatPage() {
                       </Reasoning>
                     );
 
-                  case 'source-url':
+                  case "source-url":
                     return null; // Collected below
 
                   default:
@@ -252,18 +252,16 @@ export default function ChatPage() {
 
               {/* Collect and display sources */}
               {(() => {
-                const sourceUrls = message.parts.filter((p) => p.type === 'source-url');
+                const sourceUrls = message.parts.filter(
+                  (p) => p.type === "source-url",
+                );
                 if (sourceUrls.length === 0) return null;
                 return (
                   <Sources>
                     <SourcesTrigger count={sourceUrls.length} />
                     <SourcesContent>
                       {sourceUrls.map((part, i) => (
-                        <Source
-                          key={i}
-                          href={part.url}
-                          title={part.title}
-                        />
+                        <Source key={i} href={part.url} title={part.title} />
                       ))}
                     </SourcesContent>
                   </Sources>
@@ -271,7 +269,7 @@ export default function ChatPage() {
               })()}
             </div>
           ))}
-          {status === 'submitted' && <Loader />}
+          {status === "submitted" && <Loader />}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
@@ -306,51 +304,51 @@ An agent that can search the web and perform calculations.
 
 ```typescript
 // ai/assistant.ts
-import { ToolLoopAgent, tool, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { ToolLoopAgent, tool, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
 export const assistantAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
+  model: anthropic("claude-sonnet-4-6"),
   instructions: `You are a helpful assistant with access to tools.
 When you need current information, use the searchWeb tool.
 When calculating, use the calculator tool.
 Always explain what you're doing before using a tool.`,
   tools: {
     searchWeb: tool({
-      description: 'Search the web for current information',
+      description: "Search the web for current information",
       inputSchema: z.object({
-        query: z.string().describe('The search query'),
+        query: z.string().describe("The search query"),
       }),
       execute: async ({ query }) => {
         // Replace with actual search implementation
         // e.g., Tavily, Serper, or Perplexity API
         return {
           results: [
-            { title: 'Result 1', snippet: `Information about ${query}` },
-            { title: 'Result 2', snippet: `More about ${query}` },
+            { title: "Result 1", snippet: `Information about ${query}` },
+            { title: "Result 2", snippet: `More about ${query}` },
           ],
         };
       },
     }),
     calculator: tool({
-      description: 'Perform mathematical calculations',
+      description: "Perform mathematical calculations",
       inputSchema: z.object({
         expression: z.string().describe('Math expression (e.g., "2 + 2")'),
       }),
       execute: async ({ expression }) => {
         // Use mathjs for safe expression evaluation
-        const { evaluate } = await import('mathjs');
+        const { evaluate } = await import("mathjs");
         try {
           const result = evaluate(expression);
           return { result: String(result) };
         } catch {
-          return { error: 'Invalid expression' };
+          return { error: "Invalid expression" };
         }
       },
     }),
     getCurrentDate: tool({
-      description: 'Get the current date and time',
+      description: "Get the current date and time",
       inputSchema: z.object({}),
       execute: async () => ({
         date: new Date().toLocaleDateString(),
@@ -366,8 +364,8 @@ Always explain what you're doing before using a tool.`,
 
 ```typescript
 // app/api/chat/route.ts
-import { createAgentUIStreamResponse } from 'ai';
-import { assistantAgent } from '@/ai/assistant';
+import { createAgentUIStreamResponse } from "ai";
+import { assistantAgent } from "@/ai/assistant";
 
 export const maxDuration = 60;
 
@@ -387,19 +385,19 @@ export async function POST(request: Request) {
 
 ```tsx
 // app/page.tsx
-'use client';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+"use client";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputBody,
@@ -407,27 +405,27 @@ import {
   PromptInputFooter,
   PromptInputSubmit,
   type PromptInputMessage,
-} from '@/components/ai-elements/prompt-input';
+} from "@/components/ai-elements/prompt-input";
 import {
   Tool,
   ToolHeader,
   ToolContent,
   ToolInput,
   ToolOutput,
-} from '@/components/ai-elements/tool';
-import { Loader } from '@/components/ai-elements/loader';
-import { useState } from 'react';
+} from "@/components/ai-elements/tool";
+import { Loader } from "@/components/ai-elements/loader";
+import { useState } from "react";
 
 export default function AgentPage() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (!message.text.trim()) return;
     sendMessage({ text: message.text });
-    setInput('');
+    setInput("");
   };
 
   return (
@@ -438,7 +436,7 @@ export default function AgentPage() {
             <div key={message.id} className="flex flex-col gap-2">
               {message.parts.map((part, i) => {
                 switch (part.type) {
-                  case 'text':
+                  case "text":
                     return (
                       <Message key={i} from={message.role}>
                         <MessageContent>
@@ -447,8 +445,8 @@ export default function AgentPage() {
                       </Message>
                     );
 
-                  case 'tool-invocation':
-                  case 'tool-result':
+                  case "tool-invocation":
+                  case "tool-result":
                     return (
                       <Tool key={i}>
                         <ToolHeader
@@ -458,7 +456,7 @@ export default function AgentPage() {
                         />
                         <ToolContent>
                           <ToolInput input={part.input} />
-                          {part.state === 'output-available' && (
+                          {part.state === "output-available" && (
                             <ToolOutput output={part.output} />
                           )}
                         </ToolContent>
@@ -471,7 +469,7 @@ export default function AgentPage() {
               })}
             </div>
           ))}
-          {status === 'submitted' && <Loader />}
+          {status === "submitted" && <Loader />}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
@@ -504,16 +502,16 @@ Switch between specialized agents.
 
 ```typescript
 // ai/research.ts
-import { ToolLoopAgent, tool, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { ToolLoopAgent, tool, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
 export const researchAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
-  instructions: 'You are a research assistant. Find and summarize information.',
+  model: anthropic("claude-sonnet-4-6"),
+  instructions: "You are a research assistant. Find and summarize information.",
   tools: {
     search: tool({
-      description: 'Search for information',
+      description: "Search for information",
       inputSchema: z.object({ query: z.string() }),
       execute: async ({ query }) => ({
         results: [`Research results for: ${query}`],
@@ -526,19 +524,19 @@ export const researchAgent = new ToolLoopAgent({
 
 ```typescript
 // ai/code.ts
-import { ToolLoopAgent, tool, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { ToolLoopAgent, tool, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
 export const codeAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
-  instructions: 'You are a coding assistant. Write and explain code.',
+  model: anthropic("claude-sonnet-4-6"),
+  instructions: "You are a coding assistant. Write and explain code.",
   tools: {
     runCode: tool({
-      description: 'Execute code snippet',
+      description: "Execute code snippet",
       inputSchema: z.object({
         code: z.string(),
-        language: z.enum(['javascript', 'python']),
+        language: z.enum(["javascript", "python"]),
       }),
       execute: async ({ code, language }) => ({
         output: `Executed ${language}: ${code.slice(0, 50)}...`,
@@ -551,28 +549,28 @@ export const codeAgent = new ToolLoopAgent({
 
 ```typescript
 // ai/writing.ts
-import { ToolLoopAgent, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { ToolLoopAgent, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 
 export const writingAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
-  instructions: 'You are a writing assistant. Help with content creation.',
+  model: anthropic("claude-sonnet-4-6"),
+  instructions: "You are a writing assistant. Help with content creation.",
   tools: {},
   stopWhen: stepCountIs(10),
 });
 
-export type AgentType = 'research' | 'code' | 'writing';
+export type AgentType = "research" | "code" | "writing";
 ```
 
 ### API Route with Agent Selection
 
 ```typescript
 // app/api/chat/route.ts
-import { createAgentUIStreamResponse } from 'ai';
-import { researchAgent } from '@/ai/research';
-import { codeAgent } from '@/ai/code';
-import { writingAgent } from '@/ai/writing';
-import type { AgentType } from '@/ai/writing';
+import { createAgentUIStreamResponse } from "ai";
+import { researchAgent } from "@/ai/research";
+import { codeAgent } from "@/ai/code";
+import { writingAgent } from "@/ai/writing";
+import type { AgentType } from "@/ai/writing";
 
 export const maxDuration = 60;
 
@@ -583,7 +581,7 @@ const agents = {
 };
 
 export async function POST(request: Request) {
-  const { messages, agentType = 'research' } = await request.json();
+  const { messages, agentType = "research" } = await request.json();
 
   const agent = agents[agentType as AgentType] || agents.research;
 
@@ -599,14 +597,14 @@ export async function POST(request: Request) {
 
 ```tsx
 // components/agent-selector.tsx
-'use client';
-import { cn } from '@/lib/utils';
-import type { AgentType } from '@/ai/writing';
+"use client";
+import { cn } from "@/lib/utils";
+import type { AgentType } from "@/ai/writing";
 
 const agentInfo = {
-  research: { label: 'Research', icon: '🔍' },
-  code: { label: 'Code', icon: '💻' },
-  writing: { label: 'Writing', icon: '✍️' },
+  research: { label: "Research", icon: "🔍" },
+  code: { label: "Code", icon: "💻" },
+  writing: { label: "Writing", icon: "✍️" },
 };
 
 type AgentSelectorProps = {
@@ -622,10 +620,10 @@ export function AgentSelector({ value, onChange }: AgentSelectorProps) {
           key={type}
           onClick={() => onChange(type)}
           className={cn(
-            'rounded-full px-3 py-1 text-sm transition-colors',
+            "rounded-full px-3 py-1 text-sm transition-colors",
             value === type
-              ? 'bg-primary text-primary-foreground'
-              : 'bg-muted hover:bg-muted/80'
+              ? "bg-primary text-primary-foreground"
+              : "bg-muted hover:bg-muted/80",
           )}
         >
           {agentInfo[type].icon} {agentInfo[type].label}
@@ -640,28 +638,25 @@ export function AgentSelector({ value, onChange }: AgentSelectorProps) {
 
 ```tsx
 // app/page.tsx
-'use client';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
-import { useState } from 'react';
-import type { AgentType } from '@/ai/writing';
-import { AgentSelector } from '@/components/agent-selector';
+"use client";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { useState } from "react";
+import type { AgentType } from "@/ai/writing";
+import { AgentSelector } from "@/components/agent-selector";
 // ... other imports
 
 export default function MultiAgentPage() {
-  const [input, setInput] = useState('');
-  const [agentType, setAgentType] = useState<AgentType>('research');
+  const [input, setInput] = useState("");
+  const [agentType, setAgentType] = useState<AgentType>("research");
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (!message.text.trim()) return;
-    sendMessage(
-      { text: message.text },
-      { body: { agentType } }
-    );
-    setInput('');
+    sendMessage({ text: message.text }, { body: { agentType } });
+    setInput("");
   };
 
   return (
@@ -700,12 +695,12 @@ PERPLEXITY_API_KEY=pplx-...
 
 ## Quick Reference
 
-| Example | Files | Key Features |
-|---------|-------|--------------|
-| Minimal Chatbot | route.ts, page.tsx | Basic chat, streamText |
-| Full-Featured | route.ts, page.tsx | Reasoning, sources, attachments |
-| Agent with Tools | ai/assistant.ts, route.ts, page.tsx | ToolLoopAgent, tool visualization |
-| Multi-Agent | ai/*.ts, route.ts, page.tsx | Agent switching, specialized agents |
+| Example          | Files                               | Key Features                        |
+| ---------------- | ----------------------------------- | ----------------------------------- |
+| Minimal Chatbot  | route.ts, page.tsx                  | Basic chat, streamText              |
+| Full-Featured    | route.ts, page.tsx                  | Reasoning, sources, attachments     |
+| Agent with Tools | ai/assistant.ts, route.ts, page.tsx | ToolLoopAgent, tool visualization   |
+| Multi-Agent      | ai/\*.ts, route.ts, page.tsx        | Agent switching, specialized agents |
 
 ## See Also
 

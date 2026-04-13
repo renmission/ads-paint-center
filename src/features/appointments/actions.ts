@@ -1,7 +1,12 @@
 "use server";
 
 import { db } from "@/shared/lib/db";
-import { appointments, customers, services, users } from "@/shared/lib/db/schema";
+import {
+  appointments,
+  customers,
+  services,
+  users,
+} from "@/shared/lib/db/schema";
 import { createAppointmentSchema, updateAppointmentSchema } from "./schemas";
 import { auth } from "@/shared/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
@@ -12,7 +17,7 @@ type ActionResult = { error?: string; success?: string };
 
 export async function createAppointmentAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
@@ -48,13 +53,16 @@ export async function createAppointmentAction(
     columns: { phone: true, name: true },
   });
   if (customer?.phone) {
-    const scheduledDate = new Date(parsed.data.scheduledAt).toLocaleString("en-PH", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+    const scheduledDate = new Date(parsed.data.scheduledAt).toLocaleString(
+      "en-PH",
+      {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      },
+    );
 
     let serviceName = "appointment";
     if (parsed.data.serviceId) {
@@ -68,7 +76,7 @@ export async function createAppointmentAction(
     try {
       await sendSMS(
         customer.phone,
-        `Hi ${customer.name}! Your ${serviceName} appointment (${appointmentNumber}) at ADS Paint Center is scheduled for ${scheduledDate}. We look forward to seeing you!`
+        `Hi ${customer.name}! Your ${serviceName} appointment (${appointmentNumber}) at ADS Paint Center is scheduled for ${scheduledDate}. We look forward to seeing you!`,
       );
     } catch (err) {
       console.error("SMS send failed:", err);
@@ -80,7 +88,7 @@ export async function createAppointmentAction(
 
 export async function updateAppointmentAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
@@ -105,13 +113,19 @@ export async function updateAppointmentAction(
     cancel: ["scheduled", "confirmed"],
   };
   if (!validTransitions[action]?.includes(appointment.status)) {
-    return { error: `Cannot ${action} an appointment with status "${appointment.status}".` };
+    return {
+      error: `Cannot ${action} an appointment with status "${appointment.status}".`,
+    };
   }
 
   const newStatus =
-    action === "confirm" ? "confirmed" :
-    action === "start" ? "in_progress" :
-    action === "complete" ? "completed" : "cancelled";
+    action === "confirm"
+      ? "confirmed"
+      : action === "start"
+        ? "in_progress"
+        : action === "complete"
+          ? "completed"
+          : "cancelled";
 
   await db
     .update(appointments)
@@ -137,7 +151,7 @@ export async function updateAppointmentAction(
     try {
       await sendSMS(
         appointment.customer.phone,
-        `Hi ${appointment.customer.name}! Your appointment (${appointment.appointmentNumber}) at ADS Paint Center on ${scheduledDate} has been confirmed. See you then!`
+        `Hi ${appointment.customer.name}! Your appointment (${appointment.appointmentNumber}) at ADS Paint Center on ${scheduledDate} has been confirmed. See you then!`,
       );
     } catch (err) {
       console.error("SMS send failed:", err);
@@ -145,9 +159,13 @@ export async function updateAppointmentAction(
   }
 
   const label =
-    action === "confirm" ? "confirmed" :
-    action === "start" ? "started" :
-    action === "complete" ? "completed" : "cancelled";
+    action === "confirm"
+      ? "confirmed"
+      : action === "start"
+        ? "started"
+        : action === "complete"
+          ? "completed"
+          : "cancelled";
 
   return { success: `Appointment ${appointment.appointmentNumber} ${label}.` };
 }

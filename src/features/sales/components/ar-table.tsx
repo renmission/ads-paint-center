@@ -43,8 +43,8 @@ export async function ArTable() {
       and(
         eq(salesTransactions.paymentMethod, "credit"),
         eq(salesTransactions.status, "completed"),
-        sql`${salesTransactions.amountPaid} < ${salesTransactions.totalAmount}`
-      )
+        sql`${salesTransactions.amountPaid} < ${salesTransactions.totalAmount}`,
+      ),
     )
     .orderBy(desc(salesTransactions.createdAt));
 
@@ -54,7 +54,9 @@ export async function ArTable() {
     const total = parseFloat(r.totalAmount);
     const paid = parseFloat(r.amountPaid ?? "0");
     const balance = Math.max(0, total - paid);
-    const isOverdue = r.dueDate ? new Date(r.dueDate) < now && balance > 0 : false;
+    const isOverdue = r.dueDate
+      ? new Date(r.dueDate) < now && balance > 0
+      : false;
     return {
       id: r.id,
       transactionNumber: r.transactionNumber,

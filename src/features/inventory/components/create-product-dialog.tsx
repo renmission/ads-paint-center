@@ -51,7 +51,7 @@ interface Props {
 export function CreateProductDialog({ open, onOpenChange }: Props) {
   const [state, formAction, isPending] = useActionState(
     createProductAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<CreateProductInput>({
@@ -91,7 +91,10 @@ export function CreateProductDialog({ open, onOpenChange }: Props) {
                 <FormItem>
                   <FormLabel>Product Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Boysen Permacoat Flat White" {...field} />
+                    <Input
+                      placeholder="e.g. Boysen Permacoat Flat White"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

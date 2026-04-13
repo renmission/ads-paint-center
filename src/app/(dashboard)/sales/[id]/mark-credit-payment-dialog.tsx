@@ -38,8 +38,16 @@ interface DialogInnerProps {
   balance: number;
 }
 
-function MarkCreditPaymentDialogInner({ open, onOpenChange, transactionId, balance }: DialogInnerProps) {
-  const [state, formAction, isPending] = useActionState(markCreditPaymentAction, undefined);
+function MarkCreditPaymentDialogInner({
+  open,
+  onOpenChange,
+  transactionId,
+  balance,
+}: DialogInnerProps) {
+  const [state, formAction, isPending] = useActionState(
+    markCreditPaymentAction,
+    undefined,
+  );
   const [paymentAmount, setPaymentAmount] = useState(balance.toFixed(2));
   const [paymentMethod, setPaymentMethod] = useState("cash");
 
@@ -94,7 +102,11 @@ function MarkCreditPaymentDialogInner({ open, onOpenChange, transactionId, balan
             </Select>
           </div>
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isPending}>

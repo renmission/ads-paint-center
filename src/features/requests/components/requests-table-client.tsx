@@ -37,14 +37,39 @@ interface Props {
 }
 
 const STATUS_CONFIG = {
-  pending: { label: "Pending", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" },
-  approved: { label: "Approved", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-  out_for_delivery: { label: "Out for Delivery", className: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" },
-  rejected: { label: "Rejected", className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-  fulfilled: { label: "Fulfilled", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
+  pending: {
+    label: "Pending",
+    className:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  },
+  approved: {
+    label: "Approved",
+    className:
+      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  },
+  out_for_delivery: {
+    label: "Out for Delivery",
+    className:
+      "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  },
+  rejected: {
+    label: "Rejected",
+    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  },
+  fulfilled: {
+    label: "Fulfilled",
+    className:
+      "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  },
 } as const;
 
-export function RequestsTableClient({ initialData, customers, products, staffList, userRole }: Props) {
+export function RequestsTableClient({
+  initialData,
+  customers,
+  products,
+  staffList,
+  userRole,
+}: Props) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
   const [createOpen, setCreateOpen] = useState(false);
@@ -65,7 +90,9 @@ export function RequestsTableClient({ initialData, customers, products, staffLis
 
   const canHandle = (row: RequestRow) =>
     userRole === "administrator" &&
-    (row.status === "pending" || row.status === "approved" || row.status === "out_for_delivery");
+    (row.status === "pending" ||
+      row.status === "approved" ||
+      row.status === "out_for_delivery");
 
   return (
     <div className="space-y-4">
@@ -112,13 +139,18 @@ export function RequestsTableClient({ initialData, customers, products, staffLis
               <TableHead>Delivery</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Handled By</TableHead>
-              {userRole === "administrator" && <TableHead className="text-right">Actions</TableHead>}
+              {userRole === "administrator" && (
+                <TableHead className="text-right">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={userRole === "administrator" ? 9 : 8} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={userRole === "administrator" ? 9 : 8}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   {initialData.length === 0
                     ? "No requests yet. Click 'New Request' to submit one."
                     : "No results match your filters."}
@@ -129,7 +161,9 @@ export function RequestsTableClient({ initialData, customers, products, staffLis
                 const statusCfg = STATUS_CONFIG[row.status];
                 return (
                   <TableRow key={row.id}>
-                    <TableCell className="font-mono text-sm font-medium">{row.requestNumber}</TableCell>
+                    <TableCell className="font-mono text-sm font-medium">
+                      {row.requestNumber}
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                       {new Date(row.createdAt).toLocaleDateString("en-PH", {
                         month: "short",
@@ -139,7 +173,9 @@ export function RequestsTableClient({ initialData, customers, products, staffLis
                     </TableCell>
                     <TableCell>
                       <div>{row.customerName}</div>
-                      <div className="text-xs text-muted-foreground">{row.customerPhone}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {row.customerPhone}
+                      </div>
                     </TableCell>
                     <TableCell>
                       {row.productName ?? (
@@ -148,7 +184,9 @@ export function RequestsTableClient({ initialData, customers, products, staffLis
                         </span>
                       )}
                     </TableCell>
-                    <TableCell className="text-center">{row.quantityRequested}</TableCell>
+                    <TableCell className="text-center">
+                      {row.quantityRequested}
+                    </TableCell>
                     <TableCell>
                       {row.deliveryType === "delivery" ? (
                         <div className="space-y-0.5">
@@ -156,20 +194,28 @@ export function RequestsTableClient({ initialData, customers, products, staffLis
                             <Truck className="h-3 w-3" /> Delivery
                           </div>
                           {row.driverName && (
-                            <div className="text-xs text-muted-foreground">{row.driverName}</div>
+                            <div className="text-xs text-muted-foreground">
+                              {row.driverName}
+                            </div>
                           )}
                         </div>
                       ) : row.deliveryType === "pickup" ? (
-                        <span className="text-xs text-muted-foreground">Pickup</span>
+                        <span className="text-xs text-muted-foreground">
+                          Pickup
+                        </span>
                       ) : (
                         <span className="text-muted-foreground">—</span>
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge className={statusCfg.className}>{statusCfg.label}</Badge>
+                      <Badge className={statusCfg.className}>
+                        {statusCfg.label}
+                      </Badge>
                     </TableCell>
                     <TableCell>
-                      {row.handlerName ?? <span className="text-muted-foreground">—</span>}
+                      {row.handlerName ?? (
+                        <span className="text-muted-foreground">—</span>
+                      )}
                     </TableCell>
                     {userRole === "administrator" && (
                       <TableCell className="text-right">
@@ -200,7 +246,9 @@ export function RequestsTableClient({ initialData, customers, products, staffLis
       />
       <HandleRequestDialog
         open={!!handleTarget}
-        onOpenChange={(o) => { if (!o) setHandleTarget(null); }}
+        onOpenChange={(o) => {
+          if (!o) setHandleTarget(null);
+        }}
         request={handleTarget}
         staffList={staffList}
       />

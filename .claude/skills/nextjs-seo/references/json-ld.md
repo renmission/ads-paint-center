@@ -28,15 +28,15 @@ export function JsonLd({ data }: JsonLdProps) {
 
 ```typescript
 const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: 'Site Name',
-  url: 'https://your-site.com',
-  description: 'Site description',
-  inLanguage: 'en',
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "Site Name",
+  url: "https://your-site.com",
+  description: "Site description",
+  inLanguage: "en",
   publisher: {
-    '@type': 'Organization',
-    name: 'Organization Name',
+    "@type": "Organization",
+    name: "Organization Name",
   },
 };
 ```
@@ -45,30 +45,30 @@ const websiteSchema = {
 
 ```typescript
 const organizationSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: 'Company Name',
-  url: 'https://your-site.com',
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "Company Name",
+  url: "https://your-site.com",
   logo: {
-    '@type': 'ImageObject',
-    url: 'https://your-site.com/logo.png',
+    "@type": "ImageObject",
+    url: "https://your-site.com/logo.png",
     width: 512,
     height: 512,
   },
   sameAs: [
-    'https://twitter.com/company',
-    'https://linkedin.com/company/company',
-    'https://github.com/company',
+    "https://twitter.com/company",
+    "https://linkedin.com/company/company",
+    "https://github.com/company",
   ],
   contactPoint: {
-    '@type': 'ContactPoint',
-    email: 'contact@company.com',
-    contactType: 'customer service',
+    "@type": "ContactPoint",
+    email: "contact@company.com",
+    contactType: "customer service",
   },
-  foundingDate: '2024',
+  foundingDate: "2024",
   areaServed: {
-    '@type': 'Country',
-    name: 'Finland',
+    "@type": "Country",
+    name: "Finland",
   },
 };
 ```
@@ -77,24 +77,20 @@ const organizationSchema = {
 
 ```typescript
 const webAppSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebApplication',
-  name: 'App Name',
-  url: 'https://your-site.com',
-  description: 'App description',
-  applicationCategory: 'UtilityApplication',
-  operatingSystem: 'Any',
-  browserRequirements: 'Requires JavaScript',
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "App Name",
+  url: "https://your-site.com",
+  description: "App description",
+  applicationCategory: "UtilityApplication",
+  operatingSystem: "Any",
+  browserRequirements: "Requires JavaScript",
   offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'EUR',
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "EUR",
   },
-  featureList: [
-    'Feature 1',
-    'Feature 2',
-    'Feature 3',
-  ],
+  featureList: ["Feature 1", "Feature 2", "Feature 3"],
 };
 ```
 
@@ -102,23 +98,23 @@ const webAppSchema = {
 
 ```typescript
 const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
   mainEntity: [
     {
-      '@type': 'Question',
-      name: 'What is your product?',
+      "@type": "Question",
+      name: "What is your product?",
       acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Our product is a tool that helps you...',
+        "@type": "Answer",
+        text: "Our product is a tool that helps you...",
       },
     },
     {
-      '@type': 'Question',
-      name: 'How much does it cost?',
+      "@type": "Question",
+      name: "How much does it cost?",
       acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Our service is completely free to use.',
+        "@type": "Answer",
+        text: "Our service is completely free to use.",
       },
     },
   ],
@@ -131,29 +127,29 @@ const faqSchema = {
 
 ```typescript
 const productSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Product',
-  name: 'Product Name',
-  image: ['https://your-site.com/product.jpg'],
-  description: 'Product description',
-  sku: 'SKU123',
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: "Product Name",
+  image: ["https://your-site.com/product.jpg"],
+  description: "Product description",
+  sku: "SKU123",
   brand: {
-    '@type': 'Brand',
-    name: 'Brand Name',
+    "@type": "Brand",
+    name: "Brand Name",
   },
   offers: {
-    '@type': 'Offer',
-    url: 'https://your-site.com/product',
-    priceCurrency: 'EUR',
-    price: '99.99',
-    priceValidUntil: '2025-12-31',
-    availability: 'https://schema.org/InStock',
-    itemCondition: 'https://schema.org/NewCondition',
+    "@type": "Offer",
+    url: "https://your-site.com/product",
+    priceCurrency: "EUR",
+    price: "99.99",
+    priceValidUntil: "2025-12-31",
+    availability: "https://schema.org/InStock",
+    itemCondition: "https://schema.org/NewCondition",
   },
   aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.5',
-    reviewCount: '89',
+    "@type": "AggregateRating",
+    ratingValue: "4.5",
+    reviewCount: "89",
   },
 };
 ```
@@ -162,24 +158,24 @@ const productSchema = {
 
 ```typescript
 const articleSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Article',
-  headline: 'Article Title',
-  description: 'Article description',
-  image: 'https://your-site.com/article-image.jpg',
-  datePublished: '2024-01-15T08:00:00+00:00',
-  dateModified: '2024-01-16T10:00:00+00:00',
+  "@context": "https://schema.org",
+  "@type": "Article",
+  headline: "Article Title",
+  description: "Article description",
+  image: "https://your-site.com/article-image.jpg",
+  datePublished: "2024-01-15T08:00:00+00:00",
+  dateModified: "2024-01-16T10:00:00+00:00",
   author: {
-    '@type': 'Person',
-    name: 'Author Name',
-    url: 'https://author-website.com',
+    "@type": "Person",
+    name: "Author Name",
+    url: "https://author-website.com",
   },
   publisher: {
-    '@type': 'Organization',
-    name: 'Publisher Name',
+    "@type": "Organization",
+    name: "Publisher Name",
     logo: {
-      '@type': 'ImageObject',
-      url: 'https://your-site.com/logo.png',
+      "@type": "ImageObject",
+      url: "https://your-site.com/logo.png",
     },
   },
 };
@@ -189,26 +185,26 @@ const articleSchema = {
 
 ```typescript
 const breadcrumbSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'BreadcrumbList',
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
   itemListElement: [
     {
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: 1,
-      name: 'Home',
-      item: 'https://your-site.com',
+      name: "Home",
+      item: "https://your-site.com",
     },
     {
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: 2,
-      name: 'Products',
-      item: 'https://your-site.com/products',
+      name: "Products",
+      item: "https://your-site.com/products",
     },
     {
-      '@type': 'ListItem',
+      "@type": "ListItem",
       position: 3,
-      name: 'Product Name',
-      item: 'https://your-site.com/products/product-slug',
+      name: "Product Name",
+      item: "https://your-site.com/products/product-slug",
     },
   ],
 };

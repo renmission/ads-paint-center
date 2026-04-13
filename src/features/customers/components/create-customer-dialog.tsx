@@ -33,7 +33,7 @@ interface Props {
 export function CreateCustomerDialog({ open, onOpenChange }: Props) {
   const [state, formAction, isPending] = useActionState(
     createCustomerAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<CreateCustomerInput>({

@@ -28,6 +28,7 @@ git diff HEAD~1 --stat         # which files changed
 ```
 
 Browse `app/` or `pages/` structure to identify:
+
 - Forms and their endpoints
 - API routes
 - AI features
@@ -46,6 +47,7 @@ This context focuses the testing effort on what matters.
 ### Step 2: Select testing tool
 
 Try in order:
+
 1. Call `mcp__next-devtools__nextjs_index` — is Next.js DevTools available?
 2. Try a Playwright MCP tool — is Playwright available?
 3. Fall back to `mcp__claude-in-chrome__*`
@@ -63,33 +65,40 @@ Use whichever tool is available. Proceed with all three if available for richer 
 Test **all** features revealed by the codebase or mentioned by the user:
 
 **Forms**
+
 - Fill and submit successfully
 - Test validation: empty required fields, wrong format
 - Verify API response on submit
 
 **AI features**
+
 - Trigger AI calls
 - Wait for response
 - Verify output appears and looks correct
 
 **File import**
+
 - Upload a sample file (CSV, XLSX, PDF, etc.)
 - Verify parsing and UI update
 
 **Export**
+
 - Generate a report or export
 - Verify file downloads and content is correct (not empty, not malformed)
 
 **Data listing / search**
+
 - List views load
 - Search/filter works
 
 **CRUD**
+
 - Create, edit, delete records if the app supports it
 
 ### Step 5: Console errors and network
 
 Read console output during testing. Report:
+
 - JavaScript errors
 - 4xx / 5xx API responses (note the endpoint and how often)
 - Classify each finding: **Critical** (blocks usage) vs **Warning** (non-critical)
@@ -97,6 +106,7 @@ Read console output during testing. Report:
 ### Step 6: Light responsiveness check
 
 Test at three viewport widths:
+
 - Mobile: 375px
 - Tablet: 768px
 - Desktop: 1280px
@@ -109,34 +119,41 @@ Write the report in this format:
 
 ```markdown
 ## E2E Test Report — [App Name]
+
 **URL:** https://...
 **Date:** [date]
 **Tool:** Next.js DevTools / Playwright / Claude in Chrome
 **Scope:** Recent changes / Full smoke test
 
 ### Core Functionality
+
 - [x] Homepage loads
 - [x] Navigation
 - [x] Login/auth flow
 - [ ] Contact form — ERROR: 422 Unprocessable Entity on submit
 
 ### AI Features
+
 - [x] Report generation — response in ~3s, output looks correct
 - [!] Slow response on large dataset (>10s timeout risk)
 
 ### Import / Export
+
 - [x] CSV import — 50 rows parsed correctly
 - [ ] PDF export — download triggers but file is empty (0 bytes)
 
 ### Responsiveness
+
 - [x] Mobile 375px — OK
 - [!] Tablet 768px — data table overflows on /reports
 
 ### Console & Network
+
 - Error: /api/documents returned 500 (3 occurrences)
 - Warning: React key prop missing (non-critical)
 
 ### Summary
+
 🔴 Critical: PDF export broken, /api/documents 500
 🟡 Warnings: Table overflow on tablet, slow AI response
 ✅ Working: Login, CSV import, navigation, report generation
@@ -147,6 +164,7 @@ Write the report in this format:
 After the initial report, attempt to fix all **code-level** issues:
 
 **Auto-fix these:**
+
 - Runtime JavaScript errors (undefined variables, missing imports, React key props)
 - Broken API calls (wrong endpoint path, malformed request payload)
 - Form validation bugs (wrong regex, missing required field check)
@@ -154,6 +172,7 @@ After the initial report, attempt to fix all **code-level** issues:
 - Empty or malformed export output (file generation logic)
 
 **Do NOT attempt to fix:**
+
 - Missing infrastructure (database tables, missing routes that need to be created from scratch)
 - Environment variables / secrets
 - External service failures
@@ -172,10 +191,12 @@ Use the same report format as Step 7, but add two sections:
 
 ```markdown
 ### Fixes Applied
+
 - [file:line] React key prop added to list items in components/TaskList.tsx
 - [file:line] API path corrected: /api/document → /api/documents in lib/api.ts
 
 ### Could Not Fix (manual action required)
+
 - /api/reports 500 — requires database migration (missing `reports` table)
 - PDF export empty — AWS S3 credentials missing in .env
 ```

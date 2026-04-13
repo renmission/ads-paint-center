@@ -46,7 +46,7 @@ Quick customizations in `globals.css`:
   --font-mono: "Fira Code", ui-monospace, monospace;
 
   /* Border radius - affects all rounded corners */
-  --radius: 0.5rem;       /* Default */
+  --radius: 0.5rem; /* Default */
   /* --radius: 0.25rem;   /* Sharp */
   /* --radius: 0.75rem;   /* More rounded */
   /* --radius: 1rem;      /* Very rounded */
@@ -54,11 +54,11 @@ Quick customizations in `globals.css`:
 }
 ```
 
-| Variable | Effect |
-|----------|--------|
-| `--font-sans` | Body text, buttons, inputs |
-| `--font-mono` | Code blocks, technical content |
-| `--radius` | All rounded corners (buttons, cards, inputs) |
+| Variable      | Effect                                       |
+| ------------- | -------------------------------------------- |
+| `--font-sans` | Body text, buttons, inputs                   |
+| `--font-mono` | Code blocks, technical content               |
+| `--radius`    | All rounded corners (buttons, cards, inputs) |
 
 **Tip**: Larger `--radius` values (1rem+) give a softer, more modern look. Smaller values (0.25rem) feel sharper and technical.
 
@@ -79,31 +79,31 @@ Quick customizations in `globals.css`:
 
 Available styles at ui.shadcn.com/create:
 
-| Preset | Character |
-|--------|-----------|
-| vega | Classic shadcn/ui look. Clean, neutral, familiar |
-| nova | Reduced padding and margins for compact layouts |
-| maia | Soft and rounded, with generous spacing |
-| lyra | Boxy and sharp. Pairs well with mono fonts |
-| mira | Compact. Made for dense interfaces |
+| Preset | Character                                        |
+| ------ | ------------------------------------------------ |
+| vega   | Classic shadcn/ui look. Clean, neutral, familiar |
+| nova   | Reduced padding and margins for compact layouts  |
+| maia   | Soft and rounded, with generous spacing          |
+| lyra   | Boxy and sharp. Pairs well with mono fonts       |
+| mira   | Compact. Made for dense interfaces               |
 
 ### Fonts
 
 Available fonts via `shadcn create` preset URL:
 
-| Font | Type | Character |
-|------|------|-----------|
-| geist-sans | Sans | Vercel's modern geometric sans |
-| inter | Sans | Clean, versatile (classic default) |
-| figtree | Sans | Friendly, geometric |
-| dm-sans | Sans | Compact geometric with character |
-| outfit | Sans | Modern, soft |
-| noto-sans | Sans | Universal language support |
-| nunito-sans | Sans | Rounded, approachable |
-| roboto | Sans | Google's versatile sans |
-| raleway | Sans | Elegant, thin-weight display |
-| public-sans | Sans | US government standard, neutral |
-| jetbrains-mono | Mono | Developer-focused monospace |
+| Font           | Type | Character                          |
+| -------------- | ---- | ---------------------------------- |
+| geist-sans     | Sans | Vercel's modern geometric sans     |
+| inter          | Sans | Clean, versatile (classic default) |
+| figtree        | Sans | Friendly, geometric                |
+| dm-sans        | Sans | Compact geometric with character   |
+| outfit         | Sans | Modern, soft                       |
+| noto-sans      | Sans | Universal language support         |
+| nunito-sans    | Sans | Rounded, approachable              |
+| roboto         | Sans | Google's versatile sans            |
+| raleway        | Sans | Elegant, thin-weight display       |
+| public-sans    | Sans | US government standard, neutral    |
+| jetbrains-mono | Mono | Developer-focused monospace        |
 
 ## Icon Libraries
 
@@ -116,11 +116,11 @@ Priority order (use first available):
 
 ```tsx
 // lucide example
-import { ChevronRight, Menu, X } from "lucide-react"
+import { ChevronRight, Menu, X } from "lucide-react";
 
 <Button>
   Next <ChevronRight data-icon="inline-end" />
-</Button>
+</Button>;
 ```
 
 ## Animations
@@ -153,7 +153,7 @@ Usage in layout or template:
 ```tsx
 // template.tsx - animates on every navigation
 export default function Template({ children }: { children: React.ReactNode }) {
-  return <main className="animate-page-in">{children}</main>
+  return <main className="animate-page-in">{children}</main>;
 }
 ```
 
@@ -163,23 +163,23 @@ Next.js built-in support (works with `<Link>`):
 
 ```ts
 // next.config.ts
-import type { NextConfig } from "next"
+import type { NextConfig } from "next";
 
 const config: NextConfig = {
   experimental: {
-    viewTransition: true
-  }
-}
+    viewTransition: true,
+  },
+};
 
-export default config
+export default config;
 ```
 
 Use `<Link>` normally - transitions work automatically:
 
 ```tsx
-import Link from "next/link"
+import Link from "next/link";
 
-<Link href="/about">About</Link>
+<Link href="/about">About</Link>;
 ```
 
 ### Motion Library
@@ -191,14 +191,14 @@ bun add motion
 ```
 
 ```tsx
-"use client"
+"use client";
 
-import { motion, HTMLMotionProps } from "motion/react"
+import { motion, HTMLMotionProps } from "motion/react";
 
 interface FadeInProps extends HTMLMotionProps<"div"> {
-  delay?: number
-  duration?: number
-  direction?: "up" | "down" | "left" | "right" | "none"
+  delay?: number;
+  duration?: number;
+  direction?: "up" | "down" | "left" | "right" | "none";
 }
 
 export function FadeIn({
@@ -215,7 +215,7 @@ export function FadeIn({
     left: { x: 20, y: 0 },
     right: { x: -20, y: 0 },
     none: { x: 0, y: 0 },
-  }
+  };
 
   return (
     <motion.div
@@ -228,7 +228,7 @@ export function FadeIn({
     >
       {children}
     </motion.div>
-  )
+  );
 }
 ```
 
@@ -241,17 +241,17 @@ bun add gsap @gsap/react
 ```
 
 ```tsx
-"use client"
+"use client";
 
-import { useRef } from "react"
-import { useGSAP } from "@gsap/react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-gsap.registerPlugin(ScrollTrigger)
+gsap.registerPlugin(ScrollTrigger);
 
 export function ScrollReveal({ children }) {
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
     gsap.from(containerRef.current, {
@@ -261,10 +261,10 @@ export function ScrollReveal({ children }) {
         trigger: containerRef.current,
         start: "top 80%",
       },
-    })
-  }, [])
+    });
+  }, []);
 
-  return <div ref={containerRef}>{children}</div>
+  return <div ref={containerRef}>{children}</div>;
 }
 ```
 
@@ -299,8 +299,8 @@ Scroll-triggered sequences?
 // Lazy load animation library
 const MotionDiv = dynamic(
   () => import("motion/react").then((mod) => mod.motion.div),
-  { ssr: false }
-)
+  { ssr: false },
+);
 ```
 
 ## Decorative Backgrounds
@@ -310,29 +310,29 @@ Reusable patterns for visual atmosphere and section hierarchy.
 ### Grid Pattern
 
 ```tsx
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export function GridBackground({
   children,
   className,
-  size = 20
+  size = 20,
 }: {
-  children: React.ReactNode
-  className?: string
-  size?: number
+  children: React.ReactNode;
+  className?: string;
+  size?: number;
 }) {
   return (
     <div className={cn("relative", className)}>
       <div
         className={cn(
           "absolute inset-0 -z-10",
-          "[background-image:linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)]"
+          "[background-image:linear-gradient(to_right,hsl(var(--border))_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--border))_1px,transparent_1px)]",
         )}
         style={{ backgroundSize: `${size}px ${size}px` }}
       />
       {children}
     </div>
-  )
+  );
 }
 ```
 
@@ -341,10 +341,10 @@ export function GridBackground({
 ```tsx
 export function DotBackground({
   children,
-  className
+  className,
 }: {
-  children: React.ReactNode
-  className?: string
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <div className={cn("relative", className)}>
@@ -352,12 +352,12 @@ export function DotBackground({
         className={cn(
           "absolute inset-0 -z-10",
           "[background-size:20px_20px]",
-          "[background-image:radial-gradient(hsl(var(--muted-foreground)/0.3)_1px,transparent_1px)]"
+          "[background-image:radial-gradient(hsl(var(--muted-foreground)/0.3)_1px,transparent_1px)]",
         )}
       />
       {children}
     </div>
-  )
+  );
 }
 ```
 
@@ -371,12 +371,13 @@ export function GradientHero({ children }: { children: React.ReactNode }) {
         aria-hidden
         className="fixed inset-0 -z-10"
         style={{
-          background: "radial-gradient(125% 125% at 50% 10%, hsl(var(--background)) 40%, hsl(var(--primary)) 100%)"
+          background:
+            "radial-gradient(125% 125% at 50% 10%, hsl(var(--background)) 40%, hsl(var(--primary)) 100%)",
         }}
       />
       {children}
     </div>
-  )
+  );
 }
 ```
 
@@ -397,17 +398,17 @@ Combine with grid/dot for vignette:
 For premium hero sections. Requires `motion`:
 
 ```tsx
-"use client"
+"use client";
 
-import { motion } from "motion/react"
-import { cn } from "@/lib/utils"
+import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
 
 export function Spotlight({ className }: { className?: string }) {
   return (
     <motion.div
       className={cn(
         "pointer-events-none fixed inset-0 -z-10 overflow-hidden",
-        className
+        className,
       )}
       aria-hidden
     >
@@ -421,7 +422,7 @@ export function Spotlight({ className }: { className?: string }) {
         transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
       />
     </motion.div>
-  )
+  );
 }
 ```
 
@@ -443,24 +444,29 @@ For sections that need different theme context:
 
 ```tsx
 type SectionProps = {
-  children: React.ReactNode
-  variant?: "default" | "muted" | "inverted"
-  className?: string
-}
+  children: React.ReactNode;
+  variant?: "default" | "muted" | "inverted";
+  className?: string;
+};
 
-export function Section({ children, variant = "default", className }: SectionProps) {
+export function Section({
+  children,
+  variant = "default",
+  className,
+}: SectionProps) {
   return (
     <section
       className={cn(
         "relative py-24",
         variant === "muted" && "bg-muted",
-        variant === "inverted" && "bg-foreground text-background [&_*]:border-background/20",
-        className
+        variant === "inverted" &&
+          "bg-foreground text-background [&_*]:border-background/20",
+        className,
       )}
     >
       {children}
     </section>
-  )
+  );
 }
 ```
 
@@ -504,11 +510,11 @@ bun add tailwind-scrollbar-hide
 
 ```ts
 // tailwind.config.ts
-import scrollbarHide from "tailwind-scrollbar-hide"
+import scrollbarHide from "tailwind-scrollbar-hide";
 
 export default {
   plugins: [scrollbarHide],
-}
+};
 ```
 
 ```tsx

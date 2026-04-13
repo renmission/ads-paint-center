@@ -37,7 +37,7 @@ export function StockAdjustSheet({ open, onOpenChange, row }: Props) {
 
   const [state, formAction, isPending] = useActionState(
     adjustStockAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<AdjustStockInput>({

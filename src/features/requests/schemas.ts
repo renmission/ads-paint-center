@@ -18,13 +18,13 @@ export const createRequestSchema = z
     (data) =>
       (data.productId && data.productId !== "") ||
       (data.productDescription && data.productDescription.trim() !== ""),
-    { message: "Either select a product or provide a product description" }
+    { message: "Either select a product or provide a product description" },
   )
   .refine(
     (data) =>
       data.deliveryType !== "delivery" ||
       (data.deliveryAddress && data.deliveryAddress.trim() !== ""),
-    { message: "Delivery address is required for delivery orders" }
+    { message: "Delivery address is required for delivery orders" },
   );
 
 export const handleRequestSchema = z
@@ -38,7 +38,7 @@ export const handleRequestSchema = z
     (data) =>
       data.action !== "reject" ||
       (data.rejectionReason && data.rejectionReason.trim() !== ""),
-    { message: "Rejection reason is required when rejecting a request" }
+    { message: "Rejection reason is required when rejecting a request" },
   );
 
 export type CreateRequestInput = z.infer<typeof createRequestSchema>;

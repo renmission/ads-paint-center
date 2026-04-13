@@ -3,13 +3,7 @@
     "CLAUDE_AUTOCOMPACT_PCT_OVERRIDE": "75"
   },
   "permissions": {
-    "allow": [
-      "Read",
-      "Grep",
-      "Glob",
-      "LS",
-      "SlashCommand"
-    ],
+    "allow": ["Read", "Grep", "Glob", "LS", "SlashCommand"],
     "ask": [
       "Bash",
       "Edit",

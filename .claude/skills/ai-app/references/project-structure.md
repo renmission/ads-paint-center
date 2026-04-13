@@ -93,43 +93,43 @@ my-ai-app/
 
 ### Core Files
 
-| File | Purpose |
-|------|---------|
-| `app/page.tsx` | Main application UI |
-| `app/layout.tsx` | Root layout with providers |
-| `app/globals.css` | CSS variables, Tailwind base |
-| `app/api/chat/route.ts` | AI streaming endpoint |
+| File                    | Purpose                      |
+| ----------------------- | ---------------------------- |
+| `app/page.tsx`          | Main application UI          |
+| `app/layout.tsx`        | Root layout with providers   |
+| `app/globals.css`       | CSS variables, Tailwind base |
+| `app/api/chat/route.ts` | AI streaming endpoint        |
 
 ### Configuration
 
-| File | Purpose |
-|------|---------|
-| `.env.local` | API keys (not committed) |
-| `next.config.ts` | Next.js configuration |
-| `tailwind.config.ts` | Tailwind theme |
-| `components.json` | shadcn/ui settings |
+| File                 | Purpose                  |
+| -------------------- | ------------------------ |
+| `.env.local`         | API keys (not committed) |
+| `next.config.ts`     | Next.js configuration    |
+| `tailwind.config.ts` | Tailwind theme           |
+| `components.json`    | shadcn/ui settings       |
 
 ### Components
 
-| Directory | Purpose |
-|-----------|---------|
-| `components/ai-elements/` | AI Elements (from CLI) |
-| `components/ui/` | shadcn/ui primitives |
-| `components/chat/` | Chat-specific components |
-| `components/dashboard/` | Dashboard components |
+| Directory                 | Purpose                  |
+| ------------------------- | ------------------------ |
+| `components/ai-elements/` | AI Elements (from CLI)   |
+| `components/ui/`          | shadcn/ui primitives     |
+| `components/chat/`        | Chat-specific components |
+| `components/dashboard/`   | Dashboard components     |
 
 ### Agents
 
-| File | Purpose |
-|------|---------|
+| File           | Purpose                                                     |
+| -------------- | ----------------------------------------------------------- |
 | `ai/[name].ts` | Individual agent definitions (use `@/ai/assistant` imports) |
 
 ### Utilities
 
-| File | Purpose |
-|------|---------|
-| `lib/utils.ts` | cn() and common utilities |
-| `lib/ai.ts` | AI configuration (optional) |
+| File           | Purpose                     |
+| -------------- | --------------------------- |
+| `lib/utils.ts` | cn() and common utilities   |
+| `lib/ai.ts`    | AI configuration (optional) |
 
 ## Environment Variables
 
@@ -208,11 +208,11 @@ Installed automatically with `bunx --bun ai-elements@latest`:
 
 Choose based on your app's needs:
 
-| Pattern | When to use |
-|---------|-------------|
-| Root layout only | Minimal apps, providers only |
-| Nested layouts | Shared UI per section (sidebar, navigation) |
-| `template.tsx` | Reset state/effects on navigation |
+| Pattern          | When to use                                 |
+| ---------------- | ------------------------------------------- |
+| Root layout only | Minimal apps, providers only                |
+| Nested layouts   | Shared UI per section (sidebar, navigation) |
+| `template.tsx`   | Reset state/effects on navigation           |
 
 ### Root Layout Only
 
@@ -220,7 +220,11 @@ For simple single-page apps:
 
 ```tsx
 // app/layout.tsx - minimal, just providers
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <html lang="en">
       <body>{children}</body>
@@ -256,6 +260,7 @@ export default function Template({ children }: { children: React.ReactNode }) {
 ```
 
 **Decision guide:**
+
 - State should persist → `layout.tsx`
 - State should reset → `template.tsx`
 - Per-page analytics/animations → `template.tsx`

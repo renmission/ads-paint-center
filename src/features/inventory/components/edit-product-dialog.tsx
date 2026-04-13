@@ -55,12 +55,12 @@ export function EditProductDialog({ open, onOpenChange, row }: Props) {
 
   const [state, formAction, isPending] = useActionState(
     updateProductAction,
-    undefined
+    undefined,
   );
 
   const [toggleState, toggleAction, isTogglePending] = useActionState(
     toggleProductActiveAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<UpdateProductInput>({
@@ -212,14 +212,16 @@ export function EditProductDialog({ open, onOpenChange, row }: Props) {
                   variant="outline"
                   disabled={isTogglePending}
                   className={
-                    product.isActive ? "text-destructive hover:text-destructive" : ""
+                    product.isActive
+                      ? "text-destructive hover:text-destructive"
+                      : ""
                   }
                 >
                   {isTogglePending
                     ? "..."
                     : product.isActive
-                    ? "Archive"
-                    : "Restore"}
+                      ? "Archive"
+                      : "Restore"}
                 </Button>
               </form>
               <Button

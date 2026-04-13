@@ -25,45 +25,47 @@ Run this checklist for any Next.js project:
 ### app/layout.tsx - Root Metadata
 
 ```typescript
-import type { Metadata, Viewport } from 'next';
+import type { Metadata, Viewport } from "next";
 
 // Viewport (separate export required in Next.js 14+)
 export const viewport: Viewport = {
-  width: 'device-width',
+  width: "device-width",
   initialScale: 1,
   maximumScale: 5,
   userScalable: true,
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#ffffff' },
-    { media: '(prefers-color-scheme: dark)', color: '#0a0a0a' },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0a0a" },
   ],
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://your-site.com'),
+  metadataBase: new URL("https://your-site.com"),
   title: {
-    default: 'Site Title - Main Keyword',
-    template: '%s | Site Name',
+    default: "Site Title - Main Keyword",
+    template: "%s | Site Name",
   },
-  description: 'Compelling description with keywords (150-160 chars)',
-  keywords: ['keyword1', 'keyword2', 'keyword3'],
+  description: "Compelling description with keywords (150-160 chars)",
+  keywords: ["keyword1", "keyword2", "keyword3"],
   openGraph: {
-    type: 'website',
-    locale: 'en_US',
-    url: 'https://your-site.com',
-    siteName: 'Site Name',
-    title: 'Site Title',
-    description: 'Description for social sharing',
-    images: [{ url: '/og-image.png', width: 1200, height: 630, alt: 'Site preview' }],
+    type: "website",
+    locale: "en_US",
+    url: "https://your-site.com",
+    siteName: "Site Name",
+    title: "Site Title",
+    description: "Description for social sharing",
+    images: [
+      { url: "/og-image.png", width: 1200, height: 630, alt: "Site preview" },
+    ],
   },
   twitter: {
-    card: 'summary_large_image',
-    title: 'Site Title',
-    description: 'Description for Twitter',
-    images: ['/og-image.png'],
+    card: "summary_large_image",
+    title: "Site Title",
+    description: "Description for Twitter",
+    images: ["/og-image.png"],
   },
   alternates: {
-    canonical: '/',
+    canonical: "/",
   },
   robots: {
     index: true,
@@ -75,23 +77,23 @@ export const metadata: Metadata = {
 ### app/sitemap.ts - Dynamic Sitemap
 
 ```typescript
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://your-site.com';
+  const baseUrl = "https://your-site.com";
 
   return [
     {
       url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: 'weekly',
+      changeFrequency: "weekly",
       priority: 1,
       images: [`${baseUrl}/og-image.png`], // Next.js 16 Image Sitemap
     },
     {
       url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: 'monthly',
+      changeFrequency: "monthly",
       priority: 0.8,
     },
   ];
@@ -101,17 +103,17 @@ export default function sitemap(): MetadataRoute.Sitemap {
 ### app/robots.ts - Robots Configuration
 
 ```typescript
-import type { MetadataRoute } from 'next';
+import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = 'https://your-site.com';
+  const baseUrl = "https://your-site.com";
 
   return {
     rules: [
       {
-        userAgent: '*',
-        allow: '/',
-        disallow: ['/api/', '/admin/'],
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/", "/admin/"],
         // Do NOT disallow /_next/ — crawlers need render-critical CSS/JS
         // Do NOT add bot-specific rules (Googlebot, Bingbot) unless overriding wildcard
       },
@@ -141,6 +143,7 @@ export async function HeroSection() {
 ```
 
 **Key rules:**
+
 - `"use cache"` must be the first statement in the function body
 - No `cookies()`/`headers()` inside cache scope
 - Use `cacheLife()` + `cacheTag()` instead of `export const revalidate`
@@ -148,20 +151,20 @@ export async function HeroSection() {
 
 ### Rendering Strategy for SEO
 
-| Strategy | Use When | SEO Impact |
-|----------|----------|------------|
-| "use cache" | Server components with periodic data | Best - cached HTML, fast TTFB |
-| SSG (Static) | Content rarely changes | Best - pre-rendered HTML |
-| SSR | Dynamic content per request | Great - server-rendered |
-| CSR | Dashboards, authenticated areas | Poor - avoid for SEO pages |
+| Strategy     | Use When                             | SEO Impact                    |
+| ------------ | ------------------------------------ | ----------------------------- |
+| "use cache"  | Server components with periodic data | Best - cached HTML, fast TTFB |
+| SSG (Static) | Content rarely changes               | Best - pre-rendered HTML      |
+| SSR          | Dynamic content per request          | Great - server-rendered       |
+| CSR          | Dashboards, authenticated areas      | Poor - avoid for SEO pages    |
 
 ### Core Web Vitals Targets
 
-| Metric | Target | Impact |
-|--------|--------|--------|
-| LCP (Largest Contentful Paint) | < 2.5s | Loading speed |
-| INP (Interaction to Next Paint) | < 200ms | Interactivity |
-| CLS (Cumulative Layout Shift) | < 0.1 | Visual stability |
+| Metric                          | Target  | Impact           |
+| ------------------------------- | ------- | ---------------- |
+| LCP (Largest Contentful Paint)  | < 2.5s  | Loading speed    |
+| INP (Interaction to Next Paint) | < 200ms | Interactivity    |
+| CLS (Cumulative Layout Shift)   | < 0.1   | Visual stability |
 
 ## References
 

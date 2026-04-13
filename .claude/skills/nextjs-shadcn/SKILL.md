@@ -114,29 +114,30 @@ export default async function Page({
 ### Data Fetching vs Server Actions
 
 **CRITICAL RULE:**
+
 - **Server Actions** = ONLY for mutations (create, update, delete)
 - **Data fetching** = In Server Components or `'use cache'` functions
 
 ```tsx
 // ❌ WRONG: Server Action for data fetching
-"use server"
+"use server";
 export async function getUsers() {
-  return await db.users.findMany()
+  return await db.users.findMany();
 }
 
 // ✅ CORRECT: Data function with caching
 // data/users.ts
 export async function getUsers() {
-  "use cache"
-  cacheTag("users")
-  cacheLife("hours")
-  return await db.users.findMany()
+  "use cache";
+  cacheTag("users");
+  cacheLife("hours");
+  return await db.users.findMany();
 }
 
 // ✅ CORRECT: Read cookies in Server Component directly
 export default async function Page() {
-  const theme = (await cookies()).get("theme")?.value ?? "light"
-  return <App theme={theme} />
+  const theme = (await cookies()).get("theme")?.value ?? "light";
+  return <App theme={theme} />;
 }
 ```
 
@@ -185,16 +186,16 @@ Use `proxy.ts` for request interception (replaces middleware). Place at project 
 
 ```tsx
 // proxy.ts (project root, same level as app/)
-import { NextResponse } from "next/server"
-import type { NextRequest } from "next/server"
+import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 export function proxy(request: NextRequest) {
   // Auth checks, redirects, etc.
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
-}
+  matcher: ["/dashboard/:path*"],
+};
 ```
 
 ## References

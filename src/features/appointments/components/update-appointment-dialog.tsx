@@ -4,7 +4,10 @@ import { useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { updateAppointmentSchema, type UpdateAppointmentInput } from "../schemas";
+import {
+  updateAppointmentSchema,
+  type UpdateAppointmentInput,
+} from "../schemas";
 import { updateAppointmentAction } from "../actions";
 import type { AppointmentRow } from "./appointments-table";
 import {
@@ -42,9 +45,7 @@ const STATUS_ACTIONS: Record<string, { value: string; label: string }[]> = {
     { value: "start", label: "Start (In Progress)" },
     { value: "cancel", label: "Cancel" },
   ],
-  in_progress: [
-    { value: "complete", label: "Complete" },
-  ],
+  in_progress: [{ value: "complete", label: "Complete" }],
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -71,8 +72,16 @@ interface InnerProps {
   staffList: StaffMember[];
 }
 
-function UpdateAppointmentDialogInner({ open, onOpenChange, appointment, staffList }: InnerProps) {
-  const [state, formAction, isPending] = useActionState(updateAppointmentAction, undefined);
+function UpdateAppointmentDialogInner({
+  open,
+  onOpenChange,
+  appointment,
+  staffList,
+}: InnerProps) {
+  const [state, formAction, isPending] = useActionState(
+    updateAppointmentAction,
+    undefined,
+  );
 
   const availableActions = STATUS_ACTIONS[appointment.status] ?? [];
   const defaultAction = availableActions[0]?.value ?? "confirm";
@@ -102,7 +111,9 @@ function UpdateAppointmentDialogInner({ open, onOpenChange, appointment, staffLi
           <DialogTitle>Update Appointment</DialogTitle>
         </DialogHeader>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span className="font-mono font-medium text-foreground">{appointment.appointmentNumber}</span>
+          <span className="font-mono font-medium text-foreground">
+            {appointment.appointmentNumber}
+          </span>
           <Badge variant="outline">{STATUS_LABELS[appointment.status]}</Badge>
         </div>
         <Form {...form}>
@@ -123,7 +134,9 @@ function UpdateAppointmentDialogInner({ open, onOpenChange, appointment, staffLi
                     </FormControl>
                     <SelectContent>
                       {availableActions.map((a) => (
-                        <SelectItem key={a.value} value={a.value}>{a.label}</SelectItem>
+                        <SelectItem key={a.value} value={a.value}>
+                          {a.label}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -138,8 +151,17 @@ function UpdateAppointmentDialogInner({ open, onOpenChange, appointment, staffLi
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Assign Staff (optional)</FormLabel>
-                    <input type="hidden" name="staffId" value={field.value ?? ""} />
-                    <Select value={field.value || "none"} onValueChange={(v) => field.onChange(v === "none" ? "" : v)}>
+                    <input
+                      type="hidden"
+                      name="staffId"
+                      value={field.value ?? ""}
+                    />
+                    <Select
+                      value={field.value || "none"}
+                      onValueChange={(v) =>
+                        field.onChange(v === "none" ? "" : v)
+                      }
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Unassigned" />
@@ -148,7 +170,9 @@ function UpdateAppointmentDialogInner({ open, onOpenChange, appointment, staffLi
                       <SelectContent>
                         <SelectItem value="none">Unassigned</SelectItem>
                         {staffList.map((s) => (
-                          <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                          <SelectItem key={s.id} value={s.id}>
+                            {s.name}
+                          </SelectItem>
                         ))}
                       </SelectContent>
                     </Select>
@@ -164,14 +188,23 @@ function UpdateAppointmentDialogInner({ open, onOpenChange, appointment, staffLi
                 <FormItem>
                   <FormLabel>Notes (optional)</FormLabel>
                   <FormControl>
-                    <Textarea rows={2} placeholder="Add any notes…" {...field} name="notes" />
+                    <Textarea
+                      rows={2}
+                      placeholder="Add any notes…"
+                      {...field}
+                      name="notes"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>
@@ -185,7 +218,12 @@ function UpdateAppointmentDialogInner({ open, onOpenChange, appointment, staffLi
   );
 }
 
-export function UpdateAppointmentDialog({ open, onOpenChange, appointment, staffList }: Props) {
+export function UpdateAppointmentDialog({
+  open,
+  onOpenChange,
+  appointment,
+  staffList,
+}: Props) {
   if (!appointment) return null;
   return (
     <UpdateAppointmentDialogInner

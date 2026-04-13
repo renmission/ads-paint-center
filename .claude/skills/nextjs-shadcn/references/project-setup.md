@@ -46,6 +46,7 @@ https://ui.shadcn.com/init?
 ### Example Presets
 
 **Classic (vega + inter)** — traditional shadcn/ui look:
+
 ```bash
 bunx --bun shadcn@latest init \
   --preset "https://ui.shadcn.com/init?base=radix&style=vega&baseColor=zinc&iconLibrary=lucide&font=inter" \
@@ -53,6 +54,7 @@ bunx --bun shadcn@latest init \
 ```
 
 **Compact (nova + geist-sans)** — reduced padding, modern feel:
+
 ```bash
 bunx --bun shadcn@latest init \
   --preset "https://ui.shadcn.com/init?base=radix&style=nova&baseColor=neutral&iconLibrary=lucide&font=geist-sans" \
@@ -60,6 +62,7 @@ bunx --bun shadcn@latest init \
 ```
 
 **Soft (maia + figtree)** — rounded, generous spacing:
+
 ```bash
 bunx --bun shadcn@latest init \
   --preset "https://ui.shadcn.com/init?base=radix&style=maia&baseColor=stone&iconLibrary=phosphor&font=figtree&radius=lg" \
@@ -67,6 +70,7 @@ bunx --bun shadcn@latest init \
 ```
 
 **Sharp (lyra + jetbrains-mono)** — boxy, technical:
+
 ```bash
 bunx --bun shadcn@latest init \
   --preset "https://ui.shadcn.com/init?base=radix&style=lyra&baseColor=slate&iconLibrary=lucide&font=jetbrains-mono&radius=sm" \
@@ -74,6 +78,7 @@ bunx --bun shadcn@latest init \
 ```
 
 **Dense (mira + dm-sans)** — compact data interfaces:
+
 ```bash
 bunx --bun shadcn@latest init \
   --preset "https://ui.shadcn.com/init?base=radix&style=mira&baseColor=gray&iconLibrary=tabler&font=dm-sans" \
@@ -130,13 +135,12 @@ project/
 
 ## Bun Commands Reference
 
-| Task | Command |
-|------|---------|
-| Install deps | `bun install` |
-| Add package | `bun add package` |
-| Dev server | `bun --bun next dev` |
-| Build | `bun --bun next build` |
-| Start prod | `bun --bun next start` |
-| Add shadcn component | `bunx --bun shadcn@latest add component` |
-| Create project | `bunx --bun shadcn@latest init --preset <code> --template next` |
-
+| Task                 | Command                                                         |
+| -------------------- | --------------------------------------------------------------- |
+| Install deps         | `bun install`                                                   |
+| Add package          | `bun add package`                                               |
+| Dev server           | `bun --bun next dev`                                            |
+| Build                | `bun --bun next build`                                          |
+| Start prod           | `bun --bun next start`                                          |
+| Add shadcn component | `bunx --bun shadcn@latest add component`                        |
+| Create project       | `bunx --bun shadcn@latest init --preset <code> --template next` |

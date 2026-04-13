@@ -17,11 +17,11 @@
 
 ## Naming Conventions
 
-| Target | Convention | Example |
-| --- | --- | --- |
-| Files & folders | `kebab-case` | `user-profile.tsx` |
-| Components & types | `PascalCase` | `UserProfile` |
-| Variables & functions | `camelCase` | `formatDate` |
-| Hooks | `camelCase` + `use` prefix | `useAuth` |
-| Constants & env vars | `UPPER_SNAKE_CASE` | `API_URL` |
-| Next.js routing files | reserved names | `page.tsx`, `layout.tsx`, `route.ts` |
+| Target                | Convention                 | Example                              |
+| --------------------- | -------------------------- | ------------------------------------ |
+| Files & folders       | `kebab-case`               | `user-profile.tsx`                   |
+| Components & types    | `PascalCase`               | `UserProfile`                        |
+| Variables & functions | `camelCase`                | `formatDate`                         |
+| Hooks                 | `camelCase` + `use` prefix | `useAuth`                            |
+| Constants & env vars  | `UPPER_SNAKE_CASE`         | `API_URL`                            |
+| Next.js routing files | reserved names             | `page.tsx`, `layout.tsx`, `route.ts` |

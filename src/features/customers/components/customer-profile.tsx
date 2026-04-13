@@ -3,7 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Mail, Phone, MapPin, FileText, Pencil } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -47,7 +52,10 @@ type Customer = {
   requests: Request[];
 };
 
-const STATUS_VARIANTS: Record<string, "default" | "secondary" | "outline" | "destructive"> = {
+const STATUS_VARIANTS: Record<
+  string,
+  "default" | "secondary" | "outline" | "destructive"
+> = {
   completed: "default",
   pending: "secondary",
   voided: "destructive",
@@ -80,7 +88,7 @@ export function CustomerProfile({ customer }: Props) {
     .reduce((sum, t) => sum + parseFloat(t.totalAmount), 0);
 
   const pendingRequests = customer.requests.filter(
-    (r) => r.status === "pending"
+    (r) => r.status === "pending",
   ).length;
 
   return (
@@ -153,7 +161,9 @@ export function CustomerProfile({ customer }: Props) {
             <CardTitle className="text-base">Total Spent</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{formatCurrency(totalSpent.toString())}</p>
+            <p className="text-3xl font-bold">
+              {formatCurrency(totalSpent.toString())}
+            </p>
             <p className="text-xs text-muted-foreground mt-1">
               {pendingRequests > 0
                 ? `${pendingRequests} pending request${pendingRequests > 1 ? "s" : ""}`
@@ -193,9 +203,13 @@ export function CustomerProfile({ customer }: Props) {
                     <TableCell className="text-muted-foreground">
                       {formatDate(tx.createdAt)}
                     </TableCell>
-                    <TableCell className="capitalize">{tx.paymentMethod}</TableCell>
+                    <TableCell className="capitalize">
+                      {tx.paymentMethod}
+                    </TableCell>
                     <TableCell>
-                      <Badge variant={STATUS_VARIANTS[tx.status] ?? "secondary"}>
+                      <Badge
+                        variant={STATUS_VARIANTS[tx.status] ?? "secondary"}
+                      >
                         {tx.status}
                       </Badge>
                     </TableCell>
@@ -237,12 +251,12 @@ export function CustomerProfile({ customer }: Props) {
                     <TableCell className="font-mono text-sm">
                       {req.requestNumber}
                     </TableCell>
-                    <TableCell>
-                      {req.productDescription ?? "—"}
-                    </TableCell>
+                    <TableCell>{req.productDescription ?? "—"}</TableCell>
                     <TableCell>{req.quantityRequested}</TableCell>
                     <TableCell>
-                      <Badge variant={STATUS_VARIANTS[req.status] ?? "secondary"}>
+                      <Badge
+                        variant={STATUS_VARIANTS[req.status] ?? "secondary"}
+                      >
                         {req.status}
                       </Badge>
                     </TableCell>

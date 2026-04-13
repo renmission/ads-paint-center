@@ -32,12 +32,12 @@ import {
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
-| `Conversation` | Extends `StickToBottom` - auto-scroll container |
-| `ConversationContent` | Content wrapper with gap-8 padding |
-| `ConversationScrollButton` | Shows when not at bottom, scrolls to bottom |
-| `ConversationEmptyState` | `title?`, `description?`, `icon?` |
+| Component                  | Props                                           |
+| -------------------------- | ----------------------------------------------- |
+| `Conversation`             | Extends `StickToBottom` - auto-scroll container |
+| `ConversationContent`      | Content wrapper with gap-8 padding              |
+| `ConversationScrollButton` | Shows when not at bottom, scrolls to bottom     |
+| `ConversationEmptyState`   | `title?`, `description?`, `icon?`               |
 
 ## Message
 
@@ -52,34 +52,37 @@ import {
   MessageAction,
   MessageAttachment,
   MessageAttachments,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 
 <Message from="assistant">
   <MessageContent>
     <MessageResponse>{text}</MessageResponse>
   </MessageContent>
   <MessageActions>
-    <MessageAction label="Copy" onClick={() => navigator.clipboard.writeText(text)}>
+    <MessageAction
+      label="Copy"
+      onClick={() => navigator.clipboard.writeText(text)}
+    >
       <CopyIcon className="size-3" />
     </MessageAction>
     <MessageAction label="Retry" onClick={() => regenerate()}>
       <RefreshCcwIcon className="size-3" />
     </MessageAction>
   </MessageActions>
-</Message>
+</Message>;
 ```
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
-| `Message` | `from: "user" \| "assistant"` - determines styling |
-| `MessageContent` | Styled wrapper (rounded bg for user) |
-| `MessageResponse` | Streaming markdown via `Streamdown`, memoized |
-| `MessageActions` | Action button container |
-| `MessageAction` | `label?`, `tooltip?` - icon button |
-| `MessageAttachment` | `data: FileUIPart`, `onRemove?` |
-| `MessageAttachments` | Grid container for attachments |
+| Component            | Props                                              |
+| -------------------- | -------------------------------------------------- |
+| `Message`            | `from: "user" \| "assistant"` - determines styling |
+| `MessageContent`     | Styled wrapper (rounded bg for user)               |
+| `MessageResponse`    | Streaming markdown via `Streamdown`, memoized      |
+| `MessageActions`     | Action button container                            |
+| `MessageAction`      | `label?`, `tooltip?` - icon button                 |
+| `MessageAttachment`  | `data: FileUIPart`, `onRemove?`                    |
+| `MessageAttachments` | Grid container for attachments                     |
 
 ### Message Branching
 
@@ -93,7 +96,7 @@ import {
   MessageBranchPrevious,
   MessageBranchNext,
   MessageBranchPage,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 
 <MessageBranch defaultBranch={0} onBranchChange={(i) => console.log(i)}>
   <MessageBranchContent>
@@ -106,7 +109,7 @@ import {
     <MessageBranchPage /> {/* Shows "1 of 3" */}
     <MessageBranchNext />
   </MessageBranchSelector>
-</MessageBranch>
+</MessageBranch>;
 ```
 
 ## PromptInput
@@ -123,7 +126,7 @@ import {
   PromptInputFooter,
   PromptInputSubmit,
   type PromptInputMessage,
-} from '@/components/ai-elements/prompt-input';
+} from "@/components/ai-elements/prompt-input";
 
 const handleSubmit = (message: PromptInputMessage) => {
   sendMessage({
@@ -134,12 +137,15 @@ const handleSubmit = (message: PromptInputMessage) => {
 
 <PromptInput onSubmit={handleSubmit}>
   <PromptInputBody>
-    <PromptInputTextarea value={input} onChange={(e) => setInput(e.target.value)} />
+    <PromptInputTextarea
+      value={input}
+      onChange={(e) => setInput(e.target.value)}
+    />
   </PromptInputBody>
   <PromptInputFooter>
     <PromptInputSubmit status={status} />
   </PromptInputFooter>
-</PromptInput>
+</PromptInput>;
 ```
 
 ### Full Featured
@@ -166,13 +172,13 @@ import {
   PromptInputSelectContent,
   PromptInputSelectItem,
   PromptInputSpeechButton,
-} from '@/components/ai-elements/prompt-input';
+} from "@/components/ai-elements/prompt-input";
 
 <PromptInput
   onSubmit={handleSubmit}
-  globalDrop        // Accept drops anywhere on document
-  multiple          // Allow multiple files
-  accept="image/*"  // Only images
+  globalDrop // Accept drops anywhere on document
+  multiple // Allow multiple files
+  accept="image/*" // Only images
   maxFiles={5}
   maxFileSize={10 * 1024 * 1024} // 10MB
   onError={(err) => console.error(err.code, err.message)}
@@ -203,7 +209,7 @@ import {
 
       {/* Custom Toggle Button */}
       <PromptInputButton
-        variant={webSearch ? 'default' : 'ghost'}
+        variant={webSearch ? "default" : "ghost"}
         onClick={() => setWebSearch(!webSearch)}
       >
         <GlobeIcon size={16} />
@@ -230,20 +236,20 @@ import {
 
     <PromptInputSubmit status={status} />
   </PromptInputFooter>
-</PromptInput>
+</PromptInput>;
 ```
 
 ### Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onSubmit` | `(message: PromptInputMessage, event) => void` | Submit handler |
-| `accept` | `string` | File type filter (e.g., `"image/*"`) |
-| `multiple` | `boolean` | Allow multiple files |
-| `globalDrop` | `boolean` | Accept drops anywhere on document |
-| `maxFiles` | `number` | Maximum number of files |
-| `maxFileSize` | `number` | Max file size in bytes |
-| `onError` | `(err) => void` | Error callback (`max_files`, `max_file_size`, `accept`) |
+| Prop          | Type                                           | Description                                             |
+| ------------- | ---------------------------------------------- | ------------------------------------------------------- |
+| `onSubmit`    | `(message: PromptInputMessage, event) => void` | Submit handler                                          |
+| `accept`      | `string`                                       | File type filter (e.g., `"image/*"`)                    |
+| `multiple`    | `boolean`                                      | Allow multiple files                                    |
+| `globalDrop`  | `boolean`                                      | Accept drops anywhere on document                       |
+| `maxFiles`    | `number`                                       | Maximum number of files                                 |
+| `maxFileSize` | `number`                                       | Max file size in bytes                                  |
+| `onError`     | `(err) => void`                                | Error callback (`max_files`, `max_file_size`, `accept`) |
 
 ### PromptInputMessage Type
 
@@ -269,31 +275,31 @@ import {
   Reasoning,
   ReasoningTrigger,
   ReasoningContent,
-} from '@/components/ai-elements/reasoning';
+} from "@/components/ai-elements/reasoning";
 
 <Reasoning
-  isStreaming={status === 'streaming'}
+  isStreaming={status === "streaming"}
   defaultOpen={true}
   duration={10} // seconds
 >
   <ReasoningTrigger
     getThinkingMessage={(isStreaming, duration) =>
-      isStreaming ? 'Thinking...' : `Thought for ${duration}s`
+      isStreaming ? "Thinking..." : `Thought for ${duration}s`
     }
   />
   <ReasoningContent>{reasoningText}</ReasoningContent>
-</Reasoning>
+</Reasoning>;
 ```
 
 ### Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `isStreaming` | `boolean` | Track if reasoning is streaming |
-| `open` | `boolean` | Controlled open state |
-| `defaultOpen` | `boolean` | Initial state (default: `true`) |
-| `onOpenChange` | `(open) => void` | Open state callback |
-| `duration` | `number` | Time spent reasoning (seconds) |
+| Prop           | Type             | Description                     |
+| -------------- | ---------------- | ------------------------------- |
+| `isStreaming`  | `boolean`        | Track if reasoning is streaming |
+| `open`         | `boolean`        | Controlled open state           |
+| `defaultOpen`  | `boolean`        | Initial state (default: `true`) |
+| `onOpenChange` | `(open) => void` | Open state callback             |
+| `duration`     | `number`         | Time spent reasoning (seconds)  |
 
 ### Behavior
 
@@ -311,28 +317,30 @@ import {
   SourcesTrigger,
   SourcesContent,
   Source,
-} from '@/components/ai-elements/sources';
+} from "@/components/ai-elements/sources";
 
-const sourceUrls = message.parts.filter((p) => p.type === 'source-url');
+const sourceUrls = message.parts.filter((p) => p.type === "source-url");
 
-{sourceUrls.length > 0 && (
-  <Sources>
-    <SourcesTrigger count={sourceUrls.length} />
-    <SourcesContent>
-      {sourceUrls.map((part, i) => (
-        <Source key={i} href={part.url} title={part.title} />
-      ))}
-    </SourcesContent>
-  </Sources>
-)}
+{
+  sourceUrls.length > 0 && (
+    <Sources>
+      <SourcesTrigger count={sourceUrls.length} />
+      <SourcesContent>
+        {sourceUrls.map((part, i) => (
+          <Source key={i} href={part.url} title={part.title} />
+        ))}
+      </SourcesContent>
+    </Sources>
+  );
+}
 ```
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
+| Component        | Props                               |
+| ---------------- | ----------------------------------- |
 | `SourcesTrigger` | `count: number` - number of sources |
-| `Source` | `href: string`, `title?: string` |
+| `Source`         | `href: string`, `title?: string`    |
 
 ## Tool
 
@@ -345,34 +353,32 @@ import {
   ToolContent,
   ToolInput,
   ToolOutput,
-} from '@/components/ai-elements/tool';
+} from "@/components/ai-elements/tool";
 
-{part.type.startsWith('tool-') && (
-  <Tool>
-    <ToolHeader
-      title={part.toolName}
-      type={part.type}
-      state={part.state}
-    />
-    <ToolContent>
-      <ToolInput input={part.input} />
-      <ToolOutput output={part.output} errorText={part.errorText} />
-    </ToolContent>
-  </Tool>
-)}
+{
+  part.type.startsWith("tool-") && (
+    <Tool>
+      <ToolHeader title={part.toolName} type={part.type} state={part.state} />
+      <ToolContent>
+        <ToolInput input={part.input} />
+        <ToolOutput output={part.output} errorText={part.errorText} />
+      </ToolContent>
+    </Tool>
+  );
+}
 ```
 
 ### Tool States
 
-| State | Icon | Color |
-|-------|------|-------|
-| `input-streaming` | Circle | Gray |
-| `input-available` | Pulsing clock | Gray |
-| `approval-requested` | Clock | Yellow |
-| `approval-responded` | Check | Blue |
-| `output-available` | Check | Green |
-| `output-error` | X | Red |
-| `output-denied` | X | Orange |
+| State                | Icon          | Color  |
+| -------------------- | ------------- | ------ |
+| `input-streaming`    | Circle        | Gray   |
+| `input-available`    | Pulsing clock | Gray   |
+| `approval-requested` | Clock         | Yellow |
+| `approval-responded` | Check         | Blue   |
+| `output-available`   | Check         | Green  |
+| `output-error`       | X             | Red    |
+| `output-denied`      | X             | Orange |
 
 ## ChainOfThought
 
@@ -386,7 +392,7 @@ import {
   ChainOfThoughtStep,
   ChainOfThoughtSearchResults,
   ChainOfThoughtImage,
-} from '@/components/ai-elements/chain-of-thought';
+} from "@/components/ai-elements/chain-of-thought";
 
 <ChainOfThought defaultOpen={false}>
   <ChainOfThoughtHeader>View reasoning steps</ChainOfThoughtHeader>
@@ -412,7 +418,7 @@ import {
       <Badge>Result 2</Badge>
     </ChainOfThoughtSearchResults>
   </ChainOfThoughtContent>
-</ChainOfThought>
+</ChainOfThought>;
 ```
 
 ### Step Status
@@ -426,9 +432,11 @@ import {
 Loading indicator for submitted state.
 
 ```tsx
-import { Loader } from '@/components/ai-elements/loader';
+import { Loader } from "@/components/ai-elements/loader";
 
-{status === 'submitted' && <Loader />}
+{
+  status === "submitted" && <Loader />;
+}
 ```
 
 ## InlineCitation
@@ -451,12 +459,12 @@ import {
   InlineCitationCarouselItem,
   InlineCitationSource,
   InlineCitationQuote,
-} from '@/components/ai-elements/inline-citation';
+} from "@/components/ai-elements/inline-citation";
 
 <InlineCitation>
   <InlineCitationText>cited text here</InlineCitationText>
   <InlineCitationCard>
-    <InlineCitationCardTrigger sources={['https://example.com']} />
+    <InlineCitationCardTrigger sources={["https://example.com"]} />
     <InlineCitationCardBody>
       <InlineCitationCarousel>
         <InlineCitationCarouselHeader>
@@ -477,15 +485,15 @@ import {
       </InlineCitationCarousel>
     </InlineCitationCardBody>
   </InlineCitationCard>
-</InlineCitation>
+</InlineCitation>;
 ```
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
+| Component                   | Props                               |
+| --------------------------- | ----------------------------------- |
 | `InlineCitationCardTrigger` | `sources: string[]` - array of URLs |
-| `InlineCitationSource` | `title?`, `url?`, `description?` |
+| `InlineCitationSource`      | `title?`, `url?`, `description?`    |
 
 ## Plan
 
@@ -501,9 +509,9 @@ import {
   PlanContent,
   PlanFooter,
   PlanTrigger,
-} from '@/components/ai-elements/plan';
+} from "@/components/ai-elements/plan";
 
-<Plan isStreaming={status === 'streaming'} defaultOpen>
+<Plan isStreaming={status === "streaming"} defaultOpen>
   <PlanHeader>
     <div>
       <PlanTitle>Implementation Plan</PlanTitle>
@@ -523,15 +531,15 @@ import {
   <PlanFooter>
     <Button>Execute Plan</Button>
   </PlanFooter>
-</Plan>
+</Plan>;
 ```
 
 ### Props
 
-| Prop | Type | Description |
-|------|------|-------------|
+| Prop          | Type      | Description                               |
+| ------------- | --------- | ----------------------------------------- |
 | `isStreaming` | `boolean` | Shows shimmer effect on title/description |
-| `defaultOpen` | `boolean` | Initial collapsed state |
+| `defaultOpen` | `boolean` | Initial collapsed state                   |
 
 ## Task
 
@@ -544,7 +552,7 @@ import {
   TaskContent,
   TaskItem,
   TaskItemFile,
-} from '@/components/ai-elements/task';
+} from "@/components/ai-elements/task";
 
 <Task defaultOpen>
   <TaskTrigger title="Searching codebase..." />
@@ -556,15 +564,15 @@ import {
       Also referenced in <TaskItemFile>src/pages/index.tsx</TaskItemFile>
     </TaskItem>
   </TaskContent>
-</Task>
+</Task>;
 ```
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
-| `Task` | `defaultOpen?: boolean` (default: `true`) |
-| `TaskTrigger` | `title: string` |
+| Component     | Props                                     |
+| ------------- | ----------------------------------------- |
+| `Task`        | `defaultOpen?: boolean` (default: `true`) |
+| `TaskTrigger` | `title: string`                           |
 
 ## Queue
 
@@ -587,7 +595,7 @@ import {
   QueueItemAttachment,
   QueueItemImage,
   QueueItemFile,
-} from '@/components/ai-elements/queue';
+} from "@/components/ai-elements/queue";
 
 <Queue>
   <QueueSection>
@@ -619,17 +627,17 @@ import {
       </QueueList>
     </QueueSectionContent>
   </QueueSection>
-</Queue>
+</Queue>;
 ```
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
-| `QueueSection` | `defaultOpen?: boolean` (default: `true`) |
-| `QueueSectionLabel` | `count?: number`, `label: string`, `icon?: ReactNode` |
-| `QueueItemIndicator` | `completed?: boolean` |
-| `QueueItemContent` | `completed?: boolean` |
+| Component            | Props                                                 |
+| -------------------- | ----------------------------------------------------- |
+| `QueueSection`       | `defaultOpen?: boolean` (default: `true`)             |
+| `QueueSectionLabel`  | `count?: number`, `label: string`, `icon?: ReactNode` |
+| `QueueItemIndicator` | `completed?: boolean`                                 |
+| `QueueItemContent`   | `completed?: boolean`                                 |
 
 ## Complete Chatbot Example
 

@@ -4,7 +4,10 @@ import { useActionState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
-import { createAppointmentSchema, type CreateAppointmentInput } from "../schemas";
+import {
+  createAppointmentSchema,
+  type CreateAppointmentInput,
+} from "../schemas";
 import { createAppointmentAction } from "../actions";
 import {
   Dialog,
@@ -48,12 +51,28 @@ function fmt(n: string) {
   return parseFloat(n).toLocaleString("en-PH", { minimumFractionDigits: 2 });
 }
 
-export function CreateAppointmentDialog({ open, onOpenChange, customers, servicesList, staffList }: Props) {
-  const [state, formAction, isPending] = useActionState(createAppointmentAction, undefined);
+export function CreateAppointmentDialog({
+  open,
+  onOpenChange,
+  customers,
+  servicesList,
+  staffList,
+}: Props) {
+  const [state, formAction, isPending] = useActionState(
+    createAppointmentAction,
+    undefined,
+  );
 
   const form = useForm<CreateAppointmentInput>({
     resolver: zodResolver(createAppointmentSchema),
-    defaultValues: { customerId: "", serviceId: "", staffId: "", scheduledAt: "", notes: "", address: "" },
+    defaultValues: {
+      customerId: "",
+      serviceId: "",
+      staffId: "",
+      scheduledAt: "",
+      notes: "",
+      address: "",
+    },
   });
 
   useEffect(() => {
@@ -82,7 +101,9 @@ export function CreateAppointmentDialog({ open, onOpenChange, customers, service
               name="customerId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Customer <span className="text-destructive">*</span></FormLabel>
+                  <FormLabel>
+                    Customer <span className="text-destructive">*</span>
+                  </FormLabel>
                   <input type="hidden" name="customerId" value={field.value} />
                   <Select value={field.value} onValueChange={field.onChange}>
                     <FormControl>
@@ -110,7 +131,10 @@ export function CreateAppointmentDialog({ open, onOpenChange, customers, service
                 <FormItem>
                   <FormLabel>Service</FormLabel>
                   <input type="hidden" name="serviceId" value={field.value} />
-                  <Select value={field.value || "none"} onValueChange={(v) => field.onChange(v === "none" ? "" : v)}>
+                  <Select
+                    value={field.value || "none"}
+                    onValueChange={(v) => field.onChange(v === "none" ? "" : v)}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select service (optional)…" />
@@ -135,7 +159,9 @@ export function CreateAppointmentDialog({ open, onOpenChange, customers, service
               name="scheduledAt"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Date & Time <span className="text-destructive">*</span></FormLabel>
+                  <FormLabel>
+                    Date & Time <span className="text-destructive">*</span>
+                  </FormLabel>
                   <FormControl>
                     <Input
                       type="datetime-local"
@@ -156,7 +182,10 @@ export function CreateAppointmentDialog({ open, onOpenChange, customers, service
                 <FormItem>
                   <FormLabel>Assign Staff</FormLabel>
                   <input type="hidden" name="staffId" value={field.value} />
-                  <Select value={field.value || "none"} onValueChange={(v) => field.onChange(v === "none" ? "" : v)}>
+                  <Select
+                    value={field.value || "none"}
+                    onValueChange={(v) => field.onChange(v === "none" ? "" : v)}
+                  >
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Assign staff (optional)…" />
@@ -165,7 +194,9 @@ export function CreateAppointmentDialog({ open, onOpenChange, customers, service
                     <SelectContent>
                       <SelectItem value="none">Unassigned</SelectItem>
                       {staffList.map((s) => (
-                        <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                        <SelectItem key={s.id} value={s.id}>
+                          {s.name}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -200,7 +231,12 @@ export function CreateAppointmentDialog({ open, onOpenChange, customers, service
                 <FormItem>
                   <FormLabel>Notes</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Additional notes…" rows={2} {...field} name="notes" />
+                    <Textarea
+                      placeholder="Additional notes…"
+                      rows={2}
+                      {...field}
+                      name="notes"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -208,7 +244,13 @@ export function CreateAppointmentDialog({ open, onOpenChange, customers, service
             />
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Cancel
+              </Button>
               <Button type="submit" disabled={isPending}>
                 {isPending ? "Scheduling…" : "Schedule Appointment"}
               </Button>

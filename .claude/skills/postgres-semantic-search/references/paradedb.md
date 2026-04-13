@@ -6,17 +6,18 @@ ParadeDB is a YC S23 company with 400,000+ deployments. Used in production by Al
 
 ## Why ParadeDB?
 
-| Feature | Postgres FTS | Elasticsearch | ParadeDB |
-|---------|--------------|---------------|----------|
-| BM25 ranking | No (ts_rank) | Yes | Yes |
-| ACID | Yes | No | Yes |
-| Zero ETL | - | Requires ETL | Yes |
-| Facets | Manual | Yes | Yes |
-| Highlighting | Manual | Yes | Yes |
-| Fuzzy search | Weak | Yes | Yes |
-| JOINs | Yes | No | Yes |
+| Feature      | Postgres FTS | Elasticsearch | ParadeDB |
+| ------------ | ------------ | ------------- | -------- |
+| BM25 ranking | No (ts_rank) | Yes           | Yes      |
+| ACID         | Yes          | No            | Yes      |
+| Zero ETL     | -            | Requires ETL  | Yes      |
+| Facets       | Manual       | Yes           | Yes      |
+| Highlighting | Manual       | Yes           | Yes      |
+| Fuzzy search | Weak         | Yes           | Yes      |
+| JOINs        | Yes          | No            | Yes      |
 
 **Key benefits:**
+
 - Zero ETL - runs as Postgres extension or logical replica
 - Full ACID compliance with read-after-write guarantees
 - Standard SQL with custom search operators
@@ -74,19 +75,20 @@ WITH (key_field='id');
 ```
 
 **Key field requirements:**
+
 - Must have UNIQUE constraint (usually PRIMARY KEY)
 - Must be first in column list
 - If text, must be untokenized
 
 ### Available Tokenizers
 
-| Tokenizer | Use Case |
-|-----------|----------|
-| `pdb.unicode` | General text (default) |
-| `pdb.unicode_words` | Word-level with stemmers |
-| `pdb.icu` | Multi-language |
+| Tokenizer             | Use Case                         |
+| --------------------- | -------------------------------- |
+| `pdb.unicode`         | General text (default)           |
+| `pdb.unicode_words`   | Word-level with stemmers         |
+| `pdb.icu`             | Multi-language                   |
 | `pdb.ngram(min, max)` | Partial matching, typo tolerance |
-| `pdb.simple` | Basic whitespace |
+| `pdb.simple`          | Basic whitespace                 |
 
 ### Tokenizer Parameters
 
@@ -286,20 +288,22 @@ ORDER BY combined_score DESC;
 
 ### Community vs Enterprise
 
-| Feature | Community | Enterprise |
-|---------|-----------|------------|
-| Core search | Yes | Yes |
-| ACID | Yes | Yes |
-| WAL durability | No | Yes |
-| Physical replication | No | Yes |
-| High availability | No | Yes |
+| Feature              | Community | Enterprise |
+| -------------------- | --------- | ---------- |
+| Core search          | Yes       | Yes        |
+| ACID                 | Yes       | Yes        |
+| WAL durability       | No        | Yes        |
+| Physical replication | No        | Yes        |
+| High availability    | No        | Yes        |
 
 **Community** is suitable for:
+
 - Development and testing
 - Non-critical workloads
 - Logical replica setups
 
 **Enterprise** is required for:
+
 - Production with durability requirements
 - High availability setups
 - Physical replication

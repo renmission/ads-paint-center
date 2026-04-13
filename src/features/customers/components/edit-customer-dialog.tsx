@@ -43,7 +43,7 @@ interface Props {
 export function EditCustomerDialog({ open, onOpenChange, customer }: Props) {
   const [state, formAction, isPending] = useActionState(
     updateCustomerAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<UpdateCustomerInput>({
@@ -136,11 +136,7 @@ export function EditCustomerDialog({ open, onOpenChange, customer }: Props) {
                 <FormItem>
                   <FormLabel>Notes (optional)</FormLabel>
                   <FormControl>
-                    <Textarea
-                      className="resize-none"
-                      rows={2}
-                      {...field}
-                    />
+                    <Textarea className="resize-none" rows={2} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

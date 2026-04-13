@@ -128,13 +128,13 @@ When writing a React Server Component, ask these questions in order:
 
 ```typescript
 // next.config.ts
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
-}
+};
 
-export default nextConfig
+export default nextConfig;
 ```
 
 ### Basic Usage
@@ -142,9 +142,9 @@ export default nextConfig
 ```tsx
 // Cached component - output included in static shell
 async function CachedPosts() {
-  'use cache'
-  const posts = await db.posts.findMany()
-  return <PostList posts={posts} />
+  "use cache";
+  const posts = await db.posts.findMany();
+  return <PostList posts={posts} />;
 }
 
 // Page with static + cached + dynamic content
@@ -157,7 +157,7 @@ export default async function BlogPage() {
         <DynamicComments /> {/* Dynamic - streams */}
       </Suspense>
     </>
-  )
+  );
 }
 ```
 
@@ -165,22 +165,22 @@ export default async function BlogPage() {
 
 **Server Actions are for MUTATIONS ONLY** - never for data fetching:
 
-| Purpose         | Use                              | Example Functions                        |
-| --------------- | -------------------------------- | ---------------------------------------- |
-| **Data fetch**  | Server Component / `'use cache'` | `getProducts()`, `getUser(id)`           |
-| **Mutation**    | Server Action (`'use server'`)   | `createProduct()`, `updateUser()`, `deletePost()` |
+| Purpose        | Use                              | Example Functions                                 |
+| -------------- | -------------------------------- | ------------------------------------------------- |
+| **Data fetch** | Server Component / `'use cache'` | `getProducts()`, `getUser(id)`                    |
+| **Mutation**   | Server Action (`'use server'`)   | `createProduct()`, `updateUser()`, `deletePost()` |
 
 ### ❌ WRONG: Server Action for Data Fetching
 
 ```tsx
-"use server"
+"use server";
 export async function getProducts() {
-  return await db.products.findMany() // NO! This is not a mutation
+  return await db.products.findMany(); // NO! This is not a mutation
 }
 
-"use server"
+("use server");
 export async function getTheme() {
-  return (await cookies()).get("theme")?.value // NO! Just reading data
+  return (await cookies()).get("theme")?.value; // NO! Just reading data
 }
 ```
 
@@ -189,31 +189,31 @@ export async function getTheme() {
 ```tsx
 // data/products.ts - Cached data function
 export async function getProducts() {
-  "use cache"
-  cacheTag("products")
-  cacheLife("hours")
-  return await db.products.findMany()
+  "use cache";
+  cacheTag("products");
+  cacheLife("hours");
+  return await db.products.findMany();
 }
 
 // page.tsx - Server Component reads data directly
-import { cookies } from "next/headers"
+import { cookies } from "next/headers";
 
 export default async function Page() {
-  const products = await getProducts()
-  const theme = (await cookies()).get("theme")?.value ?? "light"
-  return <ProductList products={products} theme={theme} />
+  const products = await getProducts();
+  const theme = (await cookies()).get("theme")?.value ?? "light";
+  return <ProductList products={products} theme={theme} />;
 }
 ```
 
 ### ✅ CORRECT: Server Action for Mutation
 
 ```tsx
-"use server"
-import { updateTag } from "next/cache"
+"use server";
+import { updateTag } from "next/cache";
 
 export async function createProduct(formData: FormData) {
-  await db.products.create({ data: formData })
-  updateTag("products") // Invalidate cache after mutation
+  await db.products.create({ data: formData });
+  updateTag("products"); // Invalidate cache after mutation
 }
 ```
 
@@ -225,7 +225,7 @@ Marks code as cacheable. Can be applied at three levels:
 
 ```tsx
 // File-level: All exports are cached
-'use cache'
+"use cache";
 export async function getData() {
   /* ... */
 }
@@ -235,15 +235,15 @@ export async function Component() {
 
 // Component-level
 async function UserCard({ id }: { id: string }) {
-  'use cache'
-  const user = await fetchUser(id)
-  return <Card>{user.name}</Card>
+  "use cache";
+  const user = await fetchUser(id);
+  return <Card>{user.name}</Card>;
 }
 
 // Function-level
 async function fetchWithCache(url: string) {
-  'use cache'
-  return fetch(url).then((r) => r.json())
+  "use cache";
+  return fetch(url).then((r) => r.json());
 }
 ```
 
@@ -252,20 +252,20 @@ async function fetchWithCache(url: string) {
 ### 2. `cacheLife()` - Control Cache Duration
 
 ```tsx
-import { cacheLife } from 'next/cache'
+import { cacheLife } from "next/cache";
 
 async function Posts() {
-  'use cache'
-  cacheLife('hours') // Use a predefined profile
+  "use cache";
+  cacheLife("hours"); // Use a predefined profile
 
   // Or custom configuration:
   cacheLife({
     stale: 60, // 1 min - client cache validity
     revalidate: 3600, // 1 hr - start background refresh
     expire: 86400, // 1 day - absolute expiration
-  })
+  });
 
-  return await db.posts.findMany()
+  return await db.posts.findMany();
 }
 ```
 
@@ -274,21 +274,21 @@ async function Posts() {
 ### 3. `cacheTag()` - Tag for Invalidation
 
 ```tsx
-import { cacheTag } from 'next/cache'
+import { cacheTag } from "next/cache";
 
 async function BlogPosts() {
-  'use cache'
-  cacheTag('posts')
-  cacheLife('days')
+  "use cache";
+  cacheTag("posts");
+  cacheLife("days");
 
-  return await db.posts.findMany()
+  return await db.posts.findMany();
 }
 
 async function UserProfile({ userId }: { userId: string }) {
-  'use cache'
-  cacheTag('users', `user-${userId}`) // Multiple tags
+  "use cache";
+  cacheTag("users", `user-${userId}`); // Multiple tags
 
-  return await db.users.findUnique({ where: { id: userId } })
+  return await db.users.findUnique({ where: { id: userId } });
 }
 ```
 
@@ -297,13 +297,13 @@ async function UserProfile({ userId }: { userId: string }) {
 For **read-your-own-writes** semantics:
 
 ```tsx
-'use server'
-import { updateTag } from 'next/cache'
+"use server";
+import { updateTag } from "next/cache";
 
 export async function createPost(formData: FormData) {
-  await db.posts.create({ data: formData })
+  await db.posts.create({ data: formData });
 
-  updateTag('posts') // Client immediately sees fresh data
+  updateTag("posts"); // Client immediately sees fresh data
 }
 ```
 
@@ -312,13 +312,13 @@ export async function createPost(formData: FormData) {
 For stale-while-revalidate pattern:
 
 ```tsx
-'use server'
-import { revalidateTag } from 'next/cache'
+"use server";
+import { revalidateTag } from "next/cache";
 
 export async function updatePost(id: string, data: FormData) {
-  await db.posts.update({ where: { id }, data })
+  await db.posts.update({ where: { id }, data });
 
-  revalidateTag('posts', 'max') // Serve stale, refresh in background
+  revalidateTag("posts", "max"); // Serve stale, refresh in background
 }
 ```
 
@@ -338,10 +338,10 @@ export async function updatePost(id: string, data: FormData) {
 // app/products/[category]/[slug]/page.tsx
 export async function generateStaticParams() {
   return [
-    { category: 'jackets', slug: 'classic-bomber' },
-    { category: 'jackets', slug: 'essential-windbreaker' },
-    { category: 'accessories', slug: 'thermal-fleece-gloves' },
-  ]
+    { category: "jackets", slug: "classic-bomber" },
+    { category: "jackets", slug: "essential-windbreaker" },
+    { category: "accessories", slug: "thermal-fleece-gloves" },
+  ];
 }
 ```
 
@@ -369,13 +369,13 @@ With Cache Components enabled:
 ```tsx
 // ❌ ERROR with Cache Components
 export function generateStaticParams() {
-  return [] // Build error: must provide at least one param
+  return []; // Build error: must provide at least one param
 }
 
 // ✅ CORRECT: Provide real params
 export async function generateStaticParams() {
-  const products = await getPopularProducts()
-  return products.map(({ category, slug }) => ({ category, slug }))
+  const products = await getPopularProducts();
+  return products.map(({ category, slug }) => ({ category, slug }));
 }
 ```
 
@@ -386,10 +386,10 @@ Arguments become part of the cache key:
 ```tsx
 // Different userId = different cache entry
 async function UserData({ userId }: { userId: string }) {
-  'use cache'
-  cacheTag(`user-${userId}`)
+  "use cache";
+  cacheTag(`user-${userId}`);
 
-  return await fetchUser(userId)
+  return await fetchUser(userId);
 }
 ```
 
@@ -422,14 +422,14 @@ Error: Accessing uncached data outside Suspense
 ```tsx
 // Option 1: Cache it
 async function ProductData({ id }: { id: string }) {
-  'use cache'
-  return await db.products.findUnique({ where: { id } })
+  "use cache";
+  return await db.products.findUnique({ where: { id } });
 }
 
 // Option 2: Make it dynamic with Suspense
-;<Suspense fallback={<Loading />}>
+<Suspense fallback={<Loading />}>
   <DynamicProductData id={id} />
-</Suspense>
+</Suspense>;
 ```
 
 ### Error: Request data inside cache
@@ -471,18 +471,18 @@ Ask yourself: "Can this data be cached?" If yes, add `'use cache'`:
 ```tsx
 // Before: Uncached fetch
 async function ProductList() {
-  const products = await db.products.findMany()
-  return <Grid products={products} />
+  const products = await db.products.findMany();
+  return <Grid products={products} />;
 }
 
 // After: With caching
 async function ProductList() {
-  'use cache'
-  cacheTag('products')
-  cacheLife('hours')
+  "use cache";
+  cacheTag("products");
+  cacheLife("hours");
 
-  const products = await db.products.findMany()
-  return <Grid products={products} />
+  const products = await db.products.findMany();
+  return <Grid products={products} />;
 }
 ```
 
@@ -491,12 +491,12 @@ async function ProductList() {
 Always invalidate relevant caches after mutations:
 
 ```tsx
-'use server'
-import { updateTag } from 'next/cache'
+"use server";
+import { updateTag } from "next/cache";
 
 export async function createProduct(data: FormData) {
-  await db.products.create({ data })
-  updateTag('products') // Don't forget!
+  await db.products.create({ data });
+  updateTag("products"); // Don't forget!
 }
 ```
 
@@ -514,7 +514,7 @@ export default async function Page() {
         <DynamicUserContent /> {/* Streams at runtime */}
       </Suspense>
     </>
-  )
+  );
 }
 ```
 

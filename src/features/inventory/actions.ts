@@ -16,7 +16,7 @@ type ActionResult = { error?: string; success?: string };
 
 export async function createProductAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const raw = Object.fromEntries(formData);
   const parsed = createProductSchema.safeParse(raw);
@@ -57,7 +57,7 @@ export async function createProductAction(
 
 export async function updateProductAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const raw = Object.fromEntries(formData);
   const parsed = updateProductSchema.safeParse(raw);
@@ -91,7 +91,7 @@ export async function updateProductAction(
 
 export async function toggleProductActiveAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const raw = Object.fromEntries(formData);
   const parsed = toggleProductActiveSchema.safeParse(raw);
@@ -112,7 +112,7 @@ export async function toggleProductActiveAction(
 
 export async function adjustStockAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const raw = Object.fromEntries(formData);
   const parsed = adjustStockSchema.safeParse(raw);
@@ -147,7 +147,7 @@ export async function adjustStockAction(
       if (admin.phone) {
         await sendSMS(
           admin.phone,
-          `[ADS Paint Center] Low stock alert: "${current.product.name}" has been set to ${newQty} ${current.product.unit}(s) — at or below the threshold of ${threshold}.`
+          `[ADS Paint Center] Low stock alert: "${current.product.name}" has been set to ${newQty} ${current.product.unit}(s) — at or below the threshold of ${threshold}.`,
         );
       }
     }

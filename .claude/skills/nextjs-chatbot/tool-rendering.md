@@ -68,7 +68,8 @@ if (part.type === "tool-searchServices") {
       errorPrefix: "Error searching services",
       isEmpty: (o) => o.services.length === 0,
       render: (o) => <ServiceList services={o.services} total={o.total} />,
-      collapsibleLabel: (o) => `${o.total} service${o.total !== 1 ? "s" : ""} found`,
+      collapsibleLabel: (o) =>
+        `${o.total} service${o.total !== 1 ? "s" : ""} found`,
     },
     index,
   );
@@ -84,14 +85,15 @@ AI SDK v6 names tool parts as `tool-{toolName}` where `toolName` matches the key
 ```ts
 // Agent
 const tools = {
-  searchServices: searchServicesTool,  // part.type === "tool-searchServices"
-  web_search: webSearchTool,            // part.type === "tool-web_search"
+  searchServices: searchServicesTool, // part.type === "tool-searchServices"
+  web_search: webSearchTool, // part.type === "tool-web_search"
 };
 ```
 
 Check for tool parts:
+
 ```ts
-const toolParts = message.parts.filter(part => part.type.startsWith("tool-"));
+const toolParts = message.parts.filter((part) => part.type.startsWith("tool-"));
 ```
 
 ## Collapsible for large result sets
@@ -99,7 +101,13 @@ const toolParts = message.parts.filter(part => part.type.startsWith("tool-"));
 Use `collapsibleLabel` when a tool can return many items (lists, search results). Keeps the chat readable.
 
 ```tsx
-function ToolCollapsible({ label, children }: { label: string; children: ReactNode }) {
+function ToolCollapsible({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   return (
     <CollapsiblePrimitive.Root open={open} onOpenChange={setOpen}>
@@ -127,7 +135,7 @@ export function stripPhoneNumbers(text: string): string {
 export function sanitizeContact(contact: ContactRow): SanitizedContact {
   return {
     ...contact,
-    phone: undefined,  // never expose phone
+    phone: undefined, // never expose phone
     // Apply stripPhoneNumbers to any text fields that might contain phone numbers
     notes: contact.notes ? sanitizeOptionalText(contact.notes) : undefined,
   };
@@ -152,7 +160,10 @@ export type GetContactOutput = {
 };
 
 // Used in chat-message.tsx imports:
-import type { SearchServicesOutput, GetContactOutput } from "@/lib/ai/tools/types";
+import type {
+  SearchServicesOutput,
+  GetContactOutput,
+} from "@/lib/ai/tools/types";
 ```
 
 ## Source URL parts (web search)
@@ -160,9 +171,10 @@ import type { SearchServicesOutput, GetContactOutput } from "@/lib/ai/tools/type
 Web search results come as `source-url` parts, not tool-invocation parts. Collect them separately:
 
 ```ts
-const sources = message.parts
-  .filter((p): p is { type: "source-url"; url: string; title?: string } => p.type === "source-url");
+const sources = message.parts.filter(
+  (p): p is { type: "source-url"; url: string; title?: string } =>
+    p.type === "source-url",
+);
 ```
 
 Use the `Sources` / `SourcesTrigger` / `SourcesContent` components from ai-elements to render them. See `/ai-elements` for component details.
-

@@ -4,10 +4,7 @@ import { asc } from "drizzle-orm";
 import { StaffTableClient } from "./staff-table-client";
 
 export async function StaffTable() {
-  const staff = await db
-    .select()
-    .from(users)
-    .orderBy(asc(users.createdAt));
+  const staff = await db.select().from(users).orderBy(asc(users.createdAt));
 
   return <StaffTableClient initialData={staff} />;
 }

@@ -5,7 +5,7 @@
 ```ts
 // lib/db/schema/chat-sessions.ts
 export const chatSessions = pgTable("chat_sessions", {
-  id: text("id").primaryKey(),                  // client-generated UUID
+  id: text("id").primaryKey(), // client-generated UUID
   consentAccepted: boolean("consent_accepted").notNull(),
   consentVersion: text("consent_version").notNull(),
   consentAcceptedAt: timestamp("consent_accepted_at").notNull(),
@@ -16,20 +16,25 @@ export const chatSessions = pgTable("chat_sessions", {
 });
 
 // lib/db/schema/chat-messages.ts
-export const chatMessages = pgTable("chat_messages", {
-  id: serial("id").primaryKey(),
-  chatId: text("chat_id").notNull()
-    .references(() => chatSessions.id, { onDelete: "cascade" }),  // GDPR cascade
-  messageId: text("message_id").notNull(),      // server-generated stable ID
-  role: text("role").notNull(),
-  content: text("content").notNull(),           // extracted text from parts
-  rawParts: jsonb("raw_parts").$type<unknown[]>(), // full UIMessage.parts (tool results etc.)
-  feedback: smallint("feedback"),               // null | 1 (up) | -1 (down)
-  createdAt: timestamp("created_at").defaultNow(),
-}, (table) => ({
-  // Prevents duplicate saves (idempotent onFinish)
-  chatMessageUnique: uniqueIndex("...").on(table.chatId, table.messageId),
-}));
+export const chatMessages = pgTable(
+  "chat_messages",
+  {
+    id: serial("id").primaryKey(),
+    chatId: text("chat_id")
+      .notNull()
+      .references(() => chatSessions.id, { onDelete: "cascade" }), // GDPR cascade
+    messageId: text("message_id").notNull(), // server-generated stable ID
+    role: text("role").notNull(),
+    content: text("content").notNull(), // extracted text from parts
+    rawParts: jsonb("raw_parts").$type<unknown[]>(), // full UIMessage.parts (tool results etc.)
+    feedback: smallint("feedback"), // null | 1 (up) | -1 (down)
+    createdAt: timestamp("created_at").defaultNow(),
+  },
+  (table) => ({
+    // Prevents duplicate saves (idempotent onFinish)
+    chatMessageUnique: uniqueIndex("...").on(table.chatId, table.messageId),
+  }),
+);
 ```
 
 ## Critical ordering: session upsert BEFORE stream
@@ -76,18 +81,20 @@ onFinish: async ({ messages: finishedMessages }) => {
   const db = getDb();
   await db
     .insert(chatMessages)
-    .values(finishedMessages.map((m, index) => ({
-      chatId,
-      messageId: getStoredMessageId(m.id, index, m.role),
-      role: m.role,
-      content: m.parts                         // extract plain text
-        .filter((p): p is { type: "text"; text: string } => p.type === "text")
-        .map((p) => p.text)
-        .join(""),
-      rawParts: m.parts as unknown[],          // keep full parts for tool results
-    })))
-    .onConflictDoNothing();                    // idempotent — safe to retry
-}
+    .values(
+      finishedMessages.map((m, index) => ({
+        chatId,
+        messageId: getStoredMessageId(m.id, index, m.role),
+        role: m.role,
+        content: m.parts // extract plain text
+          .filter((p): p is { type: "text"; text: string } => p.type === "text")
+          .map((p) => p.text)
+          .join(""),
+        rawParts: m.parts as unknown[], // keep full parts for tool results
+      })),
+    )
+    .onConflictDoNothing(); // idempotent — safe to retry
+};
 ```
 
 `rawParts` (JSONB) stores the full `UIMessage.parts[]` so chat history can restore tool results, not just text.
@@ -103,7 +110,9 @@ onFinish: async ({ messages: finishedMessages }) => {
 const result = await db
   .update(chatMessages)
   .set({ feedback })
-  .where(and(eq(chatMessages.chatId, chatId), eq(chatMessages.messageId, messageId)))
+  .where(
+    and(eq(chatMessages.chatId, chatId), eq(chatMessages.messageId, messageId)),
+  )
   .returning({ id: chatMessages.id });
 
 if (result.length === 0) {
@@ -122,7 +131,7 @@ async function submitFeedback(
   messageId: string,
   vote: "up" | "down" | null,
   attempt: number,
-  isCancelled: () => boolean,   // prevents stale retries if user changes vote
+  isCancelled: () => boolean, // prevents stale retries if user changes vote
 ): Promise<void> {
   if (isCancelled()) return;
 
@@ -134,7 +143,7 @@ async function submitFeedback(
 
   if (res.status === 202) {
     if (attempt < delays.length) {
-      await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+      await new Promise((resolve) => setTimeout(resolve, delays[attempt]));
       return submitFeedback(chatId, messageId, vote, attempt + 1, isCancelled);
     }
     throw new Error("Max retries exceeded"); // triggers optimistic UI revert
@@ -145,11 +154,16 @@ async function submitFeedback(
 const handleFeedback = (vote: "up" | "down") => {
   const newVote = feedback === vote ? null : vote;
   const previousFeedback = feedback;
-  setFeedback(newVote);                          // optimistic
+  setFeedback(newVote); // optimistic
 
   const generation = ++generationRef.current;
-  submitFeedback(chatId, messageId, newVote, 0, () => generationRef.current !== generation)
-    .catch(() => setFeedback(previousFeedback)); // revert on failure
+  submitFeedback(
+    chatId,
+    messageId,
+    newVote,
+    0,
+    () => generationRef.current !== generation,
+  ).catch(() => setFeedback(previousFeedback)); // revert on failure
 };
 ```
 
@@ -169,4 +183,3 @@ Consent fields (`consentAccepted`, `consentVersion`, `consentAcceptedAt`) are st
 ## Stream resumption (optional)
 
 For long-running agent loops, enable reconnection after page reload with `resume: true` in useChat and `createResumableStreamContext` on the server. Requires a stream store (Redis). See AI SDK docs: ai-sdk.dev/docs/ai-sdk-ui/chatbot-resume-streams
-

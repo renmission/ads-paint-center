@@ -20,7 +20,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
-import { ShoppingCart, XCircle, Search, TrendingUp, Receipt, BarChart3, FileText } from "lucide-react";
+import {
+  ShoppingCart,
+  XCircle,
+  Search,
+  TrendingUp,
+  Receipt,
+  BarChart3,
+  FileText,
+} from "lucide-react";
 import type { SalesRow, DailyStats } from "./sales-table";
 import { VoidSaleDialog } from "./void-sale-dialog";
 import { AddPaymentDialog } from "./add-payment-dialog";
@@ -32,9 +40,20 @@ interface Props {
 }
 
 const STATUS_LABELS = {
-  completed: { label: "Completed", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-  voided: { label: "Voided", className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-  pending: { label: "Pending", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" },
+  completed: {
+    label: "Completed",
+    className:
+      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  },
+  voided: {
+    label: "Voided",
+    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  },
+  pending: {
+    label: "Pending",
+    className:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  },
 } as const;
 
 const METHOD_LABELS: Record<string, string> = {
@@ -64,7 +83,8 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
         (row.customerName?.toLowerCase().includes(q) ?? false) ||
         row.staffName.toLowerCase().includes(q);
       const matchStatus = statusFilter === "all" || row.status === statusFilter;
-      const matchMethod = methodFilter === "all" || row.paymentMethod === methodFilter;
+      const matchMethod =
+        methodFilter === "all" || row.paymentMethod === methodFilter;
       return matchSearch && matchStatus && matchMethod;
     });
   }, [initialData, search, statusFilter, methodFilter]);
@@ -78,8 +98,12 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
             <TrendingUp className="h-5 w-5 text-primary" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Today&apos;s Revenue</p>
-            <p className="text-xl font-bold tabular-nums">₱{fmt(dailyStats.revenue)}</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Today&apos;s Revenue
+            </p>
+            <p className="text-xl font-bold tabular-nums">
+              ₱{fmt(dailyStats.revenue)}
+            </p>
           </div>
         </div>
         <div className="rounded-xl border bg-card p-4 flex items-center gap-4">
@@ -87,8 +111,12 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
             <Receipt className="h-5 w-5 text-blue-500" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Transactions Today</p>
-            <p className="text-xl font-bold tabular-nums">{dailyStats.transactionCount}</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Transactions Today
+            </p>
+            <p className="text-xl font-bold tabular-nums">
+              {dailyStats.transactionCount}
+            </p>
           </div>
         </div>
         <div className="rounded-xl border bg-card p-4 flex items-center gap-4">
@@ -96,8 +124,12 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
             <BarChart3 className="h-5 w-5 text-green-500" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Average Sale</p>
-            <p className="text-xl font-bold tabular-nums">₱{fmt(dailyStats.averageSale)}</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Average Sale
+            </p>
+            <p className="text-xl font-bold tabular-nums">
+              ₱{fmt(dailyStats.averageSale)}
+            </p>
           </div>
         </div>
       </div>
@@ -159,22 +191,32 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
               <TableHead className="text-right">Total</TableHead>
               <TableHead>Method</TableHead>
               <TableHead>Status</TableHead>
-              {userRole === "administrator" && <TableHead className="text-right">Actions</TableHead>}
+              {userRole === "administrator" && (
+                <TableHead className="text-right">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={userRole === "administrator" ? 9 : 8} className="h-24 text-center text-muted-foreground">
-                  {initialData.length === 0 ? "No sales yet. Click 'New Sale' to start." : "No results match your filters."}
+                <TableCell
+                  colSpan={userRole === "administrator" ? 9 : 8}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  {initialData.length === 0
+                    ? "No sales yet. Click 'New Sale' to start."
+                    : "No results match your filters."}
                 </TableCell>
               </TableRow>
             ) : (
               filtered.map((row) => {
-                const status = STATUS_LABELS[row.status] ?? STATUS_LABELS.completed;
+                const status =
+                  STATUS_LABELS[row.status] ?? STATUS_LABELS.completed;
                 return (
                   <TableRow key={row.id}>
-                    <TableCell className="font-mono text-sm font-medium">{row.transactionNumber}</TableCell>
+                    <TableCell className="font-mono text-sm font-medium">
+                      {row.transactionNumber}
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                       {new Date(row.createdAt).toLocaleDateString("en-PH", {
                         month: "short",
@@ -184,23 +226,44 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
                         minute: "2-digit",
                       })}
                     </TableCell>
-                    <TableCell>{row.customerName ?? <span className="text-muted-foreground italic">Walk-in</span>}</TableCell>
-                    <TableCell>{row.staffName}</TableCell>
-                    <TableCell className="text-center">{row.itemCount}</TableCell>
-                    <TableCell className="text-right font-medium tabular-nums">
-                      <div>₱{parseFloat(row.totalAmount).toLocaleString("en-PH", { minimumFractionDigits: 2 })}</div>
-                      {row.paymentMethod === "credit" && row.amountPaid !== null && (
-                        (() => {
-                          const balance = parseFloat(row.totalAmount) - parseFloat(row.amountPaid);
-                          return balance > 0 ? (
-                            <div className="text-xs text-amber-600 font-medium tabular-nums">
-                              ₱{balance.toLocaleString("en-PH", { minimumFractionDigits: 2 })} due
-                            </div>
-                          ) : null;
-                        })()
+                    <TableCell>
+                      {row.customerName ?? (
+                        <span className="text-muted-foreground italic">
+                          Walk-in
+                        </span>
                       )}
                     </TableCell>
-                    <TableCell>{METHOD_LABELS[row.paymentMethod] ?? row.paymentMethod}</TableCell>
+                    <TableCell>{row.staffName}</TableCell>
+                    <TableCell className="text-center">
+                      {row.itemCount}
+                    </TableCell>
+                    <TableCell className="text-right font-medium tabular-nums">
+                      <div>
+                        ₱
+                        {parseFloat(row.totalAmount).toLocaleString("en-PH", {
+                          minimumFractionDigits: 2,
+                        })}
+                      </div>
+                      {row.paymentMethod === "credit" &&
+                        row.amountPaid !== null &&
+                        (() => {
+                          const balance =
+                            parseFloat(row.totalAmount) -
+                            parseFloat(row.amountPaid);
+                          return balance > 0 ? (
+                            <div className="text-xs text-amber-600 font-medium tabular-nums">
+                              ₱
+                              {balance.toLocaleString("en-PH", {
+                                minimumFractionDigits: 2,
+                              })}{" "}
+                              due
+                            </div>
+                          ) : null;
+                        })()}
+                    </TableCell>
+                    <TableCell>
+                      {METHOD_LABELS[row.paymentMethod] ?? row.paymentMethod}
+                    </TableCell>
                     <TableCell>
                       <Badge className={status.className}>{status.label}</Badge>
                     </TableCell>
@@ -213,16 +276,17 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
                               Invoice
                             </Link>
                           </Button>
-                          {row.status === "pending" && row.paymentMethod !== "credit" && (
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              className="text-amber-600 hover:text-amber-600"
-                              onClick={() => setPaymentTarget(row)}
-                            >
-                              Add Payment
-                            </Button>
-                          )}
+                          {row.status === "pending" &&
+                            row.paymentMethod !== "credit" && (
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                className="text-amber-600 hover:text-amber-600"
+                                onClick={() => setPaymentTarget(row)}
+                              >
+                                Add Payment
+                              </Button>
+                            )}
                           {row.status === "completed" && (
                             <Button
                               variant="ghost"
@@ -247,12 +311,16 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
 
       <VoidSaleDialog
         open={!!voidTarget}
-        onOpenChange={(o) => { if (!o) setVoidTarget(null); }}
+        onOpenChange={(o) => {
+          if (!o) setVoidTarget(null);
+        }}
         transaction={voidTarget}
       />
       <AddPaymentDialog
         open={!!paymentTarget}
-        onOpenChange={(o) => { if (!o) setPaymentTarget(null); }}
+        onOpenChange={(o) => {
+          if (!o) setPaymentTarget(null);
+        }}
         transaction={paymentTarget}
       />
     </div>

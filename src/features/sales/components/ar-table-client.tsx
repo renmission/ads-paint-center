@@ -20,7 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
-import { Search, FileText, AlertTriangle, DollarSign, Clock } from "lucide-react";
+import {
+  Search,
+  FileText,
+  AlertTriangle,
+  DollarSign,
+  Clock,
+} from "lucide-react";
 import type { ArRow, ArSummary } from "./ar-table";
 
 interface Props {
@@ -29,17 +35,25 @@ interface Props {
 }
 
 function fmt(n: number | string) {
-  return parseFloat(String(n)).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  return parseFloat(String(n)).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+  });
 }
 
 function fmtDate(d: string | Date | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-PH", { month: "short", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-PH", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 export function ArTableClient({ data, summary }: Props) {
   const [search, setSearch] = useState("");
-  const [overdueFilter, setOverdueFilter] = useState<"all" | "overdue" | "current">("all");
+  const [overdueFilter, setOverdueFilter] = useState<
+    "all" | "overdue" | "current"
+  >("all");
 
   const filtered = useMemo(() => {
     return data.filter((row) => {
@@ -65,8 +79,12 @@ export function ArTableClient({ data, summary }: Props) {
             <DollarSign className="h-5 w-5 text-amber-500" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Total Outstanding</p>
-            <p className="text-xl font-bold tabular-nums">₱{fmt(summary.totalOutstanding)}</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Total Outstanding
+            </p>
+            <p className="text-xl font-bold tabular-nums">
+              ₱{fmt(summary.totalOutstanding)}
+            </p>
           </div>
         </div>
         <div className="rounded-xl border bg-card p-4 flex items-center gap-4">
@@ -74,8 +92,12 @@ export function ArTableClient({ data, summary }: Props) {
             <AlertTriangle className="h-5 w-5 text-destructive" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Overdue Invoices</p>
-            <p className="text-xl font-bold tabular-nums">{summary.overdueCount}</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Overdue Invoices
+            </p>
+            <p className="text-xl font-bold tabular-nums">
+              {summary.overdueCount}
+            </p>
           </div>
         </div>
         <div className="rounded-xl border bg-card p-4 flex items-center gap-4">
@@ -83,8 +105,12 @@ export function ArTableClient({ data, summary }: Props) {
             <Clock className="h-5 w-5 text-blue-500" />
           </div>
           <div>
-            <p className="text-xs text-muted-foreground font-medium">Open Receivables</p>
-            <p className="text-xl font-bold tabular-nums">{summary.totalCount}</p>
+            <p className="text-xs text-muted-foreground font-medium">
+              Open Receivables
+            </p>
+            <p className="text-xl font-bold tabular-nums">
+              {summary.totalCount}
+            </p>
           </div>
         </div>
       </div>
@@ -100,7 +126,10 @@ export function ArTableClient({ data, summary }: Props) {
             className="pl-8"
           />
         </div>
-        <Select value={overdueFilter} onValueChange={(v) => setOverdueFilter(v as typeof overdueFilter)}>
+        <Select
+          value={overdueFilter}
+          onValueChange={(v) => setOverdueFilter(v as typeof overdueFilter)}
+        >
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
@@ -131,7 +160,10 @@ export function ArTableClient({ data, summary }: Props) {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="h-24 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={9}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   {data.length === 0
                     ? "No outstanding credit invoices."
                     : "No results match your filters."}
@@ -140,34 +172,56 @@ export function ArTableClient({ data, summary }: Props) {
             ) : (
               filtered.map((row) => (
                 <TableRow key={row.id}>
-                  <TableCell className="font-mono text-sm font-medium">{row.transactionNumber}</TableCell>
+                  <TableCell className="font-mono text-sm font-medium">
+                    {row.transactionNumber}
+                  </TableCell>
                   <TableCell>
-                    {row.customerName ?? <span className="text-muted-foreground italic">Walk-in</span>}
+                    {row.customerName ?? (
+                      <span className="text-muted-foreground italic">
+                        Walk-in
+                      </span>
+                    )}
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground whitespace-nowrap">
                     {fmtDate(row.createdAt)}
                   </TableCell>
                   <TableCell className="text-sm whitespace-nowrap">
                     {row.dueDate ? (
-                      <span className={row.isOverdue ? "text-destructive font-medium" : ""}>
+                      <span
+                        className={
+                          row.isOverdue ? "text-destructive font-medium" : ""
+                        }
+                      >
                         {fmtDate(row.dueDate)}
                       </span>
                     ) : (
                       <span className="text-muted-foreground">—</span>
                     )}
                   </TableCell>
-                  <TableCell className="text-right tabular-nums">₱{fmt(row.totalAmount)}</TableCell>
-                  <TableCell className="text-right tabular-nums text-green-600">₱{fmt(row.amountPaid)}</TableCell>
+                  <TableCell className="text-right tabular-nums">
+                    ₱{fmt(row.totalAmount)}
+                  </TableCell>
+                  <TableCell className="text-right tabular-nums text-green-600">
+                    ₱{fmt(row.amountPaid)}
+                  </TableCell>
                   <TableCell className="text-right tabular-nums font-semibold">
-                    <span className={row.isOverdue ? "text-destructive" : "text-amber-600"}>
+                    <span
+                      className={
+                        row.isOverdue ? "text-destructive" : "text-amber-600"
+                      }
+                    >
                       ₱{fmt(row.balance)}
                     </span>
                   </TableCell>
                   <TableCell>
                     {row.isOverdue ? (
-                      <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">Overdue</Badge>
+                      <Badge className="bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300">
+                        Overdue
+                      </Badge>
                     ) : (
-                      <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">Outstanding</Badge>
+                      <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                        Outstanding
+                      </Badge>
                     )}
                   </TableCell>
                   <TableCell className="text-right">

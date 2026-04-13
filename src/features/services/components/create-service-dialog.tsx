@@ -46,11 +46,20 @@ interface Props {
 }
 
 export function CreateServiceDialog({ open, onOpenChange }: Props) {
-  const [state, formAction, isPending] = useActionState(createServiceAction, undefined);
+  const [state, formAction, isPending] = useActionState(
+    createServiceAction,
+    undefined,
+  );
 
   const form = useForm<CreateServiceInput>({
     resolver: zodResolver(createServiceSchema),
-    defaultValues: { name: "", description: "", price: "", duration: "60", category: "other" },
+    defaultValues: {
+      name: "",
+      description: "",
+      price: "",
+      duration: "60",
+      category: "other",
+    },
   });
 
   useEffect(() => {
@@ -81,7 +90,11 @@ export function CreateServiceDialog({ open, onOpenChange }: Props) {
                 <FormItem>
                   <FormLabel>Service Name</FormLabel>
                   <FormControl>
-                    <Input placeholder="e.g. Paint Consultation" {...field} name="name" />
+                    <Input
+                      placeholder="e.g. Paint Consultation"
+                      {...field}
+                      name="name"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -94,7 +107,12 @@ export function CreateServiceDialog({ open, onOpenChange }: Props) {
                 <FormItem>
                   <FormLabel>Description (optional)</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Brief description…" rows={2} {...field} name="description" />
+                    <Textarea
+                      placeholder="Brief description…"
+                      rows={2}
+                      {...field}
+                      name="description"
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -108,7 +126,14 @@ export function CreateServiceDialog({ open, onOpenChange }: Props) {
                   <FormItem>
                     <FormLabel>Price (₱)</FormLabel>
                     <FormControl>
-                      <Input type="number" min="0" step="0.01" placeholder="0.00" {...field} name="price" />
+                      <Input
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        placeholder="0.00"
+                        {...field}
+                        name="price"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -121,7 +146,13 @@ export function CreateServiceDialog({ open, onOpenChange }: Props) {
                   <FormItem>
                     <FormLabel>Duration (min)</FormLabel>
                     <FormControl>
-                      <Input type="number" min="1" placeholder="60" {...field} name="duration" />
+                      <Input
+                        type="number"
+                        min="1"
+                        placeholder="60"
+                        {...field}
+                        name="duration"
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -143,7 +174,9 @@ export function CreateServiceDialog({ open, onOpenChange }: Props) {
                     </FormControl>
                     <SelectContent>
                       {SERVICE_CATEGORIES.map((c) => (
-                        <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>
+                        <SelectItem key={c.value} value={c.value}>
+                          {c.label}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -152,8 +185,16 @@ export function CreateServiceDialog({ open, onOpenChange }: Props) {
               )}
             />
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
-              <Button type="submit" disabled={isPending}>{isPending ? "Creating…" : "Create Service"}</Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isPending}>
+                {isPending ? "Creating…" : "Create Service"}
+              </Button>
             </DialogFooter>
           </form>
         </Form>

@@ -10,7 +10,7 @@ Marks a function or file as cacheable. The cached output is included in the stat
 
 ```tsx
 // File-level (applies to all exports)
-'use cache'
+"use cache";
 
 export async function getData() {
   /* ... */
@@ -18,18 +18,18 @@ export async function getData() {
 
 // Function-level
 async function Component() {
-  'use cache'
+  "use cache";
   // ...
 }
 ```
 
 ### Variants
 
-| Directive              | Description                    | Cache Storage            |
-| ---------------------- | ------------------------------ | ------------------------ |
-| `'use cache'`          | Standard cache (default)       | Default handler + Remote |
-| `'use cache: remote'`  | Platform remote cache          | Remote handler only      |
-| `'use cache: private'` | Per-request private cache      | Default handler (request-scoped) |
+| Directive              | Description               | Cache Storage                    |
+| ---------------------- | ------------------------- | -------------------------------- |
+| `'use cache'`          | Standard cache (default)  | Default handler + Remote         |
+| `'use cache: remote'`  | Platform remote cache     | Remote handler only              |
+| `'use cache: private'` | Per-request private cache | Default handler (request-scoped) |
 
 ### `'use cache: remote'`
 
@@ -37,10 +37,10 @@ Uses platform-specific remote cache handler. Requires network roundtrip.
 
 ```tsx
 async function HeavyComputation() {
-  'use cache: remote'
-  cacheLife('days')
+  "use cache: remote";
+  cacheLife("days");
 
-  return await expensiveCalculation()
+  return await expensiveCalculation();
 }
 ```
 
@@ -50,11 +50,11 @@ Creates a per-request private cache scope. Unlike `'use cache'`, which shares ca
 
 ```tsx
 async function UserComplianceData({ userId }: { userId: string }) {
-  'use cache: private'
-  cacheLife('seconds')
+  "use cache: private";
+  cacheLife("seconds");
 
   // Data is cached within this request only - not shared across requests
-  return await fetchSensitiveReport(userId)
+  return await fetchSensitiveReport(userId);
 }
 ```
 
@@ -64,8 +64,8 @@ async function UserComplianceData({ userId }: { userId: string }) {
 
 Next.js uses **cache handlers** to store and retrieve cached data. The directive variant determines which handlers are used:
 
-| Handler   | Description                                                                 |
-| --------- | --------------------------------------------------------------------------- |
+| Handler   | Description                                                                |
+| --------- | -------------------------------------------------------------------------- |
 | `default` | Local in-memory cache with optional persistence. Fast, single-server scope |
 | `remote`  | Platform-specific distributed cache. Network roundtrip, multi-server scope |
 
@@ -100,19 +100,19 @@ Configures cache duration and revalidation behavior.
 ### Import
 
 ```tsx
-import { cacheLife } from 'next/cache'
+import { cacheLife } from "next/cache";
 ```
 
 ### Signature
 
 ```tsx
-function cacheLife(profile: string): void
-function cacheLife(options: CacheLifeOptions): void
+function cacheLife(profile: string): void;
+function cacheLife(options: CacheLifeOptions): void;
 
 interface CacheLifeOptions {
-  stale?: number // Client cache duration (seconds)
-  revalidate?: number // Background revalidation window (seconds)
-  expire?: number // Absolute expiration (seconds)
+  stale?: number; // Client cache duration (seconds)
+  revalidate?: number; // Background revalidation window (seconds)
+  expire?: number; // Absolute expiration (seconds)
 }
 ```
 
@@ -148,7 +148,7 @@ Define custom profiles in `next.config.ts`:
 const nextConfig: NextConfig = {
   cacheLife: {
     // Custom profile
-    'blog-posts': {
+    "blog-posts": {
       stale: 300, // 5 minutes
       revalidate: 3600, // 1 hour
       expire: 86400, // 1 day
@@ -160,17 +160,17 @@ const nextConfig: NextConfig = {
       expire: 3600,
     },
   },
-}
+};
 ```
 
 ### Usage
 
 ```tsx
 async function BlogPosts() {
-  'use cache'
-  cacheLife('blog-posts') // Custom profile
+  "use cache";
+  cacheLife("blog-posts"); // Custom profile
 
-  return await db.posts.findMany()
+  return await db.posts.findMany();
 }
 ```
 
@@ -215,16 +215,16 @@ This 300-second threshold ensures that very short-lived caches don't pollute the
 ```tsx
 // This cache is DYNAMIC (expire=60 < 300)
 async function RealtimePrice() {
-  'use cache'
-  cacheLife('seconds') // expire=60, below threshold
-  return await fetchPrice()
+  "use cache";
+  cacheLife("seconds"); // expire=60, below threshold
+  return await fetchPrice();
 }
 
 // This cache is STATIC (expire=3600 >= 300)
 async function ProductDetails() {
-  'use cache'
-  cacheLife('minutes') // expire=3600, above threshold
-  return await fetchProduct()
+  "use cache";
+  cacheLife("minutes"); // expire=3600, above threshold
+  return await fetchProduct();
 }
 ```
 
@@ -237,24 +237,24 @@ Tags cached data for targeted invalidation.
 ### Import
 
 ```tsx
-import { cacheTag } from 'next/cache'
+import { cacheTag } from "next/cache";
 ```
 
 ### Signature
 
 ```tsx
-function cacheTag(...tags: string[]): void
+function cacheTag(...tags: string[]): void;
 ```
 
 ### Usage
 
 ```tsx
 async function UserProfile({ userId }: { userId: string }) {
-  'use cache'
-  cacheTag('users', `user-${userId}`) // Multiple tags
-  cacheLife('hours')
+  "use cache";
+  cacheTag("users", `user-${userId}`); // Multiple tags
+  cacheLife("hours");
 
-  return await db.users.findUnique({ where: { id: userId } })
+  return await db.users.findUnique({ where: { id: userId } });
 }
 ```
 
@@ -263,23 +263,23 @@ async function UserProfile({ userId }: { userId: string }) {
 **Entity-based tagging**:
 
 ```tsx
-cacheTag('posts') // All posts
-cacheTag(`post-${postId}`) // Specific post
-cacheTag(`user-${userId}-posts`) // User's posts
+cacheTag("posts"); // All posts
+cacheTag(`post-${postId}`); // Specific post
+cacheTag(`user-${userId}-posts`); // User's posts
 ```
 
 **Feature-based tagging**:
 
 ```tsx
-cacheTag('homepage')
-cacheTag('dashboard')
-cacheTag('admin')
+cacheTag("homepage");
+cacheTag("dashboard");
+cacheTag("admin");
 ```
 
 **Combined approach**:
 
 ```tsx
-cacheTag('posts', `post-${id}`, `author-${authorId}`)
+cacheTag("posts", `post-${id}`, `author-${authorId}`);
 ```
 
 ### Tag Constraints
@@ -293,13 +293,13 @@ Tags have enforced limits:
 
 ```tsx
 // ❌ Tag too long (>256 chars) - will be ignored with warning
-cacheTag('a'.repeat(300))
+cacheTag("a".repeat(300));
 
 // ❌ Too many tags (>128) - excess will be ignored with warning
-cacheTag(...Array(200).fill('tag'))
+cacheTag(...Array(200).fill("tag"));
 
 // ✅ Valid usage
-cacheTag('products', `product-${id}`, `category-${category}`)
+cacheTag("products", `product-${id}`, `category-${category}`);
 ```
 
 ### Implicit Tags (Automatic)
@@ -307,16 +307,16 @@ cacheTag('products', `product-${id}`, `category-${category}`)
 In addition to explicit `cacheTag()` calls, Next.js automatically applies **implicit tags** based on the route hierarchy. This means `revalidatePath()` works without any explicit `cacheTag()` calls:
 
 ```tsx
-'use server'
-import { revalidatePath } from 'next/cache'
+"use server";
+import { revalidatePath } from "next/cache";
 
 export async function publishBlogPost() {
   await db.posts.create({
     /* ... */
-  })
+  });
 
   // Works without explicit cacheTag() - uses implicit route-based tags
-  revalidatePath('/blog', 'layout') // Invalidates all /blog/* routes
+  revalidatePath("/blog", "layout"); // Invalidates all /blog/* routes
 }
 ```
 
@@ -367,13 +367,13 @@ Cache keys are composed of multiple parts:
 ```tsx
 // These create TWO separate cache entries (third call is a cache hit):
 async function getProduct(id: string) {
-  'use cache'
-  return db.products.findUnique({ where: { id } })
+  "use cache";
+  return db.products.findUnique({ where: { id } });
 }
 
-await getProduct('prod-1') // Cache entry 1: [buildId, getProduct, "prod-1"]
-await getProduct('prod-2') // Cache entry 2: [buildId, getProduct, "prod-2"]
-await getProduct('prod-1') // Cache HIT on entry 1
+await getProduct("prod-1"); // Cache entry 1: [buildId, getProduct, "prod-1"]
+await getProduct("prod-2"); // Cache entry 2: [buildId, getProduct, "prod-2"]
+await getProduct("prod-1"); // Cache HIT on entry 1
 ```
 
 ### Object Arguments and Cache Keys
@@ -382,16 +382,16 @@ Arguments are serialized using React's `encodeReply()`, which performs **structu
 
 ```tsx
 async function getData(options: { limit: number }) {
-  'use cache'
-  return fetch(`/api?limit=${options.limit}`)
+  "use cache";
+  return fetch(`/api?limit=${options.limit}`);
 }
 
 // Objects with identical structure produce the same cache key
-getData({ limit: 10 }) // Cache key includes serialized { limit: 10 }
-getData({ limit: 10 }) // HIT! Same structural content
+getData({ limit: 10 }); // Cache key includes serialized { limit: 10 }
+getData({ limit: 10 }); // HIT! Same structural content
 
 // Different values = different cache keys
-getData({ limit: 20 }) // MISS - different content
+getData({ limit: 20 }); // MISS - different content
 ```
 
 **Best practice:** While objects work correctly, primitives are simpler to reason about:
@@ -399,8 +399,8 @@ getData({ limit: 20 }) // MISS - different content
 ```tsx
 // ✅ Clear and explicit
 async function getData(limit: number) {
-  'use cache'
-  return fetch(`/api?limit=${limit}`)
+  "use cache";
+  return fetch(`/api?limit=${limit}`);
 }
 ```
 
@@ -413,29 +413,29 @@ async function getData(limit: number) {
 `React.cache()` provides per-request deduplication for regular Server Components, but it does **not** work across `'use cache'` boundaries. Each `'use cache'` function runs in its own isolated scope — `React.cache()` storage from the outer request is not available inside a cached function.
 
 ```tsx
-import { cache } from 'react'
+import { cache } from "react";
 
 const getUser = cache(async (id: string) => {
-  console.log('Fetching user', id)
-  return await db.users.findUnique({ where: { id } })
-})
+  console.log("Fetching user", id);
+  return await db.users.findUnique({ where: { id } });
+});
 
 // Outside 'use cache' - React.cache deduplicates normally
 async function UserHeader({ userId }: { userId: string }) {
-  const user = await getUser(userId) // Fetch #1
-  return <h1>{user.name}</h1>
+  const user = await getUser(userId); // Fetch #1
+  return <h1>{user.name}</h1>;
 }
 
 async function UserSidebar({ userId }: { userId: string }) {
-  const user = await getUser(userId) // Deduplicated - reuses Fetch #1
-  return <aside>{user.bio}</aside>
+  const user = await getUser(userId); // Deduplicated - reuses Fetch #1
+  return <aside>{user.bio}</aside>;
 }
 
 // Inside 'use cache' - React.cache does NOT deduplicate
 async function CachedUserCard({ userId }: { userId: string }) {
-  'use cache'
-  const user = await getUser(userId) // Separate fetch - isolated scope
-  return <div>{user.name}</div>
+  "use cache";
+  const user = await getUser(userId); // Separate fetch - isolated scope
+  return <div>{user.name}</div>;
 }
 ```
 
@@ -450,26 +450,26 @@ Immediately invalidates cache entries and ensures read-your-own-writes.
 ### Import
 
 ```tsx
-import { updateTag } from 'next/cache'
+import { updateTag } from "next/cache";
 ```
 
 ### Signature
 
 ```tsx
-function updateTag(tag: string): void
+function updateTag(tag: string): void;
 ```
 
 ### Usage
 
 ```tsx
-'use server'
-import { updateTag } from 'next/cache'
+"use server";
+import { updateTag } from "next/cache";
 
 export async function createPost(formData: FormData) {
-  const post = await db.posts.create({ data: formData })
+  const post = await db.posts.create({ data: formData });
 
-  updateTag('posts') // Update all cache entries tagged with 'posts'
-  updateTag(`user-${userId}`) // Update all cache entries tagged with this user
+  updateTag("posts"); // Update all cache entries tagged with 'posts'
+  updateTag(`user-${userId}`); // Update all cache entries tagged with this user
 
   // Client immediately sees fresh data
 }
@@ -490,38 +490,41 @@ Marks cache entries as stale for background revalidation.
 ### Import
 
 ```tsx
-import { revalidateTag } from 'next/cache'
+import { revalidateTag } from "next/cache";
 ```
 
 ### Signature
 
 ```tsx
-function revalidateTag(tag: string, profile: string | { expire?: number }): void
+function revalidateTag(
+  tag: string,
+  profile: string | { expire?: number },
+): void;
 ```
 
 ### Parameters
 
-| Parameter | Type                            | Description                                                    |
-| --------- | ------------------------------- | -------------------------------------------------------------- |
-| `tag`     | `string`                        | The cache tag to invalidate                                    |
-| `profile` | `string \| { expire?: number }` | Cache profile name or object with expire time (seconds)        |
+| Parameter | Type                            | Description                                             |
+| --------- | ------------------------------- | ------------------------------------------------------- |
+| `tag`     | `string`                        | The cache tag to invalidate                             |
+| `profile` | `string \| { expire?: number }` | Cache profile name or object with expire time (seconds) |
 
 > **Note:** Unlike `cacheLife()` which accepts `stale`, `revalidate`, and `expire`, the `revalidateTag()` object form only accepts `expire`. Use a predefined profile name (like `'hours'`) for full control over stale-while-revalidate behavior.
 
 ### Usage
 
 ```tsx
-'use server'
-import { revalidateTag } from 'next/cache'
+"use server";
+import { revalidateTag } from "next/cache";
 
 export async function updateSettings(data: FormData) {
-  await db.settings.update({ data })
+  await db.settings.update({ data });
 
   // With predefined profile (recommended)
-  revalidateTag('settings', 'hours')
+  revalidateTag("settings", "hours");
 
   // With custom expiration
-  revalidateTag('settings', { expire: 3600 })
+  revalidateTag("settings", { expire: 3600 });
 }
 ```
 
@@ -554,28 +557,28 @@ Here's a decision guide:
 ### E-commerce Example
 
 ```tsx
-'use server'
-import { updateTag, revalidateTag } from 'next/cache'
+"use server";
+import { updateTag, revalidateTag } from "next/cache";
 
 // When USER adds to cart → updateTag (they need accurate count)
 export async function addToCart(productId: string, userId: string) {
-  await db.cart.add({ productId, userId })
-  updateTag(`cart-${userId}`) // Immediate - user sees their cart
+  await db.cart.add({ productId, userId });
+  updateTag(`cart-${userId}`); // Immediate - user sees their cart
 }
 
 // When INVENTORY changes from warehouse sync → revalidateTag
 export async function syncInventory(products: Product[]) {
-  await db.inventory.bulkUpdate(products)
-  revalidateTag('inventory', 'max') // Background - eventual consistency OK
+  await db.inventory.bulkUpdate(products);
+  revalidateTag("inventory", "max"); // Background - eventual consistency OK
 }
 
 // When USER completes purchase → updateTag for buyer, revalidateTag for product
 export async function completePurchase(orderId: string) {
-  const order = await processOrder(orderId)
+  const order = await processOrder(orderId);
 
-  updateTag(`order-${orderId}`) // Buyer sees confirmation immediately
-  updateTag(`cart-${order.userId}`) // Buyer's cart clears immediately
-  revalidateTag(`product-${order.productId}`, 'max') // Others see updated stock eventually
+  updateTag(`order-${orderId}`); // Buyer sees confirmation immediately
+  updateTag(`cart-${order.userId}`); // Buyer's cart clears immediately
+  revalidateTag(`product-${order.productId}`, "max"); // Others see updated stock eventually
 }
 ```
 
@@ -594,29 +597,29 @@ Revalidates all cache entries associated with a path.
 ### Import
 
 ```tsx
-import { revalidatePath } from 'next/cache'
+import { revalidatePath } from "next/cache";
 ```
 
 ### Signature
 
 ```tsx
-function revalidatePath(path: string, type?: 'page' | 'layout'): void
+function revalidatePath(path: string, type?: "page" | "layout"): void;
 ```
 
 ### Usage
 
 ```tsx
-'use server'
-import { revalidatePath } from 'next/cache'
+"use server";
+import { revalidatePath } from "next/cache";
 
 export async function updateBlog() {
   await db.posts.update({
     /* ... */
-  })
+  });
 
-  revalidatePath('/blog') // Specific path
-  revalidatePath('/blog', 'layout') // Layout and all children
-  revalidatePath('/', 'layout') // Entire app
+  revalidatePath("/blog"); // Specific path
+  revalidatePath("/blog", "layout"); // Layout and all children
+  revalidatePath("/", "layout"); // Entire app
 }
 ```
 
@@ -629,28 +632,28 @@ Explicitly defers rendering to request time without accessing runtime APIs like 
 ### Import
 
 ```tsx
-import { connection } from 'next/server'
+import { connection } from "next/server";
 ```
 
 ### Signature
 
 ```tsx
-function connection(): Promise<void>
+function connection(): Promise<void>;
 ```
 
 ### Usage
 
 ```tsx
-import { connection } from 'next/server'
-import { Suspense } from 'react'
+import { connection } from "next/server";
+import { Suspense } from "react";
 
 async function UniqueContent() {
-  await connection() // Defer to request time
+  await connection(); // Defer to request time
 
   // Non-deterministic operations that need fresh values per request
-  const uuid = crypto.randomUUID()
-  const timestamp = Date.now()
-  const random = Math.random()
+  const uuid = crypto.randomUUID();
+  const timestamp = Date.now();
+  const random = Math.random();
 
   return (
     <div>
@@ -658,7 +661,7 @@ async function UniqueContent() {
       <p>Generated: {timestamp}</p>
       <p>Random: {random}</p>
     </div>
-  )
+  );
 }
 
 export default function Page() {
@@ -666,19 +669,19 @@ export default function Page() {
     <Suspense fallback={<Loading />}>
       <UniqueContent />
     </Suspense>
-  )
+  );
 }
 ```
 
 ### When to Use `connection()`
 
-| Scenario                                                  | Use `connection()`? |
-| --------------------------------------------------------- | ------------------- |
-| Need unique values per request (`crypto.randomUUID()`)    | ✅ Yes              |
-| Using `Math.random()`, `Date.now()`                       | ✅ Yes              |
-| Non-deterministic operations that shouldn't be cached     | ✅ Yes              |
-| Already using `cookies()` or `headers()`                  | ❌ No (not needed)  |
-| Data is cacheable (same for all users)                    | ❌ No (use `'use cache'`) |
+| Scenario                                               | Use `connection()`?       |
+| ------------------------------------------------------ | ------------------------- |
+| Need unique values per request (`crypto.randomUUID()`) | ✅ Yes                    |
+| Using `Math.random()`, `Date.now()`                    | ✅ Yes                    |
+| Non-deterministic operations that shouldn't be cached  | ✅ Yes                    |
+| Already using `cookies()` or `headers()`               | ❌ No (not needed)        |
+| Data is cacheable (same for all users)                 | ❌ No (use `'use cache'`) |
 
 ### Why `connection()` Exists
 
@@ -687,15 +690,15 @@ Without `connection()`, non-deterministic operations in Server Components might 
 ```tsx
 // ❌ Problem: UUID generated once at build time
 async function BadExample() {
-  const uuid = crypto.randomUUID() // Same value for all users!
-  return <div>{uuid}</div>
+  const uuid = crypto.randomUUID(); // Same value for all users!
+  return <div>{uuid}</div>;
 }
 
 // ✅ Solution: UUID generated per request
 async function GoodExample() {
-  await connection()
-  const uuid = crypto.randomUUID() // Unique per request
-  return <div>{uuid}</div>
+  await connection();
+  const uuid = crypto.randomUUID(); // Unique per request
+  return <div>{uuid}</div>;
 }
 ```
 
@@ -706,16 +709,16 @@ If you're already accessing `cookies()` or `headers()`, you don't need `connecti
 ```tsx
 // No need for connection() - cookies() already makes this dynamic
 async function UserContent() {
-  const session = (await cookies()).get('session')
-  const timestamp = Date.now() // Already dynamic due to cookies()
-  return <div>{timestamp}</div>
+  const session = (await cookies()).get("session");
+  const timestamp = Date.now(); // Already dynamic due to cookies()
+  return <div>{timestamp}</div>;
 }
 
 // Need connection() - no other dynamic API used
 async function AnonymousContent() {
-  await connection() // Explicit dynamic
-  const timestamp = Date.now()
-  return <div>{timestamp}</div>
+  await connection(); // Explicit dynamic
+  const timestamp = Date.now();
+  return <div>{timestamp}</div>;
 }
 ```
 
@@ -726,13 +729,13 @@ async function AnonymousContent() {
 ### Enable Cache Components
 
 ```typescript
-import type { NextConfig } from 'next'
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
-}
+};
 
-export default nextConfig
+export default nextConfig;
 ```
 
 ### Configure Cache Handlers
@@ -746,7 +749,7 @@ const nextConfig: NextConfig = {
     // Platform-specific remote handler
     remote: CustomRemoteHandler,
   },
-}
+};
 ```
 
 ### Define Cache Profiles
@@ -765,7 +768,7 @@ const nextConfig: NextConfig = {
       expire: 604800,
     },
   },
-}
+};
 ```
 
 ---
@@ -782,10 +785,10 @@ Next.js renders ALL permutations of provided parameters to create reusable subsh
 // app/products/[category]/[slug]/page.tsx
 export async function generateStaticParams() {
   return [
-    { category: 'jackets', slug: 'bomber' },
-    { category: 'jackets', slug: 'parka' },
-    { category: 'shoes', slug: 'sneakers' },
-  ]
+    { category: "jackets", slug: "bomber" },
+    { category: "jackets", slug: "parka" },
+    { category: "shoes", slug: "sneakers" },
+  ];
 }
 ```
 
@@ -809,13 +812,13 @@ export async function generateStaticParams() {
 ```tsx
 // ❌ BUILD ERROR: Empty array not allowed
 export function generateStaticParams() {
-  return []
+  return [];
 }
 
 // ✅ CORRECT: Provide at least one param set
 export async function generateStaticParams() {
-  const products = await getProducts({ limit: 100 })
-  return products.map((p) => ({ category: p.category, slug: p.slug }))
+  const products = await getProducts({ limit: 100 });
+  return products.map((p) => ({ category: p.category, slug: p.slug }));
 }
 ```
 
@@ -829,17 +832,17 @@ export default async function CategoryLayout({
   children,
   params,
 }: {
-  children: React.ReactNode
-  params: Promise<{ category: string }>
+  children: React.ReactNode;
+  params: Promise<{ category: string }>;
 }) {
-  const { category } = await params
+  const { category } = await params;
 
   return (
     <>
       <h2>{category}</h2>
       <Suspense>{children}</Suspense> {/* Creates subshell boundary */}
     </>
-  )
+  );
 }
 ```
 
@@ -860,15 +863,15 @@ GET Route Handlers follow the same prerendering model as pages. When `cacheCompo
 
 ```tsx
 // app/api/products/route.ts
-import { cacheLife, cacheTag } from 'next/cache'
+import { cacheLife, cacheTag } from "next/cache";
 
 export async function GET() {
-  'use cache'
-  cacheTag('products')
-  cacheLife('hours')
+  "use cache";
+  cacheTag("products");
+  cacheLife("hours");
 
-  const products = await db.products.findMany()
-  return Response.json(products)
+  const products = await db.products.findMany();
+  return Response.json(products);
 }
 ```
 
@@ -882,17 +885,17 @@ export async function GET() {
 ```tsx
 // Dynamic GET handler (reads request headers)
 export async function GET(request: Request) {
-  const authHeader = request.headers.get('authorization')
-  const data = await fetchProtectedData(authHeader)
-  return Response.json(data)
+  const authHeader = request.headers.get("authorization");
+  const data = await fetchProtectedData(authHeader);
+  return Response.json(data);
 }
 
 // Static GET handler with cache (no dynamic APIs)
 export async function GET() {
-  'use cache'
-  cacheLife('days')
-  const sitemap = await generateSitemapData()
-  return Response.json(sitemap)
+  "use cache";
+  cacheLife("days");
+  const sitemap = await generateSitemapData();
+  return Response.json(sitemap);
 }
 ```
 
@@ -908,11 +911,11 @@ These exports are **deprecated** when `cacheComponents: true`:
 
 ```tsx
 // app/products/page.tsx
-export const revalidate = 3600 // 1 hour
+export const revalidate = 3600; // 1 hour
 
 export default async function ProductsPage() {
-  const products = await db.products.findMany()
-  return <ProductList products={products} />
+  const products = await db.products.findMany();
+  return <ProductList products={products} />;
 }
 ```
 
@@ -926,18 +929,18 @@ export default async function ProductsPage() {
 
 ```tsx
 // app/products/page.tsx
-import { cacheLife } from 'next/cache'
+import { cacheLife } from "next/cache";
 
 async function getProducts() {
-  'use cache'
-  cacheLife('hours') // Co-located with the data
+  "use cache";
+  cacheLife("hours"); // Co-located with the data
 
-  return await db.products.findMany()
+  return await db.products.findMany();
 }
 
 export default async function ProductsPage() {
-  const products = await getProducts()
-  return <ProductList products={products} />
+  const products = await getProducts();
+  return <ProductList products={products} />;
 }
 ```
 
@@ -954,12 +957,12 @@ export default async function ProductsPage() {
 
 ```tsx
 // app/products/page.tsx
-export const dynamic = 'force-static'
+export const dynamic = "force-static";
 
 export default async function ProductsPage() {
   // Headers would return empty, silently breaking components
-  const headers = await getHeaders()
-  return <ProductList />
+  const headers = await getHeaders();
+  return <ProductList />;
 }
 ```
 
@@ -982,7 +985,7 @@ export default async function ProductsPage() {
         <DynamicUserRecommendations /> {/* Dynamic via Suspense */}
       </Suspense>
     </>
-  )
+  );
 }
 ```
 
@@ -1017,11 +1020,11 @@ export default async function ProductsPage() {
 
 ```tsx
 // app/products/page.tsx
-export const revalidate = 3600
+export const revalidate = 3600;
 
 export default async function ProductsPage() {
-  const products = await db.products.findMany()
-  return <ProductGrid products={products} />
+  const products = await db.products.findMany();
+  return <ProductGrid products={products} />;
 }
 ```
 
@@ -1029,18 +1032,18 @@ export default async function ProductsPage() {
 
 ```tsx
 // app/products/page.tsx
-import { cacheLife } from 'next/cache'
+import { cacheLife } from "next/cache";
 
 async function getProducts() {
-  'use cache'
-  cacheLife('hours') // Roughly equivalent to revalidate = 3600
+  "use cache";
+  cacheLife("hours"); // Roughly equivalent to revalidate = 3600
 
-  return db.products.findMany()
+  return db.products.findMany();
 }
 
 export default async function ProductsPage() {
-  const products = await getProducts()
-  return <ProductGrid products={products} />
+  const products = await getProducts();
+  return <ProductGrid products={products} />;
 }
 ```
 
@@ -1050,12 +1053,12 @@ export default async function ProductsPage() {
 
 ```tsx
 // app/dashboard/page.tsx
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic";
 
 export default async function Dashboard() {
-  const user = await getCurrentUser()
-  const stats = await getStats()
-  const notifications = await getNotifications(user.id)
+  const user = await getCurrentUser();
+  const stats = await getStats();
+  const notifications = await getNotifications(user.id);
 
   return (
     <div>
@@ -1063,7 +1066,7 @@ export default async function Dashboard() {
       <Stats data={stats} />
       <Notifications items={notifications} />
     </div>
-  )
+  );
 }
 ```
 
@@ -1071,13 +1074,13 @@ export default async function Dashboard() {
 
 ```tsx
 // app/dashboard/page.tsx
-import { Suspense } from 'react'
+import { Suspense } from "react";
 
 // All data is dynamic - fetches user-specific content
 async function DashboardContent() {
-  const user = await getCurrentUser()
-  const stats = await getStats()
-  const notifications = await getNotifications(user.id)
+  const user = await getCurrentUser();
+  const stats = await getStats();
+  const notifications = await getNotifications(user.id);
 
   return (
     <>
@@ -1085,7 +1088,7 @@ async function DashboardContent() {
       <Stats data={stats} />
       <Notifications items={notifications} />
     </>
-  )
+  );
 }
 
 export default function Dashboard() {
@@ -1095,7 +1098,7 @@ export default function Dashboard() {
         <DashboardContent /> {/* Streams dynamically */}
       </Suspense>
     </div>
-  )
+  );
 }
 ```
 
@@ -1107,28 +1110,28 @@ export default function Dashboard() {
 
 ```tsx
 // app/blog/[slug]/page.tsx
-export const revalidate = 3600
+export const revalidate = 3600;
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts()
-  return posts.map((post) => ({ slug: post.slug }))
+  const posts = await getAllPosts();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export default async function BlogPost({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params
-  const post = await getPost(slug)
-  return <Article post={post} />
+  const { slug } = await params;
+  const post = await getPost(slug);
+  return <Article post={post} />;
 }
 
 // api/revalidate/route.ts
 export async function POST(request: Request) {
-  const { slug } = await request.json()
-  revalidatePath(`/blog/${slug}`)
-  return Response.json({ revalidated: true })
+  const { slug } = await request.json();
+  revalidatePath(`/blog/${slug}`);
+  return Response.json({ revalidated: true });
 }
 ```
 
@@ -1136,34 +1139,34 @@ export async function POST(request: Request) {
 
 ```tsx
 // lib/posts.ts
-import { cacheTag, cacheLife } from 'next/cache'
+import { cacheTag, cacheLife } from "next/cache";
 
 export async function getPost(slug: string) {
-  'use cache'
-  cacheTag('posts', `post-${slug}`)
-  cacheLife('hours')
+  "use cache";
+  cacheTag("posts", `post-${slug}`);
+  cacheLife("hours");
 
-  return db.posts.findUnique({ where: { slug } })
+  return db.posts.findUnique({ where: { slug } });
 }
 
 // app/blog/[slug]/page.tsx
 export default async function BlogPost({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params
-  const post = await getPost(slug)
-  return <Article post={post} />
+  const { slug } = await params;
+  const post = await getPost(slug);
+  return <Article post={post} />;
 }
 
 // app/api/revalidate/route.ts
-import { revalidatePath } from 'next/cache'
+import { revalidatePath } from "next/cache";
 
 export async function POST(request: Request) {
-  const { slug } = await request.json()
-  revalidatePath(`/blog/${slug}`)
-  return Response.json({ revalidated: true })
+  const { slug } = await request.json();
+  revalidatePath(`/blog/${slug}`);
+  return Response.json({ revalidated: true });
 }
 ```
 
@@ -1179,12 +1182,12 @@ export async function POST(request: Request) {
 
 ```tsx
 // app/products/page.tsx
-export const fetchCache = 'force-cache' // All fetches cached
+export const fetchCache = "force-cache"; // All fetches cached
 
 export default async function ProductsPage() {
-  const products = await fetch('/api/products').then((r) => r.json())
-  const categories = await fetch('/api/categories').then((r) => r.json())
-  return <ProductGrid products={products} categories={categories} />
+  const products = await fetch("/api/products").then((r) => r.json());
+  const categories = await fetch("/api/categories").then((r) => r.json());
+  return <ProductGrid products={products} categories={categories} />;
 }
 ```
 
@@ -1192,30 +1195,30 @@ export default async function ProductsPage() {
 
 ```tsx
 // app/products/page.tsx
-import { cacheLife, cacheTag } from 'next/cache'
+import { cacheLife, cacheTag } from "next/cache";
 
 async function getProducts() {
-  'use cache'
-  cacheTag('products')
-  cacheLife('hours')
+  "use cache";
+  cacheTag("products");
+  cacheLife("hours");
 
-  return fetch('/api/products').then((r) => r.json())
+  return fetch("/api/products").then((r) => r.json());
 }
 
 async function getCategories() {
-  'use cache'
-  cacheTag('categories')
-  cacheLife('days')
+  "use cache";
+  cacheTag("categories");
+  cacheLife("days");
 
-  return fetch('/api/categories').then((r) => r.json())
+  return fetch("/api/categories").then((r) => r.json());
 }
 
 export default async function ProductsPage() {
   const [products, categories] = await Promise.all([
     getProducts(),
     getCategories(),
-  ])
-  return <ProductGrid products={products} categories={categories} />
+  ]);
+  return <ProductGrid products={products} categories={categories} />;
 }
 ```
 
@@ -1230,10 +1233,10 @@ export default async function ProductsPage() {
 When [Draft Mode](https://nextjs.org/docs/app/building-your-application/configuring/draft-mode) is enabled, cache entries are **not saved**:
 
 ```tsx
-import { draftMode } from 'next/headers'
+import { draftMode } from "next/headers";
 
 export default async function PreviewPage() {
-  const { isEnabled } = await draftMode()
+  const { isEnabled } = await draftMode();
 
   // When isEnabled is true:
   // - 'use cache' functions still execute
@@ -1265,26 +1268,26 @@ Cache is bypassed (not read from) when:
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  const product = await getProduct(id) // May use its own 'use cache'
-  return { title: product.name, description: product.summary }
+  const { id } = await params;
+  const product = await getProduct(id); // May use its own 'use cache'
+  return { title: product.name, description: product.summary };
 }
 
 // Viewport follows the same independent tracking
 export async function generateViewport() {
-  return { themeColor: '#000000' }
+  return { themeColor: "#000000" };
 }
 
 // Page cache is separate from metadata cache
 export default async function ProductPage({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  return <ProductDetails productId={id} />
+  const { id } = await params;
+  return <ProductDetails productId={id} />;
 }
 ```
 
@@ -1301,8 +1304,8 @@ During static prerendering (build time), cached functions have a **50-second tim
 ```tsx
 // If this takes >50s during build, it becomes dynamic
 async function SlowData() {
-  'use cache'
-  return await verySlowApiCall() // May timeout during prerender
+  "use cache";
+  return await verySlowApiCall(); // May timeout during prerender
 }
 ```
 
@@ -1320,19 +1323,19 @@ When cached functions call other cached functions, cache metadata propagates **u
 
 ```tsx
 async function Inner() {
-  'use cache'
-  cacheLife('seconds') // expire=60
-  cacheTag('inner')
-  return await fetchData()
+  "use cache";
+  cacheLife("seconds"); // expire=60
+  cacheTag("inner");
+  return await fetchData();
 }
 
 async function Outer() {
-  'use cache'
-  cacheLife('hours') // expire=86400
-  cacheTag('outer')
+  "use cache";
+  cacheLife("hours"); // expire=86400
+  cacheTag("outer");
 
-  const data = await Inner() // Calls inner cached function
-  return process(data)
+  const data = await Inner(); // Calls inner cached function
+  return process(data);
 }
 
 // Outer's effective cache:
@@ -1346,10 +1349,10 @@ This ensures parent caches don't outlive their dependencies.
 
 Cache behavior varies depending on your deployment target:
 
-| Environment  | Cache Persistence                           | Configuration                        |
-| ------------ | ------------------------------------------- | ------------------------------------ |
-| **Serverless** | Cache does NOT persist between invocations | Use `'use cache: remote'` for shared state |
-| **Self-hosted** | In-memory cache persists across requests   | Configure `cacheMaxMemorySize`       |
+| Environment     | Cache Persistence                          | Configuration                              |
+| --------------- | ------------------------------------------ | ------------------------------------------ |
+| **Serverless**  | Cache does NOT persist between invocations | Use `'use cache: remote'` for shared state |
+| **Self-hosted** | In-memory cache persists across requests   | Configure `cacheMaxMemorySize`             |
 
 **Serverless (Vercel, AWS Lambda, etc.)**: Each function invocation starts with a cold cache. The default handler's in-memory cache is lost between invocations. Use `'use cache: remote'` or a platform-specific remote cache handler for data that must persist.
 
@@ -1363,7 +1366,7 @@ const nextConfig: NextConfig = {
       maxMemorySize: 52428800, // 50MB (default)
     },
   },
-}
+};
 ```
 
 Setting `maxMemorySize: 0` disables in-memory caching entirely, which can be useful when using an external cache handler exclusively.
@@ -1376,22 +1379,22 @@ Setting `maxMemorySize: 0` disables in-memory caching entirely, which can be use
 
 ```typescript
 type CacheLife = {
-  stale?: number // Default: 300 (from staleTimes.static)
-  revalidate?: number // Default: profile-dependent
-  expire?: number // Default: profile-dependent
-}
+  stale?: number; // Default: 300 (from staleTimes.static)
+  revalidate?: number; // Default: profile-dependent
+  expire?: number; // Default: profile-dependent
+};
 ```
 
 ### CacheLifeProfile
 
 ```typescript
 type CacheLifeProfile =
-  | 'default'
-  | 'seconds'
-  | 'minutes'
-  | 'hours'
-  | 'days'
-  | 'weeks'
-  | 'max'
-  | string // Custom profiles
+  | "default"
+  | "seconds"
+  | "minutes"
+  | "hours"
+  | "days"
+  | "weeks"
+  | "max"
+  | string; // Custom profiles
 ```

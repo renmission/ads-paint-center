@@ -25,12 +25,12 @@ const weatherTool = tool({
 
 ## Tool Properties
 
-| Property        | Required | Description                                      |
-| --------------- | -------- | ------------------------------------------------ |
-| `description`   | No       | Helps model decide when to use tool              |
-| `inputSchema`   | Yes      | Zod schema for input validation                  |
-| `outputSchema`  | No       | Zod schema for output type safety                |
-| `execute`       | No       | Async function to run when tool is called        |
+| Property        | Required | Description                                                  |
+| --------------- | -------- | ------------------------------------------------------------ |
+| `description`   | No       | Helps model decide when to use tool                          |
+| `inputSchema`   | Yes      | Zod schema for input validation                              |
+| `outputSchema`  | No       | Zod schema for output type safety                            |
+| `execute`       | No       | Async function to run when tool is called                    |
 | `needsApproval` | No       | Require user approval before execution (boolean or function) |
 
 ## Using Tools with generateText
@@ -168,15 +168,15 @@ const getLocationTool = tool({
 
 When rendering tool calls in the UI, handle these states:
 
-| State                | Description                                    |
-| -------------------- | ---------------------------------------------- |
-| `input-streaming`    | Tool input is being streamed (partial args)    |
-| `input-available`    | Tool input is complete, awaiting execution     |
-| `approval-requested` | Awaiting user approval (needsApproval: true)   |
-| `approval-responded` | User responded, awaiting execution result      |
-| `output-available`   | Tool execution completed successfully          |
-| `output-denied`      | User denied approval (needsApproval only)      |
-| `output-error`       | Tool execution failed                          |
+| State                | Description                                  |
+| -------------------- | -------------------------------------------- |
+| `input-streaming`    | Tool input is being streamed (partial args)  |
+| `input-available`    | Tool input is complete, awaiting execution   |
+| `approval-requested` | Awaiting user approval (needsApproval: true) |
+| `approval-responded` | User responded, awaiting execution result    |
+| `output-available`   | Tool execution completed successfully        |
+| `output-denied`      | User denied approval (needsApproval only)    |
+| `output-error`       | Tool execution failed                        |
 
 ```typescript
 {message.parts.map((part) => {

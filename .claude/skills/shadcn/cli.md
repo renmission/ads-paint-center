@@ -25,25 +25,25 @@ npx shadcn@latest init [components...] [options]
 
 Initializes shadcn/ui in an existing project or creates a new project (when `--name` is provided). Optionally installs components in the same step.
 
-| Flag                    | Short | Description                                               | Default |
-| ----------------------- | ----- | --------------------------------------------------------- | ------- |
+| Flag                    | Short | Description                                                | Default |
+| ----------------------- | ----- | ---------------------------------------------------------- | ------- |
 | `--template <template>` | `-t`  | Template (next, start, vite, react-router, laravel, astro) | —       |
 | `--base <base>`         | `-b`  | Component library (radix, base)                            | —       |
 | `--preset [name]`       | `-p`  | Preset configuration (named, code, or URL)                 | —       |
-| `--yes`                 | `-y`  | Skip confirmation prompt                                  | `true`  |
-| `--defaults`            | `-d`  | Use defaults (`--template=next --preset=base-nova`)       | `false` |
-| `--force`               | `-f`  | Force overwrite existing configuration                    | `false` |
-| `--cwd <cwd>`           | `-c`  | Working directory                                         | current |
-| `--name <name>`         | `-n`  | Name for new project                                      | —       |
-| `--silent`              | `-s`  | Mute output                                               | `false` |
-| `--css-variables`       |       | Use CSS variables for theming                             | `true`  |
-| `--no-css-variables`    |       | Do not use CSS variables for theming                      | —       |
-| `--rtl`                 |       | Enable RTL support                                        | —       |
-| `--no-rtl`              |       | Disable RTL support                                       | —       |
-| `--reinstall`           |       | Re-install existing UI components                         | `false` |
-| `--no-reinstall`        |       | Do not re-install existing UI components                  | —       |
-| `--monorepo`            |       | Scaffold a monorepo project                               | —       |
-| `--no-monorepo`         |       | Skip the monorepo prompt                                  | —       |
+| `--yes`                 | `-y`  | Skip confirmation prompt                                   | `true`  |
+| `--defaults`            | `-d`  | Use defaults (`--template=next --preset=base-nova`)        | `false` |
+| `--force`               | `-f`  | Force overwrite existing configuration                     | `false` |
+| `--cwd <cwd>`           | `-c`  | Working directory                                          | current |
+| `--name <name>`         | `-n`  | Name for new project                                       | —       |
+| `--silent`              | `-s`  | Mute output                                                | `false` |
+| `--css-variables`       |       | Use CSS variables for theming                              | `true`  |
+| `--no-css-variables`    |       | Do not use CSS variables for theming                       | —       |
+| `--rtl`                 |       | Enable RTL support                                         | —       |
+| `--no-rtl`              |       | Disable RTL support                                        | —       |
+| `--reinstall`           |       | Re-install existing UI components                          | `false` |
+| `--no-reinstall`        |       | Do not re-install existing UI components                   | —       |
+| `--monorepo`            |       | Scaffold a monorepo project                                | —       |
+| `--no-monorepo`         |       | Skip the monorepo prompt                                   | —       |
 
 `npx shadcn@latest create` is an alias for `npx shadcn@latest init`.
 
@@ -233,15 +233,16 @@ npx shadcn@latest migrate [migration] [path] [options]
 Runs project migrations. The optional `path` argument can be a specific file or glob pattern (e.g. `"src/components/ui/**"`).
 
 Available migrations:
+
 - `icons` — migrate UI components to a different icon library
 - `radix` — migrate to unified `radix-ui` package (from individual `@radix-ui/react-*` packages)
 - `rtl` — migrate components to support RTL (right-to-left), converting physical CSS to logical properties
 
-| Flag           | Short | Description              | Default |
-| -------------- | ----- | ------------------------ | ------- |
-| `--cwd <cwd>`  | `-c`  | Working directory        | current |
-| `--list`       | `-l`  | List all migrations      | `false` |
-| `--yes`        | `-y`  | Skip confirmation prompt | `false` |
+| Flag          | Short | Description              | Default |
+| ------------- | ----- | ------------------------ | ------- |
+| `--cwd <cwd>` | `-c`  | Working directory        | current |
+| `--list`      | `-l`  | List all migrations      | `false` |
+| `--yes`       | `-y`  | Skip confirmation prompt | `false` |
 
 ### `registry` — Manage registries
 

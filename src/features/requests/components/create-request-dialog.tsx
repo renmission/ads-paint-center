@@ -43,10 +43,22 @@ interface Props {
   products: Product[];
 }
 
-export function CreateRequestDialog({ open, onOpenChange, customers, products }: Props) {
-  const [state, formAction, isPending] = useActionState(createRequestAction, undefined);
-  const [productMode, setProductMode] = useState<"select" | "describe">("select");
-  const [deliveryType, setDeliveryType] = useState<"pickup" | "delivery" | "">("");
+export function CreateRequestDialog({
+  open,
+  onOpenChange,
+  customers,
+  products,
+}: Props) {
+  const [state, formAction, isPending] = useActionState(
+    createRequestAction,
+    undefined,
+  );
+  const [productMode, setProductMode] = useState<"select" | "describe">(
+    "select",
+  );
+  const [deliveryType, setDeliveryType] = useState<"pickup" | "delivery" | "">(
+    "",
+  );
 
   const form = useForm<CreateRequestInput>({
     resolver: zodResolver(createRequestSchema),
@@ -118,7 +130,10 @@ export function CreateRequestDialog({ open, onOpenChange, customers, products }:
                   type="button"
                   variant={productMode === "select" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => { setProductMode("select"); form.setValue("productDescription", ""); }}
+                  onClick={() => {
+                    setProductMode("select");
+                    form.setValue("productDescription", "");
+                  }}
                 >
                   Select Product
                 </Button>
@@ -126,7 +141,10 @@ export function CreateRequestDialog({ open, onOpenChange, customers, products }:
                   type="button"
                   variant={productMode === "describe" ? "default" : "outline"}
                   size="sm"
-                  onClick={() => { setProductMode("describe"); form.setValue("productId", ""); }}
+                  onClick={() => {
+                    setProductMode("describe");
+                    form.setValue("productId", "");
+                  }}
                 >
                   Describe Product
                 </Button>
@@ -139,8 +157,15 @@ export function CreateRequestDialog({ open, onOpenChange, customers, products }:
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Product</FormLabel>
-                      <input type="hidden" name="productId" value={field.value} />
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <input
+                        type="hidden"
+                        name="productId"
+                        value={field.value}
+                      />
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select product…" />
@@ -245,7 +270,10 @@ export function CreateRequestDialog({ open, onOpenChange, customers, products }:
                     name="deliveryAddress"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Delivery Address <span className="text-destructive">*</span></FormLabel>
+                        <FormLabel>
+                          Delivery Address{" "}
+                          <span className="text-destructive">*</span>
+                        </FormLabel>
                         <FormControl>
                           <Textarea
                             placeholder="Full delivery address…"
@@ -265,11 +293,7 @@ export function CreateRequestDialog({ open, onOpenChange, customers, products }:
                       <FormItem>
                         <FormLabel>Preferred Delivery Date</FormLabel>
                         <FormControl>
-                          <Input
-                            type="date"
-                            {...field}
-                            name="deliveryDate"
-                          />
+                          <Input type="date" {...field} name="deliveryDate" />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -286,7 +310,11 @@ export function CreateRequestDialog({ open, onOpenChange, customers, products }:
             </div>
 
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => onOpenChange(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={isPending}>

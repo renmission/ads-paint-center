@@ -23,7 +23,14 @@ import { Label } from "@/shared/components/ui/label";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Separator } from "@/shared/components/ui/separator";
 import { Badge } from "@/shared/components/ui/badge";
-import { CheckCircle, XCircle, PackageCheck, Truck, MapPin, Calendar } from "lucide-react";
+import {
+  CheckCircle,
+  XCircle,
+  PackageCheck,
+  Truck,
+  MapPin,
+  Calendar,
+} from "lucide-react";
 
 type StaffMember = { id: string; name: string };
 
@@ -35,16 +42,45 @@ interface Props {
 }
 
 const STATUS_CONFIG = {
-  pending: { label: "Pending", className: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300" },
-  approved: { label: "Approved", className: "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300" },
-  out_for_delivery: { label: "Out for Delivery", className: "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300" },
-  rejected: { label: "Rejected", className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300" },
-  fulfilled: { label: "Fulfilled", className: "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300" },
+  pending: {
+    label: "Pending",
+    className:
+      "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300",
+  },
+  approved: {
+    label: "Approved",
+    className:
+      "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300",
+  },
+  out_for_delivery: {
+    label: "Out for Delivery",
+    className:
+      "bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300",
+  },
+  rejected: {
+    label: "Rejected",
+    className: "bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300",
+  },
+  fulfilled: {
+    label: "Fulfilled",
+    className:
+      "bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300",
+  },
 } as const;
 
-export function HandleRequestDialog({ open, onOpenChange, request, staffList }: Props) {
-  const [state, formAction, isPending] = useActionState(handleRequestAction, undefined);
-  const [pendingAction, setPendingAction] = useState<"approve" | "reject" | "fulfill" | "mark_out_for_delivery" | null>(null);
+export function HandleRequestDialog({
+  open,
+  onOpenChange,
+  request,
+  staffList,
+}: Props) {
+  const [state, formAction, isPending] = useActionState(
+    handleRequestAction,
+    undefined,
+  );
+  const [pendingAction, setPendingAction] = useState<
+    "approve" | "reject" | "fulfill" | "mark_out_for_delivery" | null
+  >(null);
   const [rejectionReason, setRejectionReason] = useState("");
   const [driverId, setDriverId] = useState("");
 
@@ -79,7 +115,9 @@ export function HandleRequestDialog({ open, onOpenChange, request, staffList }: 
 
         <div className="space-y-3 text-sm">
           <div className="flex items-center justify-between">
-            <span className="font-mono font-semibold">{request.requestNumber}</span>
+            <span className="font-mono font-semibold">
+              {request.requestNumber}
+            </span>
             <Badge className={statusCfg.className}>{statusCfg.label}</Badge>
           </div>
           <Separator />
@@ -89,7 +127,9 @@ export function HandleRequestDialog({ open, onOpenChange, request, staffList }: 
             <span className="text-muted-foreground">Phone</span>
             <span>{request.customerPhone}</span>
             <span className="text-muted-foreground">Product</span>
-            <span>{request.productName ?? request.productDescription ?? "—"}</span>
+            <span>
+              {request.productName ?? request.productDescription ?? "—"}
+            </span>
             <span className="text-muted-foreground">Quantity</span>
             <span>{request.quantityRequested}</span>
             <span className="text-muted-foreground">Submitted</span>
@@ -181,7 +221,10 @@ export function HandleRequestDialog({ open, onOpenChange, request, staffList }: 
             <Button
               type="button"
               variant="outline"
-              onClick={() => { setPendingAction(null); onOpenChange(false); }}
+              onClick={() => {
+                setPendingAction(null);
+                onOpenChange(false);
+              }}
             >
               Close
             </Button>
@@ -190,7 +233,12 @@ export function HandleRequestDialog({ open, onOpenChange, request, staffList }: 
               <>
                 {pendingAction === "reject" ? (
                   <>
-                    <Button type="button" variant="ghost" size="sm" onClick={() => setPendingAction(null)}>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setPendingAction(null)}
+                    >
                       Back
                     </Button>
                     <Button

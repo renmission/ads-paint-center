@@ -6,7 +6,7 @@ import { AuthError } from "next-auth";
 
 export async function loginAction(
   _prevState: { error: string } | undefined,
-  formData: FormData
+  formData: FormData,
 ) {
   const raw = Object.fromEntries(formData);
   const parsed = loginSchema.safeParse(raw);

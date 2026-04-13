@@ -81,8 +81,8 @@ export async function SalesTable() {
     .where(
       and(
         eq(salesTransactions.status, "completed"),
-        gte(salesTransactions.createdAt, todayStart)
-      )
+        gte(salesTransactions.createdAt, todayStart),
+      ),
     );
 
   const revenue = parseFloat(statsRows[0]?.totalRevenue ?? "0");
