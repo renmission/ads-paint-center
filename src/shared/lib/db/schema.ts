@@ -58,6 +58,18 @@ export const paymentMethodEnum = pgEnum("payment_method", [
   "other",
 ]);
 
+export const orderStatusEnum = pgEnum("order_status", [
+  "pending",
+  "confirmed",
+  "fulfilled",
+  "cancelled",
+]);
+
+export const orderPaymentStatusEnum = pgEnum("order_payment_status", [
+  "unpaid",
+  "paid",
+]);
+
 // ─── Users / Staff ────────────────────────────────────────────────────────────
 
 export const users = pgTable("users", {
@@ -239,6 +251,47 @@ export const requests = pgTable("requests", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// ─── Orders (E-commerce) ──────────────────────────────────────────────────────
+
+export const orders = pgTable("orders", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderNumber: varchar("order_number", { length: 50 }).notNull().unique(),
+  customerName: varchar("customer_name", { length: 255 }).notNull(),
+  customerPhone: varchar("customer_phone", { length: 20 }).notNull(),
+  customerEmail: varchar("customer_email", { length: 255 }),
+  customerId: uuid("customer_id").references(() => customers.id, {
+    onDelete: "set null",
+  }),
+  subtotal: numeric("subtotal", { precision: 10, scale: 2 }).notNull(),
+  totalAmount: numeric("total_amount", { precision: 10, scale: 2 }).notNull(),
+  deliveryType: deliveryTypeEnum("delivery_type").notNull(),
+  deliveryAddress: text("delivery_address"),
+  paymentMethod: paymentMethodEnum("payment_method").notNull().default("cash"),
+  status: orderStatusEnum("status").notNull().default("pending"),
+  paymentStatus: orderPaymentStatusEnum("payment_status")
+    .notNull()
+    .default("unpaid"),
+  notes: text("notes"),
+  handledBy: uuid("handled_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const orderItems = pgTable("order_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  orderId: uuid("order_id")
+    .notNull()
+    .references(() => orders.id, { onDelete: "cascade" }),
+  productId: uuid("product_id")
+    .notNull()
+    .references(() => products.id, { onDelete: "restrict" }),
+  quantity: integer("quantity").notNull(),
+  unitPrice: numeric("unit_price", { precision: 10, scale: 2 }).notNull(),
+  lineTotal: numeric("line_total", { precision: 10, scale: 2 }).notNull(),
+});
+
 // ─── Relations ────────────────────────────────────────────────────────────────
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -343,5 +396,28 @@ export const requestsRelations = relations(requests, ({ one }) => ({
     fields: [requests.driverId],
     references: [users.id],
     relationName: "request_driver",
+  }),
+}));
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  customer: one(customers, {
+    fields: [orders.customerId],
+    references: [customers.id],
+  }),
+  handler: one(users, {
+    fields: [orders.handledBy],
+    references: [users.id],
+  }),
+  items: many(orderItems),
+}));
+
+export const orderItemsRelations = relations(orderItems, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderItems.orderId],
+    references: [orders.id],
+  }),
+  product: one(products, {
+    fields: [orderItems.productId],
+    references: [products.id],
   }),
 }));

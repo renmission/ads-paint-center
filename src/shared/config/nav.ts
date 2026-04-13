@@ -10,6 +10,7 @@ import {
   UserCog,
   Settings,
   Landmark,
+  ShoppingBag,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
@@ -67,6 +68,12 @@ export const navItems: NavItem[] = [
     title: "Requests",
     href: "/requests",
     icon: ClipboardList,
+    roles: ["administrator", "staff"],
+  },
+  {
+    title: "Online Orders",
+    href: "/orders",
+    icon: ShoppingBag,
     roles: ["administrator", "staff"],
   },
   {

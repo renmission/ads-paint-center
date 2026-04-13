@@ -43,6 +43,13 @@
       "when": 1776102602769,
       "tag": "0005_clean_karen_page",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1776105510780,
+      "tag": "0006_gigantic_agent_zero",
+      "breakpoints": true
     }
   ]
 }
