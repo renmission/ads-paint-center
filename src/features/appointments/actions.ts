@@ -111,6 +111,7 @@ export async function updateAppointmentAction(
     start: ["confirmed"],
     complete: ["in_progress", "confirmed"],
     cancel: ["scheduled", "confirmed"],
+    reassign: ["scheduled", "confirmed", "in_progress"],
   };
   if (!validTransitions[action]?.includes(appointment.status)) {
     return {
@@ -119,13 +120,15 @@ export async function updateAppointmentAction(
   }
 
   const newStatus =
-    action === "confirm"
-      ? "confirmed"
-      : action === "start"
-        ? "in_progress"
-        : action === "complete"
-          ? "completed"
-          : "cancelled";
+    action === "reassign"
+      ? appointment.status
+      : action === "confirm"
+        ? "confirmed"
+        : action === "start"
+          ? "in_progress"
+          : action === "complete"
+            ? "completed"
+            : "cancelled";
 
   await db
     .update(appointments)
@@ -159,13 +162,15 @@ export async function updateAppointmentAction(
   }
 
   const label =
-    action === "confirm"
-      ? "confirmed"
-      : action === "start"
-        ? "started"
-        : action === "complete"
-          ? "completed"
-          : "cancelled";
+    action === "reassign"
+      ? "updated"
+      : action === "confirm"
+        ? "confirmed"
+        : action === "start"
+          ? "started"
+          : action === "complete"
+            ? "completed"
+            : "cancelled";
 
   return { success: `Appointment ${appointment.appointmentNumber} ${label}.` };
 }
