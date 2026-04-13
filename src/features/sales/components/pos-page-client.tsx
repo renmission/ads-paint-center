@@ -1,6 +1,12 @@
 "use client";
 
-import { useState, useActionState, useEffect, useCallback, useMemo } from "react";
+import {
+  useState,
+  useActionState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { completeSaleAction } from "../actions";
@@ -16,7 +22,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { Trash2, Plus, Minus, Search, ShoppingCart, Package } from "lucide-react";
+import {
+  Trash2,
+  Plus,
+  Minus,
+  Search,
+  ShoppingCart,
+  Package,
+} from "lucide-react";
 
 type Product = {
   id: string;
@@ -39,43 +52,103 @@ interface Props {
   customers: Customer[];
 }
 
-const CATEGORY_STYLES: Record<string, { bg: string; text: string; dot: string }> = {
-  paint:   { bg: "bg-orange-50 dark:bg-orange-950/30",   text: "text-orange-700 dark:text-orange-300",   dot: "bg-orange-400" },
-  coating: { bg: "bg-blue-50 dark:bg-blue-950/30",       text: "text-blue-700 dark:text-blue-300",       dot: "bg-blue-400" },
-  primer:  { bg: "bg-green-50 dark:bg-green-950/30",     text: "text-green-700 dark:text-green-300",     dot: "bg-green-400" },
-  varnish: { bg: "bg-yellow-50 dark:bg-yellow-950/30",   text: "text-yellow-700 dark:text-yellow-300",   dot: "bg-yellow-400" },
-  thinner: { bg: "bg-purple-50 dark:bg-purple-950/30",   text: "text-purple-700 dark:text-purple-300",   dot: "bg-purple-400" },
-  tool:    { bg: "bg-slate-50 dark:bg-slate-800/50",     text: "text-slate-700 dark:text-slate-300",     dot: "bg-slate-400" },
-  supply:  { bg: "bg-teal-50 dark:bg-teal-950/30",       text: "text-teal-700 dark:text-teal-300",       dot: "bg-teal-400" },
-  other:   { bg: "bg-rose-50 dark:bg-rose-950/30",       text: "text-rose-700 dark:text-rose-300",       dot: "bg-rose-400" },
+const CATEGORY_STYLES: Record<
+  string,
+  { bg: string; text: string; dot: string }
+> = {
+  paint: {
+    bg: "bg-orange-50 dark:bg-orange-950/30",
+    text: "text-orange-700 dark:text-orange-300",
+    dot: "bg-orange-400",
+  },
+  coating: {
+    bg: "bg-blue-50 dark:bg-blue-950/30",
+    text: "text-blue-700 dark:text-blue-300",
+    dot: "bg-blue-400",
+  },
+  primer: {
+    bg: "bg-green-50 dark:bg-green-950/30",
+    text: "text-green-700 dark:text-green-300",
+    dot: "bg-green-400",
+  },
+  varnish: {
+    bg: "bg-yellow-50 dark:bg-yellow-950/30",
+    text: "text-yellow-700 dark:text-yellow-300",
+    dot: "bg-yellow-400",
+  },
+  thinner: {
+    bg: "bg-purple-50 dark:bg-purple-950/30",
+    text: "text-purple-700 dark:text-purple-300",
+    dot: "bg-purple-400",
+  },
+  tool: {
+    bg: "bg-slate-50 dark:bg-slate-800/50",
+    text: "text-slate-700 dark:text-slate-300",
+    dot: "bg-slate-400",
+  },
+  supply: {
+    bg: "bg-teal-50 dark:bg-teal-950/30",
+    text: "text-teal-700 dark:text-teal-300",
+    dot: "bg-teal-400",
+  },
+  other: {
+    bg: "bg-rose-50 dark:bg-rose-950/30",
+    text: "text-rose-700 dark:text-rose-300",
+    dot: "bg-rose-400",
+  },
 };
 
 const CATEGORY_LABELS: Record<string, string> = {
-  paint: "Paint", coating: "Coating", primer: "Primer", varnish: "Varnish",
-  thinner: "Thinner", tool: "Tool", supply: "Supply", other: "Other",
+  paint: "Paint",
+  coating: "Coating",
+  primer: "Primer",
+  varnish: "Varnish",
+  thinner: "Thinner",
+  tool: "Tool",
+  supply: "Supply",
+  other: "Other",
 };
 
 const CATEGORY_BANNER: Record<string, string> = {
-  paint:   "from-orange-200 to-orange-100 dark:from-orange-900/40 dark:to-orange-800/20",
-  coating: "from-blue-200 to-blue-100 dark:from-blue-900/40 dark:to-blue-800/20",
-  primer:  "from-green-200 to-green-100 dark:from-green-900/40 dark:to-green-800/20",
-  varnish: "from-yellow-200 to-yellow-100 dark:from-yellow-900/40 dark:to-yellow-800/20",
-  thinner: "from-purple-200 to-purple-100 dark:from-purple-900/40 dark:to-purple-800/20",
-  tool:    "from-slate-200 to-slate-100 dark:from-slate-700/40 dark:to-slate-600/20",
-  supply:  "from-teal-200 to-teal-100 dark:from-teal-900/40 dark:to-teal-800/20",
-  other:   "from-rose-200 to-rose-100 dark:from-rose-900/40 dark:to-rose-800/20",
+  paint:
+    "from-orange-200 to-orange-100 dark:from-orange-900/40 dark:to-orange-800/20",
+  coating:
+    "from-blue-200 to-blue-100 dark:from-blue-900/40 dark:to-blue-800/20",
+  primer:
+    "from-green-200 to-green-100 dark:from-green-900/40 dark:to-green-800/20",
+  varnish:
+    "from-yellow-200 to-yellow-100 dark:from-yellow-900/40 dark:to-yellow-800/20",
+  thinner:
+    "from-purple-200 to-purple-100 dark:from-purple-900/40 dark:to-purple-800/20",
+  tool: "from-slate-200 to-slate-100 dark:from-slate-700/40 dark:to-slate-600/20",
+  supply: "from-teal-200 to-teal-100 dark:from-teal-900/40 dark:to-teal-800/20",
+  other: "from-rose-200 to-rose-100 dark:from-rose-900/40 dark:to-rose-800/20",
 };
 
-const ALL_CATEGORIES = ["paint", "coating", "primer", "varnish", "thinner", "tool", "supply", "other"];
+const ALL_CATEGORIES = [
+  "paint",
+  "coating",
+  "primer",
+  "varnish",
+  "thinner",
+  "tool",
+  "supply",
+  "other",
+];
 
 export function PosPageClient({ products, customers }: Props) {
   const router = useRouter();
-  const [state, formAction, isPending] = useActionState(completeSaleAction, undefined);
+  const [state, formAction, isPending] = useActionState(
+    completeSaleAction,
+    undefined,
+  );
 
   const [cart, setCart] = useState<CartItem[]>([]);
   const [customerId, setCustomerId] = useState("walk-in");
   const [discountAmount, setDiscountAmount] = useState("0");
-  const [paymentMethod, setPaymentMethod] = useState<"cash" | "gcash" | "credit" | "other">("cash");
+  const [paymentMethod, setPaymentMethod] = useState<
+    "cash" | "gcash" | "credit" | "other"
+  >("cash");
   const [amountTendered, setAmountTendered] = useState("0");
   const [notes, setNotes] = useState("");
   const [dueDate, setDueDate] = useState("");
@@ -107,14 +180,18 @@ export function PosPageClient({ products, customers }: Props) {
 
   const visibleCategories = useMemo(
     () => ALL_CATEGORIES.filter((c) => products.some((p) => p.category === c)),
-    [products]
+    [products],
   );
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      const matchCat = activeCategory === "all" || p.category === activeCategory;
+      const matchCat =
+        activeCategory === "all" || p.category === activeCategory;
       const q = search.toLowerCase();
-      const matchSearch = !q || p.name.toLowerCase().includes(q) || (p.sku?.toLowerCase().includes(q) ?? false);
+      const matchSearch =
+        !q ||
+        p.name.toLowerCase().includes(q) ||
+        (p.sku?.toLowerCase().includes(q) ?? false);
       return matchCat && matchSearch;
     });
   }, [products, activeCategory, search]);
@@ -125,10 +202,25 @@ export function PosPageClient({ products, customers }: Props) {
       const idx = prev.findIndex((i) => i.productId === product.id);
       if (idx >= 0) {
         return prev.map((i, n) =>
-          n === idx ? { ...i, quantity: i.quantity + 1, lineTotal: (i.quantity + 1) * i.unitPrice } : i
+          n === idx
+            ? {
+                ...i,
+                quantity: i.quantity + 1,
+                lineTotal: (i.quantity + 1) * i.unitPrice,
+              }
+            : i,
         );
       }
-      return [...prev, { productId: product.id, productName: product.name, quantity: 1, unitPrice, lineTotal: unitPrice }];
+      return [
+        ...prev,
+        {
+          productId: product.id,
+          productName: product.name,
+          quantity: 1,
+          unitPrice,
+          lineTotal: unitPrice,
+        },
+      ];
     });
   }
 
@@ -137,10 +229,14 @@ export function PosPageClient({ products, customers }: Props) {
       prev
         .map((i) =>
           i.productId === productId
-            ? { ...i, quantity: i.quantity + delta, lineTotal: (i.quantity + delta) * i.unitPrice }
-            : i
+            ? {
+                ...i,
+                quantity: i.quantity + delta,
+                lineTotal: (i.quantity + delta) * i.unitPrice,
+              }
+            : i,
         )
-        .filter((i) => i.quantity > 0)
+        .filter((i) => i.quantity > 0),
     );
   }
 
@@ -153,15 +249,21 @@ export function PosPageClient({ products, customers }: Props) {
   const total = Math.max(0, subtotal - discount);
   const tendered = parseFloat(amountTendered) || 0;
   const change = paymentMethod === "cash" ? tendered - total : 0;
-  const fmt = (n: number) => n.toLocaleString("en-PH", { minimumFractionDigits: 2 });
-  const cartQtyFor = (id: string) => cart.find((i) => i.productId === id)?.quantity ?? 0;
+  const fmt = (n: number) =>
+    n.toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  const cartQtyFor = (id: string) =>
+    cart.find((i) => i.productId === id)?.quantity ?? 0;
 
   return (
     <div className="flex h-[calc(100vh-4rem)] overflow-hidden -mx-6 -mb-6">
       {/* Hidden form */}
       <form id="pos-form" action={formAction}>
         <input type="hidden" name="cartJson" value={JSON.stringify(cart)} />
-        <input type="hidden" name="customerId" value={customerId === "walk-in" ? "" : customerId} />
+        <input
+          type="hidden"
+          name="customerId"
+          value={customerId === "walk-in" ? "" : customerId}
+        />
         <input type="hidden" name="discountAmount" value={discountAmount} />
         <input type="hidden" name="paymentMethod" value={paymentMethod} />
         <input type="hidden" name="amountTendered" value={amountTendered} />
@@ -174,8 +276,12 @@ export function PosPageClient({ products, customers }: Props) {
         {/* Top bar */}
         <div className="flex items-center gap-3 px-6 py-3.5 bg-background border-b shadow-sm">
           <div className="shrink-0">
-            <h2 className="text-base font-semibold leading-none">Point of Sale</h2>
-            <p className="text-xs text-muted-foreground mt-0.5">Click a product to add to cart</p>
+            <h2 className="text-base font-semibold leading-none">
+              Point of Sale
+            </h2>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              Click a product to add to cart
+            </p>
           </div>
           <div className="relative flex-1 max-w-lg mx-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -215,7 +321,9 @@ export function PosPageClient({ products, customers }: Props) {
                     : `${s.bg} ${s.text} hover:opacity-80`
                 }`}
               >
-                <span className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-primary-foreground/70" : s.dot}`} />
+                <span
+                  className={`h-1.5 w-1.5 rounded-full ${isActive ? "bg-primary-foreground/70" : s.dot}`}
+                />
                 {CATEGORY_LABELS[cat] ?? cat}
               </button>
             );
@@ -232,10 +340,13 @@ export function PosPageClient({ products, customers }: Props) {
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3">
               {filteredProducts.map((product) => {
-                const style = CATEGORY_STYLES[product.category] ?? CATEGORY_STYLES.other;
-                const banner = CATEGORY_BANNER[product.category] ?? CATEGORY_BANNER.other;
+                const style =
+                  CATEGORY_STYLES[product.category] ?? CATEGORY_STYLES.other;
+                const banner =
+                  CATEGORY_BANNER[product.category] ?? CATEGORY_BANNER.other;
                 const inCart = cartQtyFor(product.id);
-                const isLowStock = product.quantityOnHand > 0 && product.quantityOnHand <= 10;
+                const isLowStock =
+                  product.quantityOnHand > 0 && product.quantityOnHand <= 10;
                 const isOutOfStock = product.quantityOnHand === 0;
                 return (
                   <button
@@ -249,8 +360,12 @@ export function PosPageClient({ products, customers }: Props) {
                         : "hover:shadow-md hover:border-primary/40 hover:-translate-y-0.5"
                     }`}
                   >
-                    <div className={`h-20 bg-gradient-to-br ${banner} flex items-center justify-center relative`}>
-                      <span className={`text-4xl font-black opacity-15 select-none ${style.text}`}>
+                    <div
+                      className={`h-20 bg-gradient-to-br ${banner} flex items-center justify-center relative`}
+                    >
+                      <span
+                        className={`text-4xl font-black opacity-15 select-none ${style.text}`}
+                      >
                         {product.name.slice(0, 2).toUpperCase()}
                       </span>
                       {inCart > 0 && (
@@ -260,30 +375,41 @@ export function PosPageClient({ products, customers }: Props) {
                       )}
                     </div>
                     <div className="p-2.5 flex flex-col gap-1">
-                      <p className="text-xs font-semibold leading-tight line-clamp-2">{product.name}</p>
+                      <p className="text-xs font-semibold leading-tight line-clamp-2">
+                        {product.name}
+                      </p>
                       {product.sku && (
-                        <p className="text-[10px] text-muted-foreground font-mono">{product.sku}</p>
+                        <p className="text-[10px] text-muted-foreground font-mono">
+                          {product.sku}
+                        </p>
                       )}
                       <div className="flex items-end justify-between mt-0.5 gap-1">
                         <span className={`text-sm font-bold ${style.text}`}>
                           ₱{fmt(parseFloat(product.price))}
                         </span>
-                        <span className="text-[10px] text-muted-foreground">/{product.unit}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          /{product.unit}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between mt-0.5">
-                        <Badge className={`text-[10px] px-1.5 py-0 border-0 ${style.bg} ${style.text}`}>
-                          {CATEGORY_LABELS[product.category] ?? product.category}
+                        <Badge
+                          className={`text-[10px] px-1.5 py-0 border-0 ${style.bg} ${style.text}`}
+                        >
+                          {CATEGORY_LABELS[product.category] ??
+                            product.category}
                         </Badge>
                         <span
                           className={`text-[10px] font-medium ${
                             isOutOfStock
                               ? "text-destructive"
                               : isLowStock
-                              ? "text-amber-600 dark:text-amber-400"
-                              : "text-muted-foreground"
+                                ? "text-amber-600 dark:text-amber-400"
+                                : "text-muted-foreground"
                           }`}
                         >
-                          {isOutOfStock ? "Out of stock" : `${product.quantityOnHand} left`}
+                          {isOutOfStock
+                            ? "Out of stock"
+                            : `${product.quantityOnHand} left`}
                         </span>
                       </div>
                     </div>
@@ -343,23 +469,40 @@ export function PosPageClient({ products, customers }: Props) {
             <div className="flex flex-col items-center justify-center h-full gap-2 text-muted-foreground py-12">
               <ShoppingCart className="h-10 w-10 opacity-15" />
               <p className="text-sm font-medium">Cart is empty</p>
-              <p className="text-xs text-center">Click on products in the catalog to add them here</p>
+              <p className="text-xs text-center">
+                Click on products in the catalog to add them here
+              </p>
             </div>
           ) : (
             cart.map((item) => {
               const product = products.find((p) => p.id === item.productId);
-              const banner = CATEGORY_BANNER[product?.category ?? "other"] ?? CATEGORY_BANNER.other;
-              const style = CATEGORY_STYLES[product?.category ?? "other"] ?? CATEGORY_STYLES.other;
+              const banner =
+                CATEGORY_BANNER[product?.category ?? "other"] ??
+                CATEGORY_BANNER.other;
+              const style =
+                CATEGORY_STYLES[product?.category ?? "other"] ??
+                CATEGORY_STYLES.other;
               return (
-                <div key={item.productId} className="flex items-center gap-3 py-1">
-                  <div className={`h-10 w-10 rounded-lg bg-gradient-to-br ${banner} flex items-center justify-center shrink-0`}>
-                    <span className={`text-xs font-black opacity-30 ${style.text}`}>
+                <div
+                  key={item.productId}
+                  className="flex items-center gap-3 py-1"
+                >
+                  <div
+                    className={`h-10 w-10 rounded-lg bg-gradient-to-br ${banner} flex items-center justify-center shrink-0`}
+                  >
+                    <span
+                      className={`text-xs font-black opacity-30 ${style.text}`}
+                    >
                       {item.productName.slice(0, 2).toUpperCase()}
                     </span>
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium leading-tight truncate">{item.productName}</p>
-                    <p className={`text-sm font-semibold ${style.text}`}>₱{fmt(item.lineTotal)}</p>
+                    <p className="text-xs font-medium leading-tight truncate">
+                      {item.productName}
+                    </p>
+                    <p className={`text-sm font-semibold ${style.text}`}>
+                      ₱{fmt(item.lineTotal)}
+                    </p>
                   </div>
                   <div className="flex items-center gap-1 shrink-0">
                     <button
@@ -370,7 +513,9 @@ export function PosPageClient({ products, customers }: Props) {
                     >
                       <Minus className="h-3 w-3" />
                     </button>
-                    <span className="w-6 text-center text-sm font-semibold tabular-nums">{item.quantity}</span>
+                    <span className="w-6 text-center text-sm font-semibold tabular-nums">
+                      {item.quantity}
+                    </span>
                     <button
                       type="button"
                       aria-label={`Increase ${item.productName}`}
@@ -435,7 +580,9 @@ export function PosPageClient({ products, customers }: Props) {
                     : "border-border text-muted-foreground hover:bg-muted bg-background"
                 }`}
               >
-                {m === "gcash" ? "GCash" : m.charAt(0).toUpperCase() + m.slice(1)}
+                {m === "gcash"
+                  ? "GCash"
+                  : m.charAt(0).toUpperCase() + m.slice(1)}
               </button>
             ))}
           </div>
@@ -443,7 +590,9 @@ export function PosPageClient({ products, customers }: Props) {
           {paymentMethod === "credit" && (
             <div className="rounded-lg bg-muted/40 p-3 space-y-2">
               <div className="flex items-center gap-2">
-                <span className="text-xs text-muted-foreground w-24 shrink-0">Due Date</span>
+                <span className="text-xs text-muted-foreground w-24 shrink-0">
+                  Due Date
+                </span>
                 <input
                   type="date"
                   value={dueDate}
@@ -459,15 +608,22 @@ export function PosPageClient({ products, customers }: Props) {
           {paymentMethod !== "credit" && (
             <button
               type="button"
-              onClick={() => { setIsPartialPayment(!isPartialPayment); setAmountTendered("0"); }}
+              onClick={() => {
+                setIsPartialPayment(!isPartialPayment);
+                setAmountTendered("0");
+              }}
               className={`flex items-center justify-between w-full px-3 py-1.5 rounded-lg border text-xs transition-colors ${
                 isPartialPayment
                   ? "bg-amber-50 border-amber-300 text-amber-800 dark:bg-amber-950/30 dark:border-amber-700 dark:text-amber-300"
                   : "border-border text-muted-foreground hover:bg-muted"
               }`}
             >
-              <span className="font-medium">Partial Payment / Down Payment</span>
-              <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPartialPayment ? "bg-amber-200 dark:bg-amber-800" : "bg-muted"}`}>
+              <span className="font-medium">
+                Partial Payment / Down Payment
+              </span>
+              <span
+                className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${isPartialPayment ? "bg-amber-200 dark:bg-amber-800" : "bg-muted"}`}
+              >
                 {isPartialPayment ? "ON" : "OFF"}
               </span>
             </button>
@@ -491,19 +647,25 @@ export function PosPageClient({ products, customers }: Props) {
                   />
                 </div>
               </div>
-              {!isPartialPayment && paymentMethod === "cash" && tendered > 0 && (
-                <div className="flex justify-between text-sm font-semibold pt-1 border-t border-border/50">
-                  <span className="text-muted-foreground">Change</span>
-                  <span className={`tabular-nums ${change < 0 ? "text-destructive" : "text-green-600 dark:text-green-400"}`}>
-                    ₱{fmt(Math.abs(change))}
-                    {change < 0 && " short"}
-                  </span>
-                </div>
-              )}
+              {!isPartialPayment &&
+                paymentMethod === "cash" &&
+                tendered > 0 && (
+                  <div className="flex justify-between text-sm font-semibold pt-1 border-t border-border/50">
+                    <span className="text-muted-foreground">Change</span>
+                    <span
+                      className={`tabular-nums ${change < 0 ? "text-destructive" : "text-green-600 dark:text-green-400"}`}
+                    >
+                      ₱{fmt(Math.abs(change))}
+                      {change < 0 && " short"}
+                    </span>
+                  </div>
+                )}
               {isPartialPayment && tendered > 0 && (
                 <div className="flex justify-between text-sm pt-1 border-t border-border/50 text-amber-600 dark:text-amber-400">
                   <span>Remaining Balance</span>
-                  <span className="tabular-nums font-semibold">₱{fmt(Math.max(0, total - tendered))}</span>
+                  <span className="tabular-nums font-semibold">
+                    ₱{fmt(Math.max(0, total - tendered))}
+                  </span>
                 </div>
               )}
             </div>

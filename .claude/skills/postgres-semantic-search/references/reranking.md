@@ -7,39 +7,39 @@ Re-ranking is a two-stage retrieval pattern:
 
 ## Why Re-rank?
 
-| Retrieval | Re-ranker |
-|-----------|-----------|
-| Bi-encoder (fast) | Cross-encoder (slow, accurate) |
-| Single embedding per doc | Compares query+doc together |
-| O(1) per doc | O(n) for n candidates |
+| Retrieval                | Re-ranker                      |
+| ------------------------ | ------------------------------ |
+| Bi-encoder (fast)        | Cross-encoder (slow, accurate) |
+| Single embedding per doc | Compares query+doc together    |
+| O(1) per doc             | O(n) for n candidates          |
 
 ## Reranker Options (2026)
 
 ### API Services
 
-| Service | Latency | Quality | Languages | Notes |
-|---------|---------|---------|-----------|-------|
-| Cohere Rerank v4.0-pro | ~300ms | Best | 100+ | 32K context, self-learning |
-| Cohere Rerank v4.0-fast | ~150ms | Excellent | 100+ | Low latency variant |
-| Zerank 2 | ~100ms | Best | 100+ | Wins most benchmarks |
-| Voyage Rerank 2.5 | ~100ms | Excellent | 100+ | 2x lower latency |
+| Service                 | Latency | Quality   | Languages | Notes                      |
+| ----------------------- | ------- | --------- | --------- | -------------------------- |
+| Cohere Rerank v4.0-pro  | ~300ms  | Best      | 100+      | 32K context, self-learning |
+| Cohere Rerank v4.0-fast | ~150ms  | Excellent | 100+      | Low latency variant        |
+| Zerank 2                | ~100ms  | Best      | 100+      | Wins most benchmarks       |
+| Voyage Rerank 2.5       | ~100ms  | Excellent | 100+      | 2x lower latency           |
 
 ### Open-Source Models
 
-| Model | Size | Speed | Quality | Notes |
-|-------|------|-------|---------|-------|
-| Qwen3-Reranker-8B | 8B | Slow | Excellent | Best open-source |
-| Qwen3-Reranker-4B | 4B | Medium | Very Good | Balanced |
-| Qwen3-Reranker-0.6B | 0.6B | Fast | Good | Latency-constrained |
-| bge-reranker-v2-m3 | 560M | Fast | Very Good | Multilingual, BAAI |
-| Jina Reranker v2 | 278M | Fast | Good | Lightweight |
+| Model               | Size | Speed  | Quality   | Notes               |
+| ------------------- | ---- | ------ | --------- | ------------------- |
+| Qwen3-Reranker-8B   | 8B   | Slow   | Excellent | Best open-source    |
+| Qwen3-Reranker-4B   | 4B   | Medium | Very Good | Balanced            |
+| Qwen3-Reranker-0.6B | 0.6B | Fast   | Good      | Latency-constrained |
+| bge-reranker-v2-m3  | 560M | Fast   | Very Good | Multilingual, BAAI  |
+| Jina Reranker v2    | 278M | Fast   | Good      | Lightweight         |
 
 ### Legacy Models (still functional)
 
-| Model | Size | Speed | Quality |
-|-------|------|-------|---------|
-| ms-marco-MiniLM-L-6-v2 | 80MB | Fast | Acceptable |
-| ms-marco-electra-base | 400MB | Slow | Good |
+| Model                  | Size  | Speed | Quality    |
+| ---------------------- | ----- | ----- | ---------- |
+| ms-marco-MiniLM-L-6-v2 | 80MB  | Fast  | Acceptable |
+| ms-marco-electra-base  | 400MB | Slow  | Good       |
 
 ## Cohere Rerank API
 
@@ -54,7 +54,7 @@ bun add cohere-ai
 ### Usage
 
 ```typescript
-import { CohereClient } from 'cohere-ai';
+import { CohereClient } from "cohere-ai";
 
 const cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
 
@@ -67,7 +67,7 @@ interface SearchResult {
 async function searchWithRerank(
   query: string,
   embedding: number[],
-  topK: number = 10
+  topK: number = 10,
 ): Promise<SearchResult[]> {
   // Stage 1: Get candidates (3x final count)
   const candidates = await db.execute(sql`
@@ -79,14 +79,14 @@ async function searchWithRerank(
 
   // Stage 2: Re-rank with Cohere v4.0
   const reranked = await cohere.rerank({
-    model: 'rerank-v4.0-fast',  // or 'rerank-v4.0-pro' for best quality
+    model: "rerank-v4.0-fast", // or 'rerank-v4.0-pro' for best quality
     query,
-    documents: candidates.map(c => c.content),
+    documents: candidates.map((c) => c.content),
     topN: topK,
   });
 
   // Map back to original results
-  return reranked.results.map(r => ({
+  return reranked.results.map((r) => ({
     ...candidates[r.index],
     score: r.relevanceScore,
   }));
@@ -168,11 +168,11 @@ interface RerankResult {
 async function rerankWithLocalService(
   query: string,
   documents: string[],
-  topN: number = 10
+  topN: number = 10,
 ): Promise<RerankResult[]> {
-  const response = await fetch('http://localhost:8000/rerank', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+  const response = await fetch("http://localhost:8000/rerank", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query, documents, top_n: topN }),
   });
   return response.json();
@@ -182,7 +182,7 @@ async function rerankWithLocalService(
 async function searchWithLocalRerank(
   query: string,
   embedding: number[],
-  topK: number = 10
+  topK: number = 10,
 ) {
   // Stage 1: Get candidates
   const candidates = await db.execute(sql`
@@ -194,12 +194,12 @@ async function searchWithLocalRerank(
   // Stage 2: Rerank with local service
   const reranked = await rerankWithLocalService(
     query,
-    candidates.map(c => c.content),
-    topK
+    candidates.map((c) => c.content),
+    topK,
   );
 
   // Map back to original results
-  return reranked.map(r => ({
+  return reranked.map((r) => ({
     ...candidates[r.index],
     score: r.score,
   }));
@@ -225,6 +225,7 @@ Stage 2: Cross-Encoder Rerank (precise)
 ### Why This Works
 
 Cross-encoders partially rediscover a semantic variant of BM25:
+
 - Transformer attention heads compute soft term frequency
 - Embedding matrix encodes inverse document frequency semantically
 - Built-in term saturation and document length normalization

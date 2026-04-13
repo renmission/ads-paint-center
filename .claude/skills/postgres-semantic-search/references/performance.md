@@ -4,27 +4,30 @@
 
 Based on benchmarks with 1M vectors (1536 dimensions):
 
-| Metric | HNSW | IVFFlat |
-|--------|------|---------|
-| Query throughput | 40.5 QPS | 2.6 QPS |
-| Query latency (p50) | 15ms | 250ms |
-| Query latency (p99) | 45ms | 800ms |
-| Index build time | ~60 min | ~10 min |
-| Index memory | Higher | Lower |
-| Recall@10 | 99.1% | 95.2% |
+| Metric              | HNSW     | IVFFlat |
+| ------------------- | -------- | ------- |
+| Query throughput    | 40.5 QPS | 2.6 QPS |
+| Query latency (p50) | 15ms     | 250ms   |
+| Query latency (p99) | 45ms     | 800ms   |
+| Index build time    | ~60 min  | ~10 min |
+| Index memory        | Higher   | Lower   |
+| Recall@10           | 99.1%    | 95.2%   |
 
 **Key takeaways:**
+
 - **HNSW is 15.5x faster** for queries (40.5 vs 2.6 QPS)
 - **IVFFlat builds 6x faster** and uses less memory
 - For most production workloads, HNSW's query speed advantage outweighs build time
 
 **When to choose IVFFlat:**
+
 - Memory is severely constrained
 - Frequent full index rebuilds needed
 - Can accept lower recall (tune probes)
 - Dataset changes frequently (faster rebuilds)
 
 **When to choose HNSW:**
+
 - Query latency is critical
 - High query throughput needed
 - Can afford one-time longer build
@@ -237,23 +240,25 @@ SELECT
 ## Scaling Strategies
 
 ### Vertical Scaling
+
 - More RAM = larger indexes in memory
 - Faster CPU = faster distance calculations
 - NVMe SSD = faster cold-start
 
 ### Horizontal Scaling (Advanced)
+
 - **Read replicas** - Distribute read queries
 - **Citus** - Distributed PostgreSQL (pg_search 0.20+ compatible)
 - **Partitioning** - Split by date/category
 
 ### When to Scale
 
-| Symptom | Solution |
-|---------|----------|
-| Cold-start > 30s | More RAM, preload index |
-| Query latency > 100ms | Tune ef_search, add RAM |
-| Insert latency high | Batch inserts, IVFFlat |
-| Index build > 1 hour | More maintenance_work_mem |
+| Symptom               | Solution                  |
+| --------------------- | ------------------------- |
+| Cold-start > 30s      | More RAM, preload index   |
+| Query latency > 100ms | Tune ef_search, add RAM   |
+| Insert latency high   | Batch inserts, IVFFlat    |
+| Index build > 1 hour  | More maintenance_work_mem |
 
 ## Benchmarking
 
@@ -271,6 +276,7 @@ SELECT * FROM documents ORDER BY embedding <=> '[...]'::vector LIMIT 10;
 ```
 
 Compare:
+
 - Different index types (HNSW vs IVFFlat)
 - Different parameters (m, ef_construction, ef_search)
 - With and without filters

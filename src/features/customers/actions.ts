@@ -10,7 +10,7 @@ type ActionResult = { error?: string; success?: string };
 
 export async function createCustomerAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const raw = Object.fromEntries(formData);
   const parsed = createCustomerSchema.safeParse(raw);
@@ -19,7 +19,8 @@ export async function createCustomerAction(
   const existing = await db.query.customers.findFirst({
     where: eq(customers.phone, parsed.data.phone),
   });
-  if (existing) return { error: "A customer with this phone number already exists." };
+  if (existing)
+    return { error: "A customer with this phone number already exists." };
 
   await db.insert(customers).values({
     name: parsed.data.name,
@@ -35,7 +36,7 @@ export async function createCustomerAction(
 
 export async function updateCustomerAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const raw = Object.fromEntries(formData);
   const parsed = updateCustomerSchema.safeParse(raw);

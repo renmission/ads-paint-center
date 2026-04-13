@@ -15,7 +15,12 @@ export type RequestRow = {
   productName: string | null;
   productDescription: string | null;
   quantityRequested: number;
-  status: "pending" | "approved" | "out_for_delivery" | "rejected" | "fulfilled";
+  status:
+    | "pending"
+    | "approved"
+    | "out_for_delivery"
+    | "rejected"
+    | "fulfilled";
   rejectionReason: string | null;
   handlerName: string | null;
   deliveryType: "pickup" | "delivery" | null;

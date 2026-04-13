@@ -13,9 +13,9 @@ bun add @xyflow/react
 React Flow wrapper with sensible defaults.
 
 ```tsx
-import { Canvas } from '@/components/ai-elements/canvas';
-import { Controls } from '@/components/ai-elements/controls';
-import { Panel } from '@/components/ai-elements/panel';
+import { Canvas } from "@/components/ai-elements/canvas";
+import { Controls } from "@/components/ai-elements/controls";
+import { Panel } from "@/components/ai-elements/panel";
 
 <Canvas
   nodes={nodes}
@@ -29,20 +29,20 @@ import { Panel } from '@/components/ai-elements/panel';
   <Panel position="top-right">
     <Button>Add Node</Button>
   </Panel>
-</Canvas>
+</Canvas>;
 ```
 
 ### Default Configuration
 
-| Feature | Value |
-|---------|-------|
-| Delete keys | Backspace, Delete |
-| Fit view | Enabled |
-| Pan on drag | Disabled |
-| Pan on scroll | Enabled |
-| Selection drag | Enabled |
-| Zoom on double-click | Disabled |
-| Background | `var(--sidebar)` |
+| Feature              | Value             |
+| -------------------- | ----------------- |
+| Delete keys          | Backspace, Delete |
+| Fit view             | Enabled           |
+| Pan on drag          | Disabled          |
+| Pan on scroll        | Enabled           |
+| Selection drag       | Enabled           |
+| Zoom on double-click | Disabled          |
+| Background           | `var(--sidebar)`  |
 
 ## Node
 
@@ -57,7 +57,7 @@ import {
   NodeContent,
   NodeFooter,
   NodeAction,
-} from '@/components/ai-elements/node';
+} from "@/components/ai-elements/node";
 
 // Define custom node component
 function MyNode({ data }) {
@@ -72,9 +72,7 @@ function MyNode({ data }) {
           </Button>
         </NodeAction>
       </NodeHeader>
-      <NodeContent>
-        {data.content}
-      </NodeContent>
+      <NodeContent>{data.content}</NodeContent>
       <NodeFooter>
         <Badge>{data.status}</Badge>
       </NodeFooter>
@@ -90,15 +88,15 @@ const nodeTypes = {
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
-| `Node` | `handles: { target: boolean; source: boolean }` |
-| `NodeHeader` | Styled header with `bg-secondary` |
-| `NodeTitle` | Title text |
-| `NodeDescription` | Muted description |
-| `NodeAction` | Action button slot (top-right) |
-| `NodeContent` | Main content area |
-| `NodeFooter` | Footer with `bg-secondary` |
+| Component         | Props                                           |
+| ----------------- | ----------------------------------------------- |
+| `Node`            | `handles: { target: boolean; source: boolean }` |
+| `NodeHeader`      | Styled header with `bg-secondary`               |
+| `NodeTitle`       | Title text                                      |
+| `NodeDescription` | Muted description                               |
+| `NodeAction`      | Action button slot (top-right)                  |
+| `NodeContent`     | Main content area                               |
+| `NodeFooter`      | Footer with `bg-secondary`                      |
 
 ### Handle Positions
 
@@ -110,7 +108,7 @@ const nodeTypes = {
 Two edge types for different states.
 
 ```tsx
-import { Edge } from '@/components/ai-elements/edge';
+import { Edge } from "@/components/ai-elements/edge";
 
 const edgeTypes = {
   temporary: Edge.Temporary,
@@ -120,30 +118,28 @@ const edgeTypes = {
 // Usage in Canvas
 <Canvas
   edges={[
-    { id: 'e1', source: 'a', target: 'b', type: 'animated' },
-    { id: 'e2', source: 'b', target: 'c', type: 'temporary' },
+    { id: "e1", source: "a", target: "b", type: "animated" },
+    { id: "e2", source: "b", target: "c", type: "temporary" },
   ]}
   edgeTypes={edgeTypes}
-/>
+/>;
 ```
 
 ### Edge Types
 
-| Type | Description | Style |
-|------|-------------|-------|
-| `Edge.Temporary` | Connection preview | Dashed, simple bezier |
-| `Edge.Animated` | Active connection | Solid, animated circle traveling along path |
+| Type             | Description        | Style                                       |
+| ---------------- | ------------------ | ------------------------------------------- |
+| `Edge.Temporary` | Connection preview | Dashed, simple bezier                       |
+| `Edge.Animated`  | Active connection  | Solid, animated circle traveling along path |
 
 ## Connection
 
 Custom connection line component for drag preview.
 
 ```tsx
-import { Connection } from '@/components/ai-elements/connection';
+import { Connection } from "@/components/ai-elements/connection";
 
-<Canvas
-  connectionLineComponent={Connection}
-/>
+<Canvas connectionLineComponent={Connection} />;
 ```
 
 ## Controls
@@ -151,15 +147,11 @@ import { Connection } from '@/components/ai-elements/connection';
 Zoom and fit view controls.
 
 ```tsx
-import { Controls } from '@/components/ai-elements/controls';
+import { Controls } from "@/components/ai-elements/controls";
 
 <Canvas>
-  <Controls
-    showZoom={true}
-    showFitView={true}
-    showInteractive={false}
-  />
-</Canvas>
+  <Controls showZoom={true} showFitView={true} showInteractive={false} />
+</Canvas>;
 ```
 
 ## Panel
@@ -167,7 +159,7 @@ import { Controls } from '@/components/ai-elements/controls';
 Positioned overlay for custom UI.
 
 ```tsx
-import { Panel } from '@/components/ai-elements/panel';
+import { Panel } from "@/components/ai-elements/panel";
 
 <Canvas>
   <Panel position="top-left">
@@ -179,7 +171,7 @@ import { Panel } from '@/components/ai-elements/panel';
   <Panel position="bottom-center">
     <Toolbar>...</Toolbar>
   </Panel>
-</Canvas>
+</Canvas>;
 ```
 
 ### Positions
@@ -203,7 +195,7 @@ import {
   ContextOutputUsage,
   ContextReasoningUsage,
   ContextCacheUsage,
-} from '@/components/ai-elements/context';
+} from "@/components/ai-elements/context";
 
 <Context
   usedTokens={15000}
@@ -227,17 +219,17 @@ import {
     </ContextContentBody>
     <ContextContentFooter />
   </ContextContent>
-</Context>
+</Context>;
 ```
 
 ### Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `usedTokens` | `number` | Total tokens used |
-| `maxTokens` | `number` | Context window size |
-| `modelId` | `string` | Model ID for cost calculation |
-| `usage` | `LanguageModelUsage` | AI SDK usage object |
+| Prop         | Type                 | Description                   |
+| ------------ | -------------------- | ----------------------------- |
+| `usedTokens` | `number`             | Total tokens used             |
+| `maxTokens`  | `number`             | Context window size           |
+| `modelId`    | `string`             | Model ID for cost calculation |
+| `usage`      | `LanguageModelUsage` | AI SDK usage object           |
 
 ### Features
 
@@ -250,20 +242,25 @@ import {
 ## Complete Workflow Example
 
 ```tsx
-'use client';
+"use client";
 
-import { useState, useCallback } from 'react';
-import { Canvas } from '@/components/ai-elements/canvas';
-import { Node, NodeHeader, NodeTitle, NodeContent } from '@/components/ai-elements/node';
-import { Edge } from '@/components/ai-elements/edge';
-import { Controls } from '@/components/ai-elements/controls';
-import { Panel } from '@/components/ai-elements/panel';
+import { useState, useCallback } from "react";
+import { Canvas } from "@/components/ai-elements/canvas";
+import {
+  Node,
+  NodeHeader,
+  NodeTitle,
+  NodeContent,
+} from "@/components/ai-elements/node";
+import { Edge } from "@/components/ai-elements/edge";
+import { Controls } from "@/components/ai-elements/controls";
+import { Panel } from "@/components/ai-elements/panel";
 import {
   useNodesState,
   useEdgesState,
   addEdge,
   type Connection,
-} from '@xyflow/react';
+} from "@xyflow/react";
 
 function AgentNode({ data }) {
   return (
@@ -282,14 +279,29 @@ const nodeTypes = { agent: AgentNode };
 const edgeTypes = { animated: Edge.Animated };
 
 const initialNodes = [
-  { id: '1', type: 'agent', position: { x: 0, y: 0 }, data: { label: 'Input', description: 'User query' } },
-  { id: '2', type: 'agent', position: { x: 300, y: 0 }, data: { label: 'Process', description: 'AI processing' } },
-  { id: '3', type: 'agent', position: { x: 600, y: 0 }, data: { label: 'Output', description: 'Response' } },
+  {
+    id: "1",
+    type: "agent",
+    position: { x: 0, y: 0 },
+    data: { label: "Input", description: "User query" },
+  },
+  {
+    id: "2",
+    type: "agent",
+    position: { x: 300, y: 0 },
+    data: { label: "Process", description: "AI processing" },
+  },
+  {
+    id: "3",
+    type: "agent",
+    position: { x: 600, y: 0 },
+    data: { label: "Output", description: "Response" },
+  },
 ];
 
 const initialEdges = [
-  { id: 'e1-2', source: '1', target: '2', type: 'animated' },
-  { id: 'e2-3', source: '2', target: '3', type: 'animated' },
+  { id: "e1-2", source: "1", target: "2", type: "animated" },
+  { id: "e2-3", source: "2", target: "3", type: "animated" },
 ];
 
 export function WorkflowEditor() {
@@ -297,8 +309,9 @@ export function WorkflowEditor() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
 
   const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge({ ...connection, type: 'animated' }, eds)),
-    [setEdges]
+    (connection: Connection) =>
+      setEdges((eds) => addEdge({ ...connection, type: "animated" }, eds)),
+    [setEdges],
   );
 
   return (
@@ -314,9 +327,7 @@ export function WorkflowEditor() {
       >
         <Controls />
         <Panel position="top-right">
-          <Button onClick={() => console.log(nodes, edges)}>
-            Export
-          </Button>
+          <Button onClick={() => console.log(nodes, edges)}>Export</Button>
         </Panel>
       </Canvas>
     </div>

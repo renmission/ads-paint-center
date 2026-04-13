@@ -1,5 +1,9 @@
 import { db } from "@/shared/lib/db";
-import { inventory, products, customers as customersTable } from "@/shared/lib/db/schema";
+import {
+  inventory,
+  products,
+  customers as customersTable,
+} from "@/shared/lib/db/schema";
 import { eq, sql } from "drizzle-orm";
 import { PosPageClient } from "./pos-page-client";
 
@@ -20,7 +24,11 @@ export async function PosPage() {
     .orderBy(products.name);
 
   const allCustomers = await db
-    .select({ id: customersTable.id, name: customersTable.name, phone: customersTable.phone })
+    .select({
+      id: customersTable.id,
+      name: customersTable.name,
+      phone: customersTable.phone,
+    })
     .from(customersTable)
     .orderBy(customersTable.name);
 

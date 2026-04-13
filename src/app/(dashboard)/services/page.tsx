@@ -5,7 +5,9 @@ export default async function ServicesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Services</h1>
-        <p className="text-muted-foreground">Manage service catalog and pricing.</p>
+        <p className="text-muted-foreground">
+          Manage service catalog and pricing.
+        </p>
       </div>
       <ServicesTable />
     </div>

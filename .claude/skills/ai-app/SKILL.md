@@ -41,6 +41,7 @@ ANTHROPIC_API_KEY=sk-ant-...
 ### 4. Generate Application
 
 Based on user requirements, generate:
+
 - **Chatbot**: See [references/chatbot.md](references/chatbot.md)
 - **Agent Dashboard**: See [references/agent-dashboard.md](references/agent-dashboard.md)
 - **Custom**: Combine patterns as needed
@@ -51,26 +52,27 @@ Based on user requirements, generate:
 
 Simple conversational AI with streaming responses.
 
-| Feature | Implementation |
-|---------|----------------|
-| Chat UI | Conversation + Message + PromptInput |
-| API | streamText + toUIMessageStreamResponse |
-| Extras | Reasoning, Sources, File attachments |
+| Feature | Implementation                         |
+| ------- | -------------------------------------- |
+| Chat UI | Conversation + Message + PromptInput   |
+| API     | streamText + toUIMessageStreamResponse |
+| Extras  | Reasoning, Sources, File attachments   |
 
 ### Agent Dashboard
 
 Multi-agent interface with tool visualization.
 
-| Feature | Implementation |
-|---------|----------------|
-| Agents | ToolLoopAgent with tools |
-| UI | Dashboard layout + Tool components |
-| API | createAgentUIStreamResponse |
-| Extras | Status monitoring, tool approval |
+| Feature | Implementation                     |
+| ------- | ---------------------------------- |
+| Agents  | ToolLoopAgent with tools           |
+| UI      | Dashboard layout + Tool components |
+| API     | createAgentUIStreamResponse        |
+| Extras  | Status monitoring, tool approval   |
 
 ### Custom AI App
 
 Mix and match based on user needs:
+
 - Web search chatbot
 - Code generation assistant
 - Document analyzer
@@ -107,8 +109,8 @@ See [references/project-structure.md](references/project-structure.md) for detai
 
 ```typescript
 // app/api/chat/route.ts
-import { streamText, UIMessage, convertToModelMessages } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { streamText, UIMessage, convertToModelMessages } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 
 export const maxDuration = 30;
 
@@ -116,9 +118,9 @@ export async function POST(req: Request) {
   const { messages }: { messages: UIMessage[] } = await req.json();
 
   const result = streamText({
-    model: anthropic('claude-sonnet-4-6'),
+    model: anthropic("claude-sonnet-4-6"),
     messages: await convertToModelMessages(messages),
-    system: 'You are a helpful assistant.',
+    system: "You are a helpful assistant.",
   });
 
   return result.toUIMessageStreamResponse({
@@ -132,19 +134,19 @@ export async function POST(req: Request) {
 
 ```tsx
 // app/page.tsx
-'use client';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+"use client";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputBody,
@@ -152,20 +154,20 @@ import {
   PromptInputFooter,
   PromptInputSubmit,
   type PromptInputMessage,
-} from '@/components/ai-elements/prompt-input';
-import { Loader } from '@/components/ai-elements/loader';
-import { useState } from 'react';
+} from "@/components/ai-elements/prompt-input";
+import { Loader } from "@/components/ai-elements/loader";
+import { useState } from "react";
 
 export default function ChatPage() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (!message.text.trim()) return;
     sendMessage({ text: message.text, files: message.files });
-    setInput('');
+    setInput("");
   };
 
   return (
@@ -175,7 +177,7 @@ export default function ChatPage() {
           {messages.map((message) => (
             <div key={message.id}>
               {message.parts.map((part, i) => {
-                if (part.type === 'text') {
+                if (part.type === "text") {
                   return (
                     <Message key={i} from={message.role}>
                       <MessageContent>
@@ -188,7 +190,7 @@ export default function ChatPage() {
               })}
             </div>
           ))}
-          {status === 'submitted' && <Loader />}
+          {status === "submitted" && <Loader />}
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
@@ -214,21 +216,22 @@ export default function ChatPage() {
 
 For detailed patterns, see:
 
-| Need | Skill | Reference |
-|------|-------|-----------|
-| Chat UI components | `/ai-elements` | [chatbot.md](references/chatbot.md) |
-| Next.js patterns | `/nextjs-shadcn` | [architecture.md](../nextjs-shadcn/references/architecture.md) |
-| AI SDK functions | `/ai-sdk-6` | [core-functions.md](../ai-sdk-6/references/core-functions.md) |
-| Agents & tools | `/ai-sdk-6` | [agents.md](../ai-sdk-6/references/agents.md) |
-| Caching | `/cache-components` | [REFERENCE.md](../cache-components/REFERENCE.md) |
-| Production patterns | `/nextjs-chatbot` | DB persistence, HITL approval, consent, feedback, search |
-| Code review & cleanup | `/code-simplifier` | DRY/KISS/YAGNI validation |
+| Need                  | Skill               | Reference                                                      |
+| --------------------- | ------------------- | -------------------------------------------------------------- |
+| Chat UI components    | `/ai-elements`      | [chatbot.md](references/chatbot.md)                            |
+| Next.js patterns      | `/nextjs-shadcn`    | [architecture.md](../nextjs-shadcn/references/architecture.md) |
+| AI SDK functions      | `/ai-sdk-6`         | [core-functions.md](../ai-sdk-6/references/core-functions.md)  |
+| Agents & tools        | `/ai-sdk-6`         | [agents.md](../ai-sdk-6/references/agents.md)                  |
+| Caching               | `/cache-components` | [REFERENCE.md](../cache-components/REFERENCE.md)               |
+| Production patterns   | `/nextjs-chatbot`   | DB persistence, HITL approval, consent, feedback, search       |
+| Code review & cleanup | `/code-simplifier`  | DRY/KISS/YAGNI validation                                      |
 
 ## Workflow
 
 ### Phase 1: Understand Requirements
 
 Ask user:
+
 - What type of AI app? (chatbot, agent, custom)
 - What features? (reasoning, sources, tools, file upload)
 - What style? (vega=classic, nova=compact, maia=soft/rounded, lyra=boxy/sharp, mira=dense) — default: nova
@@ -245,6 +248,7 @@ Run scaffolding commands based on requirements.
 ### Phase 3: Generate Files
 
 Create files based on application type:
+
 - API route (`app/api/chat/route.ts`)
 - Main page (`app/page.tsx`)
 - Components (if needed)
@@ -274,6 +278,7 @@ Test the application works correctly.
 ## Package Manager
 
 **Always use bun**, never npm:
+
 - `bun add` (not npm install)
 - `bunx --bun` (not npx)
 - `bun dev` (not npm run dev)

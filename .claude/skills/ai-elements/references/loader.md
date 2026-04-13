@@ -30,7 +30,7 @@ import { Loader } from '@/components/ai-elements/loader';
 
 ### `<Loader />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `number` | `16` | Width and height of the loader icon in pixels. |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the wrapper div. |
+| Prop       | Type                                   | Default | Description                                    |
+| ---------- | -------------------------------------- | ------- | ---------------------------------------------- |
+| `size`     | `number`                               | `16`    | Width and height of the loader icon in pixels. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -       | Any other props are spread to the wrapper div. |

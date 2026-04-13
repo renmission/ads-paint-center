@@ -2,7 +2,7 @@
  * Embedding utilities for PostgreSQL semantic search
  */
 
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 const openai = new OpenAI();
 
@@ -11,12 +11,12 @@ const openai = new OpenAI();
 // ============================================
 
 export type EmbeddingModel =
-  | 'text-embedding-3-small'  // 1536 dims, $0.02/1M tokens
-  | 'text-embedding-3-large'; // 3072 dims, $0.13/1M tokens
+  | "text-embedding-3-small" // 1536 dims, $0.02/1M tokens
+  | "text-embedding-3-large"; // 3072 dims, $0.13/1M tokens
 
 export async function getEmbedding(
   text: string,
-  model: EmbeddingModel = 'text-embedding-3-small'
+  model: EmbeddingModel = "text-embedding-3-small",
 ): Promise<number[]> {
   const response = await openai.embeddings.create({
     model,
@@ -27,14 +27,14 @@ export async function getEmbedding(
 
 export async function getEmbeddings(
   texts: string[],
-  model: EmbeddingModel = 'text-embedding-3-small'
+  model: EmbeddingModel = "text-embedding-3-small",
 ): Promise<number[][]> {
   // OpenAI supports batch of up to 2048 inputs
   const response = await openai.embeddings.create({
     model,
     input: texts,
   });
-  return response.data.map(d => d.embedding);
+  return response.data.map((d) => d.embedding);
 }
 
 // ============================================
@@ -43,10 +43,10 @@ export async function getEmbeddings(
 
 export async function getEmbeddingReduced(
   text: string,
-  dimensions: number = 1536
+  dimensions: number = 1536,
 ): Promise<number[]> {
   const response = await openai.embeddings.create({
-    model: 'text-embedding-3-large',
+    model: "text-embedding-3-large",
     input: text,
     dimensions, // Native dimension reduction
   });
@@ -61,21 +61,21 @@ export async function getEmbeddingReduced(
  * Format embedding for PostgreSQL vector type
  */
 export function toPostgresVector(embedding: number[]): string {
-  return `[${embedding.join(',')}]`;
+  return `[${embedding.join(",")}]`;
 }
 
 /**
  * Parse PostgreSQL vector string to array
  */
 export function fromPostgresVector(pgVector: string): number[] {
-  return JSON.parse(pgVector.replace(/^\[/, '[').replace(/\]$/, ']'));
+  return JSON.parse(pgVector.replace(/^\[/, "[").replace(/\]$/, "]"));
 }
 
 // ============================================
 // Supabase Integration
 // ============================================
 
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
 
 export async function searchDocuments(
   supabase: ReturnType<typeof createClient>,
@@ -84,20 +84,20 @@ export async function searchDocuments(
     threshold?: number;
     limit?: number;
     filter?: Record<string, unknown>;
-  } = {}
+  } = {},
 ) {
   const { threshold = 0.7, limit = 10, filter } = options;
 
   const embedding = await getEmbedding(query);
 
-  let rpcCall = supabase.rpc('match_documents', {
+  let rpcCall = supabase.rpc("match_documents", {
     query_embedding: embedding,
     match_threshold: threshold,
     match_count: limit,
   });
 
   if (filter) {
-    rpcCall = supabase.rpc('match_documents_filtered', {
+    rpcCall = supabase.rpc("match_documents_filtered", {
       query_embedding: embedding,
       filter_metadata: filter,
       match_threshold: threshold,
@@ -118,13 +118,13 @@ export async function hybridSearch(
     limit?: number;
     rrfK?: number;
     language?: string;
-  } = {}
+  } = {},
 ) {
-  const { limit = 10, rrfK = 60, language = 'simple' } = options;
+  const { limit = 10, rrfK = 60, language = "simple" } = options;
 
   const embedding = await getEmbedding(query);
 
-  const { data, error } = await supabase.rpc('hybrid_search_fts', {
+  const { data, error } = await supabase.rpc("hybrid_search_fts", {
     query_embedding: embedding,
     query_text: query,
     match_count: limit,
@@ -140,8 +140,8 @@ export async function hybridSearch(
 // Drizzle ORM Integration
 // ============================================
 
-import { sql } from 'drizzle-orm';
-import type { PgDatabase } from 'drizzle-orm/pg-core';
+import { sql } from "drizzle-orm";
+import type { PgDatabase } from "drizzle-orm/pg-core";
 
 export async function drizzleSemanticSearch<T extends PgDatabase<any>>(
   db: T,
@@ -150,9 +150,9 @@ export async function drizzleSemanticSearch<T extends PgDatabase<any>>(
     table?: string;
     threshold?: number;
     limit?: number;
-  } = {}
+  } = {},
 ) {
-  const { table = 'documents', threshold = 0.7, limit = 10 } = options;
+  const { table = "documents", threshold = 0.7, limit = 10 } = options;
 
   const embedding = await getEmbedding(query);
   const vectorStr = toPostgresVector(embedding);

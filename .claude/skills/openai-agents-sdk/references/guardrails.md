@@ -157,7 +157,7 @@ except InputGuardrailTripwireTriggered as e:
 
 ## GuardrailFunctionOutput Fields
 
-| Field | Description |
-|-------|-------------|
+| Field                | Description                    |
+| -------------------- | ------------------------------ |
 | `tripwire_triggered` | True if guardrail should block |
-| `output_info` | Human-readable explanation |
+| `output_info`        | Human-readable explanation     |

@@ -36,7 +36,10 @@ export function NavUser({ user }: NavUserProps) {
             <AvatarFallback className="text-xs">{initials}</AvatarFallback>
           </Avatar>
           <span className="hidden font-medium md:block">{user.name}</span>
-          <Badge variant="secondary" className="hidden text-xs md:block capitalize">
+          <Badge
+            variant="secondary"
+            className="hidden text-xs md:block capitalize"
+          >
             {user.role}
           </Badge>
         </button>

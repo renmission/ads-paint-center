@@ -12,7 +12,7 @@ type ActionResult = { error?: string; success?: string };
 
 export async function createRequestAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
@@ -53,7 +53,7 @@ export async function createRequestAction(
     if (admin.phone) {
       await sendSMS(
         admin.phone,
-        `[ADS Paint Center] New product request ${requestNumber} has been submitted and is awaiting your review.`
+        `[ADS Paint Center] New product request ${requestNumber} has been submitted and is awaiting your review.`,
       );
     }
   }
@@ -63,12 +63,14 @@ export async function createRequestAction(
 
 export async function handleRequestAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
   if (session.user.role !== "administrator") {
-    return { error: "Only administrators can approve, reject, or fulfill requests." };
+    return {
+      error: "Only administrators can approve, reject, or fulfill requests.",
+    };
   }
 
   const raw = Object.fromEntries(formData);
@@ -91,15 +93,22 @@ export async function handleRequestAction(
   }
   if (action === "mark_out_for_delivery") {
     if (request.status !== "approved") {
-      return { error: "Only approved requests can be marked out for delivery." };
+      return {
+        error: "Only approved requests can be marked out for delivery.",
+      };
     }
     if (request.deliveryType !== "delivery") {
       return { error: "This request is not a delivery order." };
     }
   }
   if (action === "fulfill") {
-    if (request.status !== "approved" && request.status !== "out_for_delivery") {
-      return { error: "Only approved or out-for-delivery requests can be fulfilled." };
+    if (
+      request.status !== "approved" &&
+      request.status !== "out_for_delivery"
+    ) {
+      return {
+        error: "Only approved or out-for-delivery requests can be fulfilled.",
+      };
     }
   }
 
@@ -122,7 +131,10 @@ export async function handleRequestAction(
         action === "approve" && parsed.data.driverId
           ? parsed.data.driverId
           : request.driverId,
-      smsNotified: newStatus === "approved" || newStatus === "out_for_delivery" || newStatus === "fulfilled",
+      smsNotified:
+        newStatus === "approved" ||
+        newStatus === "out_for_delivery" ||
+        newStatus === "fulfilled",
       updatedAt: new Date(),
     })
     .where(eq(requests.id, parsed.data.id));

@@ -6,8 +6,6 @@ The `Message` component suite provides a complete set of tools for building chat
 
 See `scripts/message.tsx` for this example.
 
-
-
 ## Installation
 
 ```bash
@@ -26,8 +24,6 @@ npx ai-elements@latest add message
 - Keyboard accessible with proper ARIA labels
 - Responsive design that adapts to different screen sizes
 - Seamless light/dark theme integration
-
-
 
 ## Usage with AI SDK
 
@@ -149,93 +145,93 @@ export default ActionsDemo;
 
 ### `<Message />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `from` | `UIMessage[` | - | The role of the message sender ( |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
+| Prop       | Type                                   | Default | Description                                 |
+| ---------- | -------------------------------------- | ------- | ------------------------------------------- |
+| `from`     | `UIMessage[`                           | -       | The role of the message sender (            |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -       | Any other props are spread to the root div. |
 
 ### `<MessageContent />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the content div. |
+| Prop       | Type                                   | Default | Description                                    |
+| ---------- | -------------------------------------- | ------- | ---------------------------------------------- |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -       | Any other props are spread to the content div. |
 
 ### `<MessageResponse />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `string` | - | The markdown content to render. |
-| `parseIncompleteMarkdown` | `boolean` | `true` | Whether to parse and fix incomplete markdown syntax (e.g., unclosed code blocks or lists). |
-| `className` | `string` | - | CSS class names to apply to the wrapper div element. |
-| `components` | `object` | - | Custom React components to use for rendering markdown elements (e.g., custom heading, paragraph, code block components). |
-| `allowedImagePrefixes` | `string[]` | `[` | Array of allowed URL prefixes for images. Use [ |
-| `allowedLinkPrefixes` | `string[]` | `[` | Array of allowed URL prefixes for links. Use [ |
-| `defaultOrigin` | `string` | - | Default origin to use for relative URLs in links and images. |
-| `rehypePlugins` | `array` | `[rehypeKatex]` | Array of rehype plugins to use for processing HTML. Includes KaTeX for math rendering by default. |
-| `remarkPlugins` | `array` | `[remarkGfm, remarkMath]` | Array of remark plugins to use for processing markdown. Includes GitHub Flavored Markdown and math support by default. |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
+| Prop                      | Type                                   | Default                   | Description                                                                                                              |
+| ------------------------- | -------------------------------------- | ------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| `children`                | `string`                               | -                         | The markdown content to render.                                                                                          |
+| `parseIncompleteMarkdown` | `boolean`                              | `true`                    | Whether to parse and fix incomplete markdown syntax (e.g., unclosed code blocks or lists).                               |
+| `className`               | `string`                               | -                         | CSS class names to apply to the wrapper div element.                                                                     |
+| `components`              | `object`                               | -                         | Custom React components to use for rendering markdown elements (e.g., custom heading, paragraph, code block components). |
+| `allowedImagePrefixes`    | `string[]`                             | `[`                       | Array of allowed URL prefixes for images. Use [                                                                          |
+| `allowedLinkPrefixes`     | `string[]`                             | `[`                       | Array of allowed URL prefixes for links. Use [                                                                           |
+| `defaultOrigin`           | `string`                               | -                         | Default origin to use for relative URLs in links and images.                                                             |
+| `rehypePlugins`           | `array`                                | `[rehypeKatex]`           | Array of rehype plugins to use for processing HTML. Includes KaTeX for math rendering by default.                        |
+| `remarkPlugins`           | `array`                                | `[remarkGfm, remarkMath]` | Array of remark plugins to use for processing markdown. Includes GitHub Flavored Markdown and math support by default.   |
+| `...props`                | `React.HTMLAttributes<HTMLDivElement>` | -                         | Any other props are spread to the root div.                                                                              |
 
 ### `<MessageActions />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | HTML attributes to spread to the root div. |
+| Prop       | Type                                   | Default | Description                                |
+| ---------- | -------------------------------------- | ------- | ------------------------------------------ |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -       | HTML attributes to spread to the root div. |
 
 ### `<MessageAction />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `tooltip` | `string` | - | Optional tooltip text shown on hover. |
-| `label` | `string` | - | Accessible label for screen readers. Also used as fallback if tooltip is not provided. |
-| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+| Prop       | Type                                  | Default | Description                                                                            |
+| ---------- | ------------------------------------- | ------- | -------------------------------------------------------------------------------------- |
+| `tooltip`  | `string`                              | -       | Optional tooltip text shown on hover.                                                  |
+| `label`    | `string`                              | -       | Accessible label for screen readers. Also used as fallback if tooltip is not provided. |
+| `...props` | `React.ComponentProps<typeof Button>` | -       | Any other props are spread to the underlying shadcn/ui Button component.               |
 
 ### `<MessageBranch />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `defaultBranch` | `number` | `0` | The index of the branch to show by default. |
-| `onBranchChange` | `(branchIndex: number) => void` | - | Callback fired when the branch changes. |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
+| Prop             | Type                                   | Default | Description                                 |
+| ---------------- | -------------------------------------- | ------- | ------------------------------------------- |
+| `defaultBranch`  | `number`                               | `0`     | The index of the branch to show by default. |
+| `onBranchChange` | `(branchIndex: number) => void`        | -       | Callback fired when the branch changes.     |
+| `...props`       | `React.HTMLAttributes<HTMLDivElement>` | -       | Any other props are spread to the root div. |
 
 ### `<MessageBranchContent />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
+| Prop       | Type                                   | Default | Description                                 |
+| ---------- | -------------------------------------- | ------- | ------------------------------------------- |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -       | Any other props are spread to the root div. |
 
 ### `<MessageBranchSelector />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `from` | `UIMessage[` | - | Aligns the selector for user, assistant or system messages. |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the selector container. |
+| Prop       | Type                                   | Default | Description                                                 |
+| ---------- | -------------------------------------- | ------- | ----------------------------------------------------------- |
+| `from`     | `UIMessage[`                           | -       | Aligns the selector for user, assistant or system messages. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -       | Any other props are spread to the selector container.       |
 
 ### `<MessageBranchPrevious />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+| Prop       | Type                                  | Default | Description                                                              |
+| ---------- | ------------------------------------- | ------- | ------------------------------------------------------------------------ |
+| `...props` | `React.ComponentProps<typeof Button>` | -       | Any other props are spread to the underlying shadcn/ui Button component. |
 
 ### `<MessageBranchNext />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `...props` | `React.ComponentProps<typeof Button>` | - | Any other props are spread to the underlying shadcn/ui Button component. |
+| Prop       | Type                                  | Default | Description                                                              |
+| ---------- | ------------------------------------- | ------- | ------------------------------------------------------------------------ |
+| `...props` | `React.ComponentProps<typeof Button>` | -       | Any other props are spread to the underlying shadcn/ui Button component. |
 
 ### `<MessageBranchPage />`
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | - | Any other props are spread to the underlying span element. |
+| Prop       | Type                                    | Default | Description                                                |
+| ---------- | --------------------------------------- | ------- | ---------------------------------------------------------- |
+| `...props` | `React.HTMLAttributes<HTMLSpanElement>` | -       | Any other props are spread to the underlying span element. |
 
 ### `<MessageAttachments />`
 
 A container component for displaying file attachments in a message. Automatically positions attachments at the end of the message with proper spacing and alignment.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `ReactNode` | - | MessageAttachment components to render. Returns null if no children provided. |
-| `...props` | `React.ComponentProps<` | - | Any other props are spread to the root div. |
+| Prop       | Type                    | Default | Description                                                                   |
+| ---------- | ----------------------- | ------- | ----------------------------------------------------------------------------- |
+| `children` | `ReactNode`             | -       | MessageAttachment components to render. Returns null if no children provided. |
+| `...props` | `React.ComponentProps<` | -       | Any other props are spread to the root div.                                   |
 
 **Example:**
 
@@ -251,11 +247,11 @@ A container component for displaying file attachments in a message. Automaticall
 
 Displays a single file attachment. Images are shown as thumbnails (96px × 96px) with rounded corners. Non-image files show a paperclip icon with the filename.
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `data` | `FileUIPart` | - | The file data to display. Must include url and mediaType. |
-| `onRemove` | `() => void` | - | Optional callback fired when the remove button is clicked. If provided, a remove button will appear on hover. |
-| `...props` | `React.HTMLAttributes<HTMLDivElement>` | - | Any other props are spread to the root div. |
+| Prop       | Type                                   | Default | Description                                                                                                   |
+| ---------- | -------------------------------------- | ------- | ------------------------------------------------------------------------------------------------------------- |
+| `data`     | `FileUIPart`                           | -       | The file data to display. Must include url and mediaType.                                                     |
+| `onRemove` | `() => void`                           | -       | Optional callback fired when the remove button is clicked. If provided, a remove button will appear on hover. |
+| `...props` | `React.HTMLAttributes<HTMLDivElement>` | -       | Any other props are spread to the root div.                                                                   |
 
 **Example:**
 

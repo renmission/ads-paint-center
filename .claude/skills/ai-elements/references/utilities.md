@@ -7,7 +7,10 @@ Supporting components for AI applications.
 Syntax highlighted code with copy button.
 
 ```tsx
-import { CodeBlock, CodeBlockCopyButton } from '@/components/ai-elements/code-block';
+import {
+  CodeBlock,
+  CodeBlockCopyButton,
+} from "@/components/ai-elements/code-block";
 
 <CodeBlock
   code={`const greeting = "Hello, World!";
@@ -16,24 +19,24 @@ console.log(greeting);`}
   showLineNumbers
 >
   <CodeBlockCopyButton />
-</CodeBlock>
+</CodeBlock>;
 ```
 
 ### Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `code` | `string` | Code to display |
-| `language` | `BundledLanguage` | Shiki language (e.g., `typescript`, `python`) |
-| `showLineNumbers` | `boolean` | Show line numbers |
+| Prop              | Type              | Description                                   |
+| ----------------- | ----------------- | --------------------------------------------- |
+| `code`            | `string`          | Code to display                               |
+| `language`        | `BundledLanguage` | Shiki language (e.g., `typescript`, `python`) |
+| `showLineNumbers` | `boolean`         | Show line numbers                             |
 
 ### Copy Button Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `onCopy` | `() => void` | Callback after successful copy |
-| `onError` | `(error: Error) => void` | Error callback |
-| `timeout` | `number` | Reset delay in ms (default: 2000) |
+| Prop      | Type                     | Description                       |
+| --------- | ------------------------ | --------------------------------- |
+| `onCopy`  | `() => void`             | Callback after successful copy    |
+| `onError` | `(error: Error) => void` | Error callback                    |
+| `timeout` | `number`                 | Reset delay in ms (default: 2000) |
 
 ### Features
 
@@ -65,10 +68,10 @@ import { Loader } from '@/components/ai-elements/loader';
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `size` | `number` | 16 | Icon size in pixels |
-| `className` | `string` | - | Additional classes |
+| Prop        | Type     | Default | Description         |
+| ----------- | -------- | ------- | ------------------- |
+| `size`      | `number` | 16      | Icon size in pixels |
+| `className` | `string` | -       | Additional classes  |
 
 ## Shimmer
 
@@ -89,12 +92,12 @@ import { Shimmer } from '@/components/ai-elements/shimmer';
 
 ### Props
 
-| Prop | Type | Default | Description |
-|------|------|---------|-------------|
-| `children` | `string` | - | Text to animate |
-| `as` | `ElementType` | `"p"` | HTML element to render |
-| `duration` | `number` | 2 | Animation duration in seconds |
-| `spread` | `number` | 2 | Shimmer spread multiplier |
+| Prop       | Type          | Default | Description                   |
+| ---------- | ------------- | ------- | ----------------------------- |
+| `children` | `string`      | -       | Text to animate               |
+| `as`       | `ElementType` | `"p"`   | HTML element to render        |
+| `duration` | `number`      | 2       | Animation duration in seconds |
+| `spread`   | `number`      | 2       | Shimmer spread multiplier     |
 
 ### Dependencies
 
@@ -105,12 +108,12 @@ import { Shimmer } from '@/components/ai-elements/shimmer';
 Quick action chips for suggested prompts.
 
 ```tsx
-import { Suggestions, Suggestion } from '@/components/ai-elements/suggestion';
+import { Suggestions, Suggestion } from "@/components/ai-elements/suggestion";
 
 const suggestions = [
-  'What are the latest trends in AI?',
-  'How does machine learning work?',
-  'Explain quantum computing',
+  "What are the latest trends in AI?",
+  "How does machine learning work?",
+  "Explain quantum computing",
 ];
 
 <Suggestions>
@@ -124,26 +127,26 @@ const suggestions = [
       }}
     />
   ))}
-</Suggestions>
+</Suggestions>;
 ```
 
 ### Props
 
 **Suggestions** - Horizontal scroll container
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `className` | `string` | Additional classes |
-| `children` | `ReactNode` | Suggestion buttons |
+| Prop        | Type        | Description        |
+| ----------- | ----------- | ------------------ |
+| `className` | `string`    | Additional classes |
+| `children`  | `ReactNode` | Suggestion buttons |
 
 **Suggestion** - Individual suggestion button
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `suggestion` | `string` | Suggestion text |
-| `onClick` | `(suggestion: string) => void` | Click handler |
-| `variant` | `string` | Button variant (default: `"outline"`) |
-| `size` | `string` | Button size (default: `"sm"`) |
+| Prop         | Type                           | Description                           |
+| ------------ | ------------------------------ | ------------------------------------- |
+| `suggestion` | `string`                       | Suggestion text                       |
+| `onClick`    | `(suggestion: string) => void` | Click handler                         |
+| `variant`    | `string`                       | Button variant (default: `"outline"`) |
+| `size`       | `string`                       | Button size (default: `"sm"`)         |
 
 ## Confirmation
 
@@ -158,10 +161,10 @@ import {
   ConfirmationRejected,
   ConfirmationActions,
   ConfirmationAction,
-} from '@/components/ai-elements/confirmation';
+} from "@/components/ai-elements/confirmation";
 
 <Confirmation
-  approval={{ id: 'tool-1', approved: undefined }}
+  approval={{ id: "tool-1", approved: undefined }}
   state="approval-requested"
 >
   <ConfirmationTitle>
@@ -175,13 +178,11 @@ import {
     <ConfirmationActions>
       <ConfirmationAction
         variant="outline"
-        onClick={() => handleResponse(false, 'User declined')}
+        onClick={() => handleResponse(false, "User declined")}
       >
         Deny
       </ConfirmationAction>
-      <ConfirmationAction
-        onClick={() => handleResponse(true)}
-      >
+      <ConfirmationAction onClick={() => handleResponse(true)}>
         Allow
       </ConfirmationAction>
     </ConfirmationActions>
@@ -194,15 +195,15 @@ import {
   <ConfirmationRejected>
     <p className="text-sm text-red-600">Action denied</p>
   </ConfirmationRejected>
-</Confirmation>
+</Confirmation>;
 ```
 
 ### Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `approval` | `{ id, approved?, reason? }` | Approval state |
-| `state` | `ToolUIPart["state"]` | Tool execution state |
+| Prop       | Type                         | Description          |
+| ---------- | ---------------------------- | -------------------- |
+| `approval` | `{ id, approved?, reason? }` | Approval state       |
+| `state`    | `ToolUIPart["state"]`        | Tool execution state |
 
 ### Conditional Components
 
@@ -225,7 +226,7 @@ import {
   ArtifactAction,
   ArtifactClose,
   ArtifactContent,
-} from '@/components/ai-elements/artifact';
+} from "@/components/ai-elements/artifact";
 
 <Artifact>
   <ArtifactHeader>
@@ -250,35 +251,35 @@ import {
   <ArtifactContent>
     <CodeBlock code={code} language="tsx" />
   </ArtifactContent>
-</Artifact>
+</Artifact>;
 ```
 
 ### Components
 
-| Component | Props |
-|-----------|-------|
-| `Artifact` | Container with rounded border |
-| `ArtifactHeader` | Header with border-bottom |
-| `ArtifactTitle` | Title text |
-| `ArtifactDescription` | Muted description |
-| `ArtifactActions` | Action buttons container |
-| `ArtifactAction` | `tooltip?`, `label?`, `icon?` |
-| `ArtifactClose` | X button with sr-only label |
-| `ArtifactContent` | Scrollable content area |
+| Component             | Props                         |
+| --------------------- | ----------------------------- |
+| `Artifact`            | Container with rounded border |
+| `ArtifactHeader`      | Header with border-bottom     |
+| `ArtifactTitle`       | Title text                    |
+| `ArtifactDescription` | Muted description             |
+| `ArtifactActions`     | Action buttons container      |
+| `ArtifactAction`      | `tooltip?`, `label?`, `icon?` |
+| `ArtifactClose`       | X button with sr-only label   |
+| `ArtifactContent`     | Scrollable content area       |
 
 ## Image
 
 AI-generated image display.
 
 ```tsx
-import { Image } from '@/components/ai-elements/image';
+import { Image } from "@/components/ai-elements/image";
 
 <Image
   src={generatedImageUrl}
   alt="AI generated artwork"
   width={512}
   height={512}
-/>
+/>;
 ```
 
 ## ModelSelector
@@ -300,7 +301,7 @@ import {
   ModelSelectorName,
   ModelSelectorShortcut,
   ModelSelectorSeparator,
-} from '@/components/ai-elements/model-selector';
+} from "@/components/ai-elements/model-selector";
 
 <ModelSelector open={open} onOpenChange={setOpen}>
   <ModelSelectorTrigger asChild>
@@ -311,7 +312,7 @@ import {
     <ModelSelectorList>
       <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
       <ModelSelectorGroup heading="Anthropic">
-        <ModelSelectorItem onSelect={() => setModel('claude-3-5-sonnet')}>
+        <ModelSelectorItem onSelect={() => setModel("claude-3-5-sonnet")}>
           <ModelSelectorLogo provider="anthropic" />
           <ModelSelectorName>Claude 3.5 Sonnet</ModelSelectorName>
           <ModelSelectorShortcut>⌘1</ModelSelectorShortcut>
@@ -319,7 +320,7 @@ import {
       </ModelSelectorGroup>
       <ModelSelectorSeparator />
       <ModelSelectorGroup heading="OpenAI">
-        <ModelSelectorItem onSelect={() => setModel('gpt-5.4')}>
+        <ModelSelectorItem onSelect={() => setModel("gpt-5.4")}>
           <ModelSelectorLogoGroup>
             <ModelSelectorLogo provider="openai" />
             <ModelSelectorLogo provider="azure" />
@@ -329,7 +330,7 @@ import {
       </ModelSelectorGroup>
     </ModelSelectorList>
   </ModelSelectorContent>
-</ModelSelector>
+</ModelSelector>;
 ```
 
 ### ModelSelectorLogo Providers
@@ -355,7 +356,7 @@ import {
   OpenInT3,
   OpenInv0,
   OpenInCursor,
-} from '@/components/ai-elements/open-in-chat';
+} from "@/components/ai-elements/open-in-chat";
 
 <OpenIn query="How do I implement authentication?">
   <OpenInTrigger />
@@ -369,19 +370,19 @@ import {
     <OpenInv0 />
     <OpenInCursor />
   </OpenInContent>
-</OpenIn>
+</OpenIn>;
 ```
 
 ### Supported Providers
 
-| Component | Opens URL |
-|-----------|-----------|
-| `OpenInChatGPT` | chatgpt.com |
-| `OpenInClaude` | claude.ai/new |
-| `OpenInScira` | scira.ai |
-| `OpenInT3` | t3.chat/new |
-| `OpenInv0` | v0.app |
-| `OpenInCursor` | cursor.com/link/prompt |
+| Component       | Opens URL              |
+| --------------- | ---------------------- |
+| `OpenInChatGPT` | chatgpt.com            |
+| `OpenInClaude`  | claude.ai/new          |
+| `OpenInScira`   | scira.ai               |
+| `OpenInT3`      | t3.chat/new            |
+| `OpenInv0`      | v0.app                 |
+| `OpenInCursor`  | cursor.com/link/prompt |
 
 ## WebPreview
 
@@ -395,11 +396,14 @@ import {
   WebPreviewUrl,
   WebPreviewBody,
   WebPreviewConsole,
-} from '@/components/ai-elements/web-preview';
+} from "@/components/ai-elements/web-preview";
 
 const [logs, setLogs] = useState([]);
 
-<WebPreview defaultUrl="http://localhost:3000" onUrlChange={(url) => console.log(url)}>
+<WebPreview
+  defaultUrl="http://localhost:3000"
+  onUrlChange={(url) => console.log(url)}
+>
   <WebPreviewNavigation>
     <WebPreviewNavigationButton tooltip="Back" onClick={() => {}}>
       <ArrowLeftIcon className="size-4" />
@@ -411,17 +415,17 @@ const [logs, setLogs] = useState([]);
   </WebPreviewNavigation>
   <WebPreviewBody />
   <WebPreviewConsole logs={logs} />
-</WebPreview>
+</WebPreview>;
 ```
 
 ### Props
 
-| Component | Props |
-|-----------|-------|
-| `WebPreview` | `defaultUrl?`, `onUrlChange?` |
-| `WebPreviewNavigationButton` | `tooltip?` |
-| `WebPreviewBody` | `loading?: ReactNode` - loading overlay |
-| `WebPreviewConsole` | `logs: Array<{ level, message, timestamp }>` |
+| Component                    | Props                                        |
+| ---------------------------- | -------------------------------------------- |
+| `WebPreview`                 | `defaultUrl?`, `onUrlChange?`                |
+| `WebPreviewNavigationButton` | `tooltip?`                                   |
+| `WebPreviewBody`             | `loading?: ReactNode` - loading overlay      |
+| `WebPreviewConsole`          | `logs: Array<{ level, message, timestamp }>` |
 
 ### Console Log Levels
 
@@ -431,10 +435,10 @@ const [logs, setLogs] = useState([]);
 
 ## Dependencies Summary
 
-| Component | Dependencies |
-|-----------|-------------|
-| `CodeBlock` | `shiki` |
-| `Shimmer` | `motion/react` |
-| `Suggestions` | `@/components/ui/scroll-area` |
-| `Confirmation` | `@/components/ui/alert`, `ai` types |
-| `Artifact` | `@/components/ui/tooltip`, `lucide-react` |
+| Component      | Dependencies                              |
+| -------------- | ----------------------------------------- |
+| `CodeBlock`    | `shiki`                                   |
+| `Shimmer`      | `motion/react`                            |
+| `Suggestions`  | `@/components/ui/scroll-area`             |
+| `Confirmation` | `@/components/ui/alert`, `ai` types       |
+| `Artifact`     | `@/components/ui/tooltip`, `lucide-react` |

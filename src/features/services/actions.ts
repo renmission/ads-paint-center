@@ -2,7 +2,11 @@
 
 import { db } from "@/shared/lib/db";
 import { services } from "@/shared/lib/db/schema";
-import { createServiceSchema, editServiceSchema, toggleServiceSchema } from "./schemas";
+import {
+  createServiceSchema,
+  editServiceSchema,
+  toggleServiceSchema,
+} from "./schemas";
 import { auth } from "@/shared/lib/auth";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -11,7 +15,7 @@ type ActionResult = { error?: string; success?: string };
 
 export async function createServiceAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
@@ -37,7 +41,7 @@ export async function createServiceAction(
 
 export async function editServiceAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
@@ -67,7 +71,7 @@ export async function editServiceAction(
 
 export async function toggleServiceAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };

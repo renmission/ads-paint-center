@@ -29,17 +29,17 @@ app/
 
 ```tsx
 // app/(dashboard)/layout.tsx
-import { AppSidebar } from "@/components/layout/app-sidebar"
+import { AppSidebar } from "@/components/layout/app-sidebar";
 import {
   SidebarInset,
   SidebarProvider,
   SidebarRail,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <SidebarProvider>
@@ -47,7 +47,7 @@ export default function DashboardLayout({
       <SidebarRail />
       <SidebarInset>{children}</SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
 ```
 
@@ -57,15 +57,15 @@ Keep pages clean - content only, no layout chrome:
 
 ```tsx
 // app/(dashboard)/page.tsx
-import { DocumentWorkspace } from "@/components/workspace/document-workspace"
-import { Suspense } from "react"
+import { DocumentWorkspace } from "@/components/workspace/document-workspace";
+import { Suspense } from "react";
 
 export default function DashboardPage() {
   return (
     <Suspense fallback={<DashboardSkeleton />}>
       <DocumentWorkspace />
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -73,7 +73,7 @@ export default function DashboardPage() {
 
 ```tsx
 // components/layout/app-sidebar.tsx
-import Link from "next/link"
+import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
@@ -86,8 +86,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-} from "@/components/ui/sidebar"
-import { NAV_GROUPS, FOOTER_NAV_ITEMS } from "./nav"
+} from "@/components/ui/sidebar";
+import { NAV_GROUPS, FOOTER_NAV_ITEMS } from "./nav";
 
 export function AppSidebar() {
   return (
@@ -146,7 +146,7 @@ export function AppSidebar() {
         </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
-  )
+  );
 }
 ```
 
@@ -156,18 +156,18 @@ Separate navigation data from component:
 
 ```tsx
 // components/layout/nav.ts
-import { Home, Settings, Users, HelpCircle } from "lucide-react"
-import type { LucideIcon } from "lucide-react"
+import { Home, Settings, Users, HelpCircle } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
-  title: string
-  href: string
-  icon: LucideIcon
+  title: string;
+  href: string;
+  icon: LucideIcon;
 }
 
 interface NavGroup {
-  title: string
-  items: NavItem[]
+  title: string;
+  items: NavItem[];
 }
 
 export const NAV_GROUPS: NavGroup[] = [
@@ -178,21 +178,21 @@ export const NAV_GROUPS: NavGroup[] = [
       { title: "Users", href: "/users", icon: Users },
     ],
   },
-]
+];
 
 export const FOOTER_NAV_ITEMS: NavItem[] = [
   { title: "Settings", href: "/settings", icon: Settings },
   { title: "Help", href: "/help", icon: HelpCircle },
-]
+];
 ```
 
 ## Sidebar Variants
 
-| Variant | Description |
-|---------|-------------|
-| `default` | Standard sidebar |
-| `inset` | Sidebar with padding, content area has rounded corners |
-| `floating` | Sidebar floats over content |
+| Variant    | Description                                            |
+| ---------- | ------------------------------------------------------ |
+| `default`  | Standard sidebar                                       |
+| `inset`    | Sidebar with padding, content area has rounded corners |
+| `floating` | Sidebar floats over content                            |
 
 ```tsx
 <Sidebar variant="inset" collapsible="icon">
@@ -200,11 +200,11 @@ export const FOOTER_NAV_ITEMS: NavItem[] = [
 
 ## Collapsible Options
 
-| Option | Behavior |
-|--------|----------|
-| `icon` | Collapses to icon-only rail |
+| Option      | Behavior                     |
+| ----------- | ---------------------------- |
+| `icon`      | Collapses to icon-only rail  |
 | `offcanvas` | Slides completely off-screen |
-| `none` | Not collapsible |
+| `none`      | Not collapsible              |
 
 ## File Structure
 

@@ -10,13 +10,9 @@ argument-hint: "[component-name]"
 
 Installing AI Elements is straightforward and can be done in a couple of ways. You can use the dedicated CLI command for the fastest setup, or integrate via the standard shadcn/ui CLI if you've already adopted shadcn's workflow.
 
-
-
 ## Quick Start
 
 Here are some basic examples of what you can achieve using components from AI Elements.
-
-
 
 ## Prerequisites
 
@@ -26,8 +22,6 @@ Before installing AI Elements, make sure your environment meets the following re
 - A [Next.js](https://nextjs.org/) project with the [AI SDK](https://ai-sdk.dev/) installed.
 - [shadcn/ui](https://ui.shadcn.com/) installed in your project. If you don't have it installed, running any install command will automatically install it for you.
 - We also highly recommend using the [AI Gateway](https://vercel.com/docs/ai-gateway) and adding `AI_GATEWAY_API_KEY` to your `env.local` so you don't have to use an API key from every provider. AI Gateway also gives $5 in usage per month so you can experiment with models. You can obtain an API key [here](https://vercel.com/d?to=%2F%5Bteam%5D%2F%7E%2Fai%2Fapi-keys&title=Get%20your%20AI%20Gateway%20key).
-
-
 
 ## Installing Components
 
@@ -91,8 +85,6 @@ All AI Elements components take as many primitive attributes as possible. For ex
 
 ## Customization
 
-
-
 After installation, no additional setup is needed. The component’s styles (Tailwind CSS classes) and scripts are already integrated. You can start interacting with the component in your app immediately.
 
 For example, if you'd like to remove the rounding on `Message`, you can go to `components/ai-elements/message.tsx` and remove `rounded-lg` as follows:
@@ -107,7 +99,7 @@ export const MessageContent = ({
     className={cn(
       "flex flex-col gap-2 text-sm text-foreground",
       "group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground group-[.is-user]:px-4 group-[.is-user]:py-3",
-      className
+      className,
     )}
     {...props}
   >

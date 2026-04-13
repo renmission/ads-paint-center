@@ -67,9 +67,7 @@
         "customers_email_unique": {
           "name": "customers_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -127,12 +125,8 @@
           "name": "inventory_product_id_products_id_fk",
           "tableFrom": "inventory",
           "tableTo": "products",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -142,9 +136,7 @@
         "inventory_product_id_unique": {
           "name": "inventory_product_id_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "product_id"
-          ]
+          "columns": ["product_id"]
         }
       },
       "policies": {},
@@ -230,9 +222,7 @@
         "products_sku_unique": {
           "name": "products_sku_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "sku"
-          ]
+          "columns": ["sku"]
         }
       },
       "policies": {},
@@ -329,12 +319,8 @@
           "name": "requests_customer_id_customers_id_fk",
           "tableFrom": "requests",
           "tableTo": "customers",
-          "columnsFrom": [
-            "customer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["customer_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -342,12 +328,8 @@
           "name": "requests_product_id_products_id_fk",
           "tableFrom": "requests",
           "tableTo": "products",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -355,12 +337,8 @@
           "name": "requests_handled_by_users_id_fk",
           "tableFrom": "requests",
           "tableTo": "users",
-          "columnsFrom": [
-            "handled_by"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["handled_by"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -370,9 +348,7 @@
         "requests_request_number_unique": {
           "name": "requests_request_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "request_number"
-          ]
+          "columns": ["request_number"]
         }
       },
       "policies": {},
@@ -427,12 +403,8 @@
           "name": "sales_transaction_items_transaction_id_sales_transactions_id_fk",
           "tableFrom": "sales_transaction_items",
           "tableTo": "sales_transactions",
-          "columnsFrom": [
-            "transaction_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["transaction_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -440,12 +412,8 @@
           "name": "sales_transaction_items_product_id_products_id_fk",
           "tableFrom": "sales_transaction_items",
           "tableTo": "products",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["product_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -552,12 +520,8 @@
           "name": "sales_transactions_customer_id_customers_id_fk",
           "tableFrom": "sales_transactions",
           "tableTo": "customers",
-          "columnsFrom": [
-            "customer_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["customer_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -565,12 +529,8 @@
           "name": "sales_transactions_staff_id_users_id_fk",
           "tableFrom": "sales_transactions",
           "tableTo": "users",
-          "columnsFrom": [
-            "staff_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["staff_id"],
+          "columnsTo": ["id"],
           "onDelete": "restrict",
           "onUpdate": "no action"
         }
@@ -580,9 +540,7 @@
         "sales_transactions_transaction_number_unique": {
           "name": "sales_transactions_transaction_number_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "transaction_number"
-          ]
+          "columns": ["transaction_number"]
         }
       },
       "policies": {},
@@ -661,9 +619,7 @@
         "users_email_unique": {
           "name": "users_email_unique",
           "nullsNotDistinct": false,
-          "columns": [
-            "email"
-          ]
+          "columns": ["email"]
         }
       },
       "policies": {},
@@ -675,12 +631,7 @@
     "public.payment_method": {
       "name": "payment_method",
       "schema": "public",
-      "values": [
-        "cash",
-        "gcash",
-        "credit",
-        "other"
-      ]
+      "values": ["cash", "gcash", "credit", "other"]
     },
     "public.product_category": {
       "name": "product_category",
@@ -699,29 +650,17 @@
     "public.request_status": {
       "name": "request_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "approved",
-        "rejected",
-        "fulfilled"
-      ]
+      "values": ["pending", "approved", "rejected", "fulfilled"]
     },
     "public.transaction_status": {
       "name": "transaction_status",
       "schema": "public",
-      "values": [
-        "pending",
-        "completed",
-        "voided"
-      ]
+      "values": ["pending", "completed", "voided"]
     },
     "public.user_role": {
       "name": "user_role",
       "schema": "public",
-      "values": [
-        "administrator",
-        "staff"
-      ]
+      "values": ["administrator", "staff"]
     }
   },
   "schemas": {},

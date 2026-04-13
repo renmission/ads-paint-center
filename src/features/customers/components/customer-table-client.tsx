@@ -40,7 +40,7 @@ export function CustomerTableClient({ initialData }: Props) {
     (c) =>
       c.name.toLowerCase().includes(search.toLowerCase()) ||
       c.phone.includes(search) ||
-      (c.email ?? "").toLowerCase().includes(search.toLowerCase())
+      (c.email ?? "").toLowerCase().includes(search.toLowerCase()),
   );
 
   return (

@@ -27,23 +27,28 @@ import { motion } from "motion/react";
 import { MessageCircle, X } from "lucide-react";
 import { ChatCallout } from "./chat-callout"; // Lottie "How can I help?" bubble
 
-export const ChatButton = memo(({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) => (
-  <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
-    <ChatCallout isOpen={isOpen} />
-    <motion.button
-      onClick={onClick}
-      className="relative flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg"
-      whileTap={{ scale: 0.95 }}
-      initial={{ scale: 0, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ type: "spring", stiffness: 260, damping: 20 }}
-    >
-      <motion.div animate={{ rotate: isOpen ? 90 : 0 }} transition={{ duration: 0.2 }}>
-        {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
-      </motion.div>
-    </motion.button>
-  </div>
-));
+export const ChatButton = memo(
+  ({ isOpen, onClick }: { isOpen: boolean; onClick: () => void }) => (
+    <div className="fixed bottom-6 right-6 z-50 flex items-end gap-3">
+      <ChatCallout isOpen={isOpen} />
+      <motion.button
+        onClick={onClick}
+        className="relative flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg"
+        whileTap={{ scale: 0.95 }}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      >
+        <motion.div
+          animate={{ rotate: isOpen ? 90 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          {isOpen ? <X size={24} /> : <MessageCircle size={24} />}
+        </motion.div>
+      </motion.button>
+    </div>
+  ),
+);
 ```
 
 ## ChatContainer
@@ -65,8 +70,10 @@ export const ChatContainer = memo(({ isOpen, onClose, children }) => (
         exit={{ opacity: 0, y: 20, scale: 0.95 }}
         transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl max-sm:rounded-none
-                        border border-border bg-background shadow-2xl">
+        <div
+          className="flex h-full min-h-0 flex-col overflow-hidden rounded-xl max-sm:rounded-none
+                        border border-border bg-background shadow-2xl"
+        >
           {/* Header with logo + close button */}
           <div className="flex items-center justify-between border-b px-4 py-2.5 bg-card">
             {/* Logo + title */}
@@ -93,7 +100,9 @@ export function ChatWidget({ inline = false }: { inline?: boolean }) {
     <div className="flex h-full min-h-0 flex-col">
       <Conversation className="px-3 [&>div]:scrollbar-none">
         <ConversationContent className="gap-4 py-3 h-fit">
-          {messages.map(m => <ChatMessage key={m.id} message={m} />)}
+          {messages.map((m) => (
+            <ChatMessage key={m.id} message={m} />
+          ))}
         </ConversationContent>
         <ConversationScrollButton />
         <ConversationAutoScroller trigger={messages.length} />
@@ -106,7 +115,7 @@ export function ChatWidget({ inline = false }: { inline?: boolean }) {
 
   return (
     <>
-      <ChatButton isOpen={isOpen} onClick={() => setIsOpen(p => !p)} />
+      <ChatButton isOpen={isOpen} onClick={() => setIsOpen((p) => !p)} />
       <ChatContainer isOpen={isOpen} onClose={() => setIsOpen(false)}>
         {chatContent}
       </ChatContainer>
@@ -145,9 +154,14 @@ Feature flag in host app:
 
 ```tsx
 // Host app layout.tsx
-{process.env.NEXT_PUBLIC_CHAT_URL && (
-  <Script src={`${process.env.NEXT_PUBLIC_CHAT_URL}/widget.js`} strategy="lazyOnload" />
-)}
+{
+  process.env.NEXT_PUBLIC_CHAT_URL && (
+    <Script
+      src={`${process.env.NEXT_PUBLIC_CHAT_URL}/widget.js`}
+      strategy="lazyOnload"
+    />
+  );
+}
 ```
 
 ## Lottie Callout

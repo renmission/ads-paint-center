@@ -1,8 +1,18 @@
 import { db } from "@/shared/lib/db";
-import { products, inventory, salesTransactions, requests } from "@/shared/lib/db/schema";
+import {
+  products,
+  inventory,
+  salesTransactions,
+  requests,
+} from "@/shared/lib/db/schema";
 import { eq, lte, sql, and, gte } from "drizzle-orm";
 import { StatCard } from "./stat-card";
-import { Package, AlertTriangle, DollarSign, ClipboardList } from "lucide-react";
+import {
+  Package,
+  AlertTriangle,
+  DollarSign,
+  ClipboardList,
+} from "lucide-react";
 import {
   Table,
   TableBody,
@@ -12,7 +22,12 @@ import {
   TableRow,
 } from "@/shared/components/ui/table";
 import { Badge } from "@/shared/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/shared/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/components/ui/card";
 
 async function getStats() {
   const today = new Date();
@@ -34,8 +49,8 @@ async function getStats() {
         .where(
           and(
             eq(salesTransactions.status, "completed"),
-            gte(salesTransactions.createdAt, today)
-          )
+            gte(salesTransactions.createdAt, today),
+          ),
         ),
       db
         .select({ count: sql<number>`count(*)` })

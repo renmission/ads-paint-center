@@ -80,20 +80,20 @@ export function Chat() {
 
 ## useChat Return Values
 
-| Property                  | Type                                               | Description                  |
-| ------------------------- | -------------------------------------------------- | ---------------------------- |
-| `id`                      | `string`                                           | Chat ID                      |
-| `messages`                | `UIMessage[]`                                      | Current messages             |
-| `status`                  | `'submitted' \| 'streaming' \| 'ready' \| 'error'` | Chat status                  |
-| `error`                   | `Error \| undefined`                               | Error if any                 |
-| `sendMessage`             | `function`                                         | Send new message             |
-| `regenerate`              | `function`                                         | Regenerate last response     |
-| `stop`                    | `function`                                         | Stop streaming               |
-| `setMessages`             | `function`                                         | Update messages locally      |
-| `resumeStream`            | `function`                                         | Resume interrupted stream    |
-| `addToolOutput`           | `function`                                         | Provide tool result          |
-| `addToolApprovalResponse` | `function`                                         | Approve/deny tool execution  |
-| `clearError`              | `function`                                         | Clear current error          |
+| Property                  | Type                                               | Description                 |
+| ------------------------- | -------------------------------------------------- | --------------------------- |
+| `id`                      | `string`                                           | Chat ID                     |
+| `messages`                | `UIMessage[]`                                      | Current messages            |
+| `status`                  | `'submitted' \| 'streaming' \| 'ready' \| 'error'` | Chat status                 |
+| `error`                   | `Error \| undefined`                               | Error if any                |
+| `sendMessage`             | `function`                                         | Send new message            |
+| `regenerate`              | `function`                                         | Regenerate last response    |
+| `stop`                    | `function`                                         | Stop streaming              |
+| `setMessages`             | `function`                                         | Update messages locally     |
+| `resumeStream`            | `function`                                         | Resume interrupted stream   |
+| `addToolOutput`           | `function`                                         | Provide tool result         |
+| `addToolApprovalResponse` | `function`                                         | Approve/deny tool execution |
+| `clearError`              | `function`                                         | Clear current error         |
 
 ## Status Values
 
@@ -219,7 +219,11 @@ type DynamicToolUIPart = {
   type: "dynamic-tool";
   toolName: string;
   toolCallId: string;
-  state: "input-streaming" | "input-available" | "output-available" | "output-error";
+  state:
+    | "input-streaming"
+    | "input-available"
+    | "output-available"
+    | "output-error";
   input: unknown;
   output?: unknown;
   errorText?: string;
@@ -260,7 +264,10 @@ type StepStartUIPart = {
 
 ```typescript
 import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport, lastAssistantMessageIsCompleteWithToolCalls } from "ai";
+import {
+  DefaultChatTransport,
+  lastAssistantMessageIsCompleteWithToolCalls,
+} from "ai";
 
 const { messages, sendMessage, addToolOutput } = useChat({
   transport: new DefaultChatTransport({ api: "/api/chat" }),
@@ -526,8 +533,8 @@ export async function POST(req: Request) {
   try {
     const validatedMessages = await validateUIMessages({
       messages: [...previousMessages, message],
-      tools,           // if using tools
-      metadataSchema,  // if using custom metadata
+      tools, // if using tools
+      metadataSchema, // if using custom metadata
     });
 
     const result = streamText({
@@ -535,7 +542,9 @@ export async function POST(req: Request) {
       messages: await convertToModelMessages(validatedMessages),
     });
 
-    return result.toUIMessageStreamResponse({ originalMessages: validatedMessages });
+    return result.toUIMessageStreamResponse({
+      originalMessages: validatedMessages,
+    });
   } catch (error) {
     if (error instanceof TypeValidationError) {
       console.error("Validation failed:", error);

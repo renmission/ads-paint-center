@@ -39,7 +39,7 @@ export function ChangePasswordDialog({
 }: Props) {
   const [state, formAction, isPending] = useActionState(
     changeStaffPasswordAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<ChangePasswordInput>({
@@ -63,7 +63,8 @@ export function ChangePasswordDialog({
           <DialogTitle>Change Password</DialogTitle>
         </DialogHeader>
         <p className="text-sm text-muted-foreground">
-          Set a new password for <span className="font-medium">{staffName}</span>.
+          Set a new password for{" "}
+          <span className="font-medium">{staffName}</span>.
         </p>
         <Form {...form}>
           <form action={formAction} className="space-y-4">

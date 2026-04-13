@@ -24,11 +24,11 @@ Two strings are compared by the overlap of their trigram sets.
 
 ### Operators
 
-| Operator | Function | Description |
-|----------|----------|-------------|
-| `%` | `similarity()` | Trigram similarity (0-1) |
-| `<%` | `word_similarity()` | Word-level similarity |
-| `<<%` | `strict_word_similarity()` | Strict word similarity |
+| Operator | Function                   | Description              |
+| -------- | -------------------------- | ------------------------ |
+| `%`      | `similarity()`             | Trigram similarity (0-1) |
+| `<%`     | `word_similarity()`        | Word-level similarity    |
+| `<<%`    | `strict_word_similarity()` | Strict word similarity   |
 
 ```sql
 -- Basic similarity (default threshold 0.3)
@@ -60,12 +60,12 @@ SET pg_trgm.similarity_threshold = 0.5;
 
 **Recommended thresholds:**
 
-| Use Case | Threshold |
-|----------|-----------|
-| Autocomplete | 0.1 - 0.2 |
-| Fuzzy search | 0.3 (default) |
-| Precise matching | 0.5 - 0.6 |
-| Near-exact | 0.8+ |
+| Use Case         | Threshold     |
+| ---------------- | ------------- |
+| Autocomplete     | 0.1 - 0.2     |
+| Fuzzy search     | 0.3 (default) |
+| Precise matching | 0.5 - 0.6     |
+| Near-exact       | 0.8+          |
 
 ### Indexes for pg_trgm
 
@@ -80,14 +80,14 @@ CREATE INDEX ON documents USING gist (title gist_trgm_ops);
 
 **GIN vs GiST for trigrams:**
 
-| Feature | GIN | GiST |
-|---------|-----|------|
-| `%` operator | Fast | Fast |
-| `LIKE`/`ILIKE` | Fast | Fast |
-| `ORDER BY similarity()` | Needs sort | Native KNN |
-| Index size | Larger | Smaller |
-| Build time | Slower | Faster |
-| Best for | Filtering (`WHERE`) | Ranking (`ORDER BY`) |
+| Feature                 | GIN                 | GiST                 |
+| ----------------------- | ------------------- | -------------------- |
+| `%` operator            | Fast                | Fast                 |
+| `LIKE`/`ILIKE`          | Fast                | Fast                 |
+| `ORDER BY similarity()` | Needs sort          | Native KNN           |
+| Index size              | Larger              | Smaller              |
+| Build time              | Slower              | Faster               |
+| Best for                | Filtering (`WHERE`) | Ranking (`ORDER BY`) |
 
 ## LIKE / ILIKE Optimization
 
@@ -249,6 +249,7 @@ ORDER BY ts_rank_cd(text_search, prefix_tsquery('simple', 'ksylitoli fluori')) D
 ```
 
 **Key points:**
+
 - Sanitizes `( ) ? ! & | < > : \ '` to prevent tsquery syntax errors from user input
 - Falls back to `websearch_to_tsquery` for quoted phrases (`"exact phrase"`)
 - Works with any `'simple'` tsvector column — no schema changes needed

@@ -15,7 +15,10 @@ export function InvoicePrintButton({ id, transactionNumber }: Props) {
         <Printer className="mr-1.5 h-4 w-4" />
         Print
       </Button>
-      <a href={`/api/invoice/${id}/pdf`} download={`invoice-${transactionNumber}.pdf`}>
+      <a
+        href={`/api/invoice/${id}/pdf`}
+        download={`invoice-${transactionNumber}.pdf`}
+      >
         <Button variant="outline" size="sm">
           <Download className="mr-1.5 h-4 w-4" />
           Download PDF

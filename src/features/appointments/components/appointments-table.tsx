@@ -1,5 +1,10 @@
 import { db } from "@/shared/lib/db";
-import { appointments, customers, services, users } from "@/shared/lib/db/schema";
+import {
+  appointments,
+  customers,
+  services,
+  users,
+} from "@/shared/lib/db/schema";
 import { alias } from "drizzle-orm/pg-core";
 import { desc, eq } from "drizzle-orm";
 import { auth } from "@/shared/lib/auth";
@@ -63,7 +68,12 @@ export async function AppointmentsTable() {
     .orderBy(customers.name);
 
   const activeServices = await db
-    .select({ id: services.id, name: services.name, price: services.price, duration: services.duration })
+    .select({
+      id: services.id,
+      name: services.name,
+      price: services.price,
+      duration: services.duration,
+    })
     .from(services)
     .where(eq(services.isActive, true))
     .orderBy(services.name);

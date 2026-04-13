@@ -51,19 +51,19 @@ result = await Runner.run(agent, "Tell me a joke")
 
 ### Key Patterns
 
-| Pattern | Purpose |
-|---------|---------|
-| Basic Agent | Simple Q&A with instructions |
-| Azure/LiteLLM | Azure OpenAI integration |
-| AgentOutputSchema | Strict JSON validation with Pydantic |
-| Function Tools | External actions (@function_tool) |
-| Streaming | Real-time UI (Runner.run_streamed) |
-| Handoffs | Specialized agents, delegation |
-| Agents as Tools | Orchestration (agent.as_tool) |
-| LLM as Judge | Iterative improvement loop |
-| Guardrails | Input/output validation |
-| Sessions | Automatic conversation history |
-| Multi-Agent Pipeline | Multi-step workflows |
+| Pattern              | Purpose                              |
+| -------------------- | ------------------------------------ |
+| Basic Agent          | Simple Q&A with instructions         |
+| Azure/LiteLLM        | Azure OpenAI integration             |
+| AgentOutputSchema    | Strict JSON validation with Pydantic |
+| Function Tools       | External actions (@function_tool)    |
+| Streaming            | Real-time UI (Runner.run_streamed)   |
+| Handoffs             | Specialized agents, delegation       |
+| Agents as Tools      | Orchestration (agent.as_tool)        |
+| LLM as Judge         | Iterative improvement loop           |
+| Guardrails           | Input/output validation              |
+| Sessions             | Automatic conversation history       |
+| Multi-Agent Pipeline | Multi-step workflows                 |
 
 ## Reference Documentation
 

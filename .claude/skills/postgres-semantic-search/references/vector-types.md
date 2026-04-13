@@ -15,11 +15,13 @@ CREATE INDEX ON documents USING hnsw (embedding vector_cosine_ops);
 ```
 
 **Properties:**
+
 - 32 bits (4 bytes) per dimension
 - Full precision
 - Max dimensions: 16,000 (HNSW), 2,000 (IVFFlat)
 
 **Memory per row:**
+
 - 1536 dims: ~6 KB
 - 3072 dims: ~12 KB
 
@@ -39,12 +41,14 @@ CREATE INDEX ON documents USING hnsw ((embedding::halfvec(3072)) halfvec_cosine_
 ```
 
 **Properties:**
+
 - 16 bits (2 bytes) per dimension
 - Slightly reduced precision (negligible for embeddings)
 - Max dimensions: 4,000 (HNSW)
 - **50% memory savings**
 
 **Memory per row:**
+
 - 3072 dims: ~6 KB (same as vector(1536))
 
 ### bit (binary vectors)
@@ -59,16 +63,17 @@ CREATE INDEX ON documents USING hnsw (embedding bit_hamming_ops);
 ```
 
 **Properties:**
+
 - 1 bit per dimension
 - Max dimensions: 64,000
 - Use for extreme compression
 
 ## Embedding Model Dimensions
 
-| Model | Dimensions | Recommended Type |
-|-------|-----------|------------------|
-| text-embedding-3-small | 1536 | `vector(1536)` |
-| text-embedding-3-large | 3072 | `halfvec(3072)` |
+| Model                  | Dimensions | Recommended Type |
+| ---------------------- | ---------- | ---------------- |
+| text-embedding-3-small | 1536       | `vector(1536)`   |
+| text-embedding-3-large | 3072       | `halfvec(3072)`  |
 
 > **Note:** For other embedding models (Cohere, Voyage AI, Mistral, etc.), consult the model provider's documentation for dimension specifications. Use `vector(dimensions)` for models with ≤ 2000 dimensions, or `halfvec(dimensions)` for larger models requiring memory optimization.
 
@@ -92,6 +97,7 @@ FROM documents;
 ```
 
 **Trade-offs:**
+
 - 3072 dims: Best quality, most memory
 - 1536 dims: Good balance
 - 768 dims: Fast, lower recall
@@ -99,16 +105,19 @@ FROM documents;
 ## Choosing Vector Type
 
 ### Use `vector(1536)` when:
+
 - Using text-embedding-3-small
 - Storage is not a concern
 - Need maximum compatibility
 
 ### Use `halfvec(3072)` when:
+
 - Using text-embedding-3-large
 - Want quality of 3072 dims with memory of 1536
 - pgvector 0.7.0+ available
 
 ### Use `bit` when:
+
 - Extreme scale (millions of vectors)
 - Can accept lower recall
 - Binary quantization is acceptable

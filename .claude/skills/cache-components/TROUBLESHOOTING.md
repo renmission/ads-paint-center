@@ -65,15 +65,15 @@ User-specific content that depends on runtime data (cookies, headers, searchPara
 ```tsx
 // ❌ WRONG: Trying to cache user-specific content
 async function UserContent() {
-  'use cache'
-  const session = await cookies() // Causes timeout!
-  return await fetchContent(session.userId)
+  "use cache";
+  const session = await cookies(); // Causes timeout!
+  return await fetchContent(session.userId);
 }
 
 // ✅ CORRECT: Don't cache user-specific content, stream it instead
 async function UserContent() {
-  const session = await cookies()
-  return await fetchContent(session.get('userId')?.value)
+  const session = await cookies();
+  return await fetchContent(session.get("userId")?.value);
 }
 
 export default function Page() {
@@ -81,7 +81,7 @@ export default function Page() {
     <Suspense fallback={<Loading />}>
       <UserContent /> {/* No 'use cache' - streams dynamically */}
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -106,14 +106,14 @@ Cache Components require async functions because cached outputs are streamed.
 ```tsx
 // ❌ WRONG: Synchronous function
 function CachedComponent() {
-  'use cache'
-  return <div>Hello</div>
+  "use cache";
+  return <div>Hello</div>;
 }
 
 // ✅ CORRECT: Async function
 async function CachedComponent() {
-  'use cache'
-  return <div>Hello</div>
+  "use cache";
+  return <div>Hello</div>;
 }
 ```
 
@@ -149,7 +149,7 @@ export default async function Page() {
       <Header />
       <UserDeals /> {/* Uses cookies() */}
     </>
-  )
+  );
 }
 
 // ✅ CORRECT: Suspense provides static fallback
@@ -161,7 +161,7 @@ export default async function Page() {
         <UserDeals />
       </Suspense>
     </>
-  )
+  );
 }
 ```
 
@@ -190,22 +190,22 @@ Either cache the data or wrap in Suspense:
 ```tsx
 // ❌ ERROR: Uncached database query without Suspense
 export default async function ProductPage({ params }) {
-  const product = await db.products.findUnique({ where: { id: params.id } })
-  return <ProductCard product={product} />
+  const product = await db.products.findUnique({ where: { id: params.id } });
+  return <ProductCard product={product} />;
 }
 
 // ✅ OPTION 1: Cache the data
 async function getProduct(id: string) {
-  'use cache'
-  cacheTag(`product-${id}`)
-  cacheLife('hours')
+  "use cache";
+  cacheTag(`product-${id}`);
+  cacheLife("hours");
 
-  return await db.products.findUnique({ where: { id } })
+  return await db.products.findUnique({ where: { id } });
 }
 
 export default async function ProductPage({ params }) {
-  const product = await getProduct(params.id)
-  return <ProductCard product={product} />
+  const product = await getProduct(params.id);
+  return <ProductCard product={product} />;
 }
 
 // ✅ OPTION 2: Wrap in Suspense (streams dynamically)
@@ -214,7 +214,7 @@ export default async function ProductPage({ params }) {
     <Suspense fallback={<ProductSkeleton />}>
       <ProductContent id={params.id} />
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -245,18 +245,18 @@ With Cache Components, empty `generateStaticParams` is no longer allowed. This p
 ```tsx
 // ❌ ERROR: Empty array
 export function generateStaticParams() {
-  return []
+  return [];
 }
 
 // ✅ CORRECT: Provide at least one param
 export async function generateStaticParams() {
-  const products = await getPopularProducts()
-  return products.map(({ category, slug }) => ({ category, slug }))
+  const products = await getPopularProducts();
+  return products.map(({ category, slug }) => ({ category, slug }));
 }
 
 // ✅ ALSO CORRECT: Hardcoded for known routes
 export function generateStaticParams() {
-  return [{ slug: 'about' }, { slug: 'contact' }, { slug: 'pricing' }]
+  return [{ slug: "about" }, { slug: "contact" }, { slug: "pricing" }];
 }
 ```
 
@@ -281,15 +281,15 @@ User-specific content should **not be cached**. Remove `'use cache'` and stream 
 ```tsx
 // ❌ ERROR: Cookies inside cache
 async function UserDashboard() {
-  'use cache'
-  const session = await cookies() // Error!
-  return await fetchDashboard(session.get('userId'))
+  "use cache";
+  const session = await cookies(); // Error!
+  return await fetchDashboard(session.get("userId"));
 }
 
 // ✅ CORRECT: Don't cache user-specific content
 async function UserDashboard() {
-  const session = await cookies()
-  return await fetchDashboard(session.get('userId')?.value)
+  const session = await cookies();
+  return await fetchDashboard(session.get("userId")?.value);
 }
 
 export default function Page() {
@@ -297,7 +297,7 @@ export default function Page() {
     <Suspense fallback={<DashboardSkeleton />}>
       <UserDashboard /> {/* Streams at request time */}
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -321,7 +321,7 @@ export default function Page() {
 // next.config.ts
 const nextConfig: NextConfig = {
   cacheComponents: true, // Required!
-}
+};
 ```
 
 **2. Is the function async?**
@@ -329,8 +329,8 @@ const nextConfig: NextConfig = {
 ```tsx
 // Must be async
 async function CachedData() {
-  'use cache'
-  return await fetchData()
+  "use cache";
+  return await fetchData();
 }
 ```
 
@@ -339,16 +339,16 @@ async function CachedData() {
 ```tsx
 // ❌ WRONG: Directive not first
 async function CachedData() {
-  const x = 1 // Something before 'use cache'
-  ;('use cache')
-  return await fetchData()
+  const x = 1; // Something before 'use cache'
+  ("use cache");
+  return await fetchData();
 }
 
 // ✅ CORRECT: Directive first
 async function CachedData() {
-  'use cache'
-  const x = 1
-  return await fetchData()
+  "use cache";
+  const x = 1;
+  return await fetchData();
 }
 ```
 
@@ -357,16 +357,16 @@ async function CachedData() {
 ```tsx
 // ❌ WRONG: Function as argument (not serializable)
 async function CachedData({ transform }: { transform: (x: any) => any }) {
-  'use cache'
-  const data = await fetchData()
-  return transform(data)
+  "use cache";
+  const data = await fetchData();
+  return transform(data);
 }
 
 // ✅ CORRECT: Only serializable arguments
 async function CachedData({ transformType }: { transformType: string }) {
-  'use cache'
-  const data = await fetchData()
-  return applyTransform(data, transformType)
+  "use cache";
+  const data = await fetchData();
+  return applyTransform(data, transformType);
 }
 ```
 
@@ -388,12 +388,12 @@ Cache not invalidated after mutation.
 **1. Use `updateTag()` for immediate consistency:**
 
 ```tsx
-'use server'
-import { updateTag } from 'next/cache'
+"use server";
+import { updateTag } from "next/cache";
 
 export async function createPost(data: FormData) {
-  await db.posts.create({ data })
-  updateTag('posts') // Immediate invalidation
+  await db.posts.create({ data });
+  updateTag("posts"); // Immediate invalidation
 }
 ```
 
@@ -402,15 +402,15 @@ export async function createPost(data: FormData) {
 ```tsx
 // Cache uses this tag
 async function Posts() {
-  'use cache'
-  cacheTag('posts') // Must match invalidation tag
-  return await db.posts.findMany()
+  "use cache";
+  cacheTag("posts"); // Must match invalidation tag
+  return await db.posts.findMany();
 }
 
 // Invalidation must use same tag
 export async function createPost(data: FormData) {
-  await db.posts.create({ data })
-  updateTag('posts') // Same tag!
+  await db.posts.create({ data });
+  updateTag("posts"); // Same tag!
 }
 ```
 
@@ -421,12 +421,12 @@ export async function updatePost(postId: string, data: FormData) {
   const post = await db.posts.update({
     where: { id: postId },
     data,
-  })
+  });
 
   // Invalidate all affected caches
-  updateTag('posts') // All posts list
-  updateTag(`post-${postId}`) // Specific post
-  updateTag(`author-${post.authorId}`) // Author's posts
+  updateTag("posts"); // All posts list
+  updateTag(`post-${postId}`); // Specific post
+  updateTag(`author-${post.authorId}`); // Author's posts
 }
 ```
 
@@ -487,33 +487,33 @@ async function CachedData({ limit }: { limit: number }) {
 Do not rely on `React.cache()` for deduplication inside `'use cache'` boundaries. Instead, rely on the `'use cache'` mechanism itself:
 
 ```tsx
-import { cache } from 'react'
+import { cache } from "react";
 
 const getUser = cache(async (id: string) => {
-  return await db.users.findUnique({ where: { id } })
-})
+  return await db.users.findUnique({ where: { id } });
+});
 
 // ❌ WRONG: React.cache does not deduplicate inside 'use cache'
 async function CachedProfile({ userId }: { userId: string }) {
-  'use cache'
-  const user = await getUser(userId) // React.cache is isolated here
-  const posts = await getPostsByAuthor(userId)
-  return <Profile user={user} posts={posts} />
+  "use cache";
+  const user = await getUser(userId); // React.cache is isolated here
+  const posts = await getPostsByAuthor(userId);
+  return <Profile user={user} posts={posts} />;
 }
 
 // ✅ CORRECT: Extract shared data as a separate cached function
 async function getUser(id: string) {
-  'use cache'
-  cacheTag(`user-${id}`)
-  cacheLife('hours')
-  return await db.users.findUnique({ where: { id } })
+  "use cache";
+  cacheTag(`user-${id}`);
+  cacheLife("hours");
+  return await db.users.findUnique({ where: { id } });
 }
 
 // Both components share the same 'use cache' entry
 async function CachedProfile({ userId }: { userId: string }) {
-  'use cache'
-  const user = await getUser(userId) // Hits 'use cache' entry
-  return <Profile user={user} />
+  "use cache";
+  const user = await getUser(userId); // Hits 'use cache' entry
+  return <Profile user={user} />;
 }
 ```
 
@@ -534,17 +534,17 @@ async function CachedProfile({ userId }: { userId: string }) {
 
 ```tsx
 async function FrequentlyUpdatedData() {
-  'use cache'
-  cacheLife('seconds') // Short cache
+  "use cache";
+  cacheLife("seconds"); // Short cache
 
   // Or custom short duration
   cacheLife({
     stale: 0,
     revalidate: 30,
     expire: 60,
-  })
+  });
 
-  return await fetchData()
+  return await fetchData();
 }
 ```
 
@@ -554,7 +554,7 @@ async function FrequentlyUpdatedData() {
 // For truly real-time data, skip caching
 async function LiveData() {
   // No 'use cache'
-  return await fetchLiveData()
+  return await fetchLiveData();
 }
 
 export default function Page() {
@@ -562,7 +562,7 @@ export default function Page() {
     <Suspense fallback={<Loading />}>
       <LiveData />
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -585,13 +585,13 @@ Cached functions making slow network requests or accessing unavailable services 
 
 ```tsx
 async function CachedData() {
-  'use cache'
+  "use cache";
 
   try {
-    return await fetchFromAPI()
+    return await fetchFromAPI();
   } catch (error) {
     // Return fallback during build if API unavailable
-    return getFallbackData()
+    return getFallbackData();
   }
 }
 ```
@@ -603,7 +603,7 @@ async function CachedData() {
 export function generateStaticParams() {
   // Only prerender most important pages at build time
   // Other pages will be generated on-demand at request time
-  return [{ slug: 'home' }, { slug: 'about' }]
+  return [{ slug: "home" }, { slug: "about" }];
 }
 ```
 
@@ -611,18 +611,18 @@ export function generateStaticParams() {
 
 ```tsx
 // app/[slug]/page.tsx
-import { Suspense } from 'react'
+import { Suspense } from "react";
 
 export default function Page({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }) {
   return (
     <Suspense fallback={<PageSkeleton />}>
       <DynamicContent params={params} />
     </Suspense>
-  )
+  );
 }
 ```
 
@@ -639,35 +639,31 @@ export default function Page({
 async function CachedContent({
   paramsPromise,
 }: {
-  paramsPromise: Promise<{ id: string }>
+  paramsPromise: Promise<{ id: string }>;
 }) {
-  'use cache'
-  const { id } = await paramsPromise // Hangs at build time!
-  return await fetchData(id)
+  "use cache";
+  const { id } = await paramsPromise; // Hangs at build time!
+  return await fetchData(id);
 }
 
-export default function Page({
-  params,
-}: {
-  params: Promise<{ id: string }>
-}) {
-  return <CachedContent paramsPromise={params} />
+export default function Page({ params }: { params: Promise<{ id: string }> }) {
+  return <CachedContent paramsPromise={params} />;
 }
 
 // ✅ CORRECT: Resolve params outside cache, pass primitives
 async function CachedContent({ id }: { id: string }) {
-  'use cache'
-  cacheTag(`content-${id}`)
-  return await fetchData(id)
+  "use cache";
+  cacheTag(`content-${id}`);
+  return await fetchData(id);
 }
 
 export default async function Page({
   params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
-  const { id } = await params
-  return <CachedContent id={id} />
+  const { id } = await params;
+  return <CachedContent id={id} />;
 }
 ```
 
@@ -680,25 +676,25 @@ export default async function Page({
 **Cause**: Code inside `'use cache'` tries to read from `React.cache()` or other per-request shared storage that doesn't exist during build-time prerendering. The deduplication mechanism waits for a request context that never arrives.
 
 ```tsx
-import { cache } from 'react'
+import { cache } from "react";
 
 const getData = cache(async () => {
-  return await db.data.findMany()
-})
+  return await db.data.findMany();
+});
 
 // ❌ WRONG: React.cache inside 'use cache' may hang during build
 async function CachedWidget() {
-  'use cache'
-  const data = await getData() // Deduplication storage not available
-  return <Widget data={data} />
+  "use cache";
+  const data = await getData(); // Deduplication storage not available
+  return <Widget data={data} />;
 }
 
 // ✅ CORRECT: Fetch directly or use a separate 'use cache' function
 async function CachedWidget() {
-  'use cache'
-  cacheTag('widget')
-  const data = await db.data.findMany() // Direct fetch inside cache scope
-  return <Widget data={data} />
+  "use cache";
+  cacheTag("widget");
+  const data = await db.data.findMany(); // Direct fetch inside cache scope
+  return <Widget data={data} />;
 }
 ```
 
@@ -744,15 +740,15 @@ Add logging to verify tags:
 
 ```tsx
 async function CachedData({ id }: { id: string }) {
-  'use cache'
+  "use cache";
 
-  const tags = ['data', `item-${id}`]
-  console.log('Cache tags:', tags) // Check during build
+  const tags = ["data", `item-${id}`];
+  console.log("Cache tags:", tags); // Check during build
 
-  tags.forEach((tag) => cacheTag(tag))
-  cacheLife('hours')
+  tags.forEach((tag) => cacheTag(tag));
+  cacheLife("hours");
 
-  return await fetchData(id)
+  return await fetchData(id);
 }
 ```
 
@@ -781,16 +777,16 @@ Monitor cache effectiveness:
 
 ```tsx
 async function CachedData() {
-  'use cache'
+  "use cache";
 
-  const start = performance.now()
-  const data = await fetchData()
-  const duration = performance.now() - start
+  const start = performance.now();
+  const data = await fetchData();
+  const duration = performance.now() - start;
 
   // Log for analysis
-  console.log(`Cache execution: ${duration}ms`)
+  console.log(`Cache execution: ${duration}ms`);
 
-  return data
+  return data;
 }
 ```
 
@@ -799,30 +795,30 @@ async function CachedData() {
 ```tsx
 // ❌ Coarse: One big cached component
 async function PageContent() {
-  'use cache'
-  const header = await fetchHeader()
-  const posts = await fetchPosts()
-  const sidebar = await fetchSidebar()
-  return <>{/* everything */}</>
+  "use cache";
+  const header = await fetchHeader();
+  const posts = await fetchPosts();
+  const sidebar = await fetchSidebar();
+  return <>{/* everything */}</>;
 }
 
 // ✅ Fine-grained: Independent cached components
 async function Header() {
-  'use cache'
-  cacheLife('days')
-  return await fetchHeader()
+  "use cache";
+  cacheLife("days");
+  return await fetchHeader();
 }
 
 async function Posts() {
-  'use cache'
-  cacheLife('hours')
-  return await fetchPosts()
+  "use cache";
+  cacheLife("hours");
+  return await fetchPosts();
 }
 
 async function Sidebar() {
-  'use cache'
-  cacheLife('minutes')
-  return await fetchSidebar()
+  "use cache";
+  cacheLife("minutes");
+  return await fetchSidebar();
 }
 ```
 
@@ -831,14 +827,14 @@ async function Sidebar() {
 ```tsx
 // Hierarchical tags for targeted invalidation
 cacheTag(
-  'posts', // All posts
+  "posts", // All posts
   `category-${category}`, // Posts in category
   `post-${id}`, // Specific post
-  `author-${authorId}` // Author's posts
-)
+  `author-${authorId}`, // Author's posts
+);
 
 // Invalidate at appropriate level
-updateTag(`post-${id}`) // Single post changed
-updateTag(`author-${author}`) // Author updated all posts
-updateTag('posts') // Nuclear option
+updateTag(`post-${id}`); // Single post changed
+updateTag(`author-${author}`); // Author updated all posts
+updateTag("posts"); // Nuclear option
 ```

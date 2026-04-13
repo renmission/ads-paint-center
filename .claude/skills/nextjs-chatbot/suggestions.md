@@ -24,11 +24,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Invalid input" }, { status: 400 });
     }
 
-    const suggestions = await generateSuggestions(parsed.data.question, parsed.data.answer);
+    const suggestions = await generateSuggestions(
+      parsed.data.question,
+      parsed.data.answer,
+    );
     return NextResponse.json({ suggestions });
   } catch (error) {
     console.error("Error generating suggestions:", error);
-    return NextResponse.json({ error: "Failed to generate suggestions" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Failed to generate suggestions" },
+      { status: 500 },
+    );
   }
 }
 ```
@@ -44,7 +50,9 @@ import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 
 const suggestionsSchema = z.object({
-  questions: z.array(z.string()).max(3)
+  questions: z
+    .array(z.string())
+    .max(3)
     .describe("Follow-up questions the user might want to ask"),
 });
 
@@ -91,13 +99,17 @@ const { messages, sendMessage } = useChat({
   transport: new DefaultChatTransport({ api: "/api/chat" }),
   onFinish: async ({ message, messages }) => {
     // Extract last user question + assistant answer
-    const lastUserMsg = [...messages].reverse().find(m => m.role === "user");
-    const question = lastUserMsg?.parts
-      .filter((p): p is { type: "text"; text: string } => p.type === "text")
-      .map(p => p.text).join("") ?? "";
-    const answer = message.parts
-      .filter((p): p is { type: "text"; text: string } => p.type === "text")
-      .map(p => p.text).join("") ?? "";
+    const lastUserMsg = [...messages].reverse().find((m) => m.role === "user");
+    const question =
+      lastUserMsg?.parts
+        .filter((p): p is { type: "text"; text: string } => p.type === "text")
+        .map((p) => p.text)
+        .join("") ?? "";
+    const answer =
+      message.parts
+        .filter((p): p is { type: "text"; text: string } => p.type === "text")
+        .map((p) => p.text)
+        .join("") ?? "";
 
     if (question && answer) {
       try {
@@ -120,21 +132,23 @@ const { messages, sendMessage } = useChat({
 ```tsx
 import { Suggestion } from "@/components/ai-elements/suggestion";
 
-{suggestions.length > 0 && (
-  <div className="flex flex-wrap gap-2 px-4 py-2">
-    {suggestions.map((text, i) => (
-      <Suggestion
-        key={i}
-        onClick={() => {
-          sendMessage({ text });
-          setSuggestions([]); // Clear after use
-        }}
-      >
-        {text}
-      </Suggestion>
-    ))}
-  </div>
-)}
+{
+  suggestions.length > 0 && (
+    <div className="flex flex-wrap gap-2 px-4 py-2">
+      {suggestions.map((text, i) => (
+        <Suggestion
+          key={i}
+          onClick={() => {
+            sendMessage({ text });
+            setSuggestions([]); // Clear after use
+          }}
+        >
+          {text}
+        </Suggestion>
+      ))}
+    </div>
+  );
+}
 ```
 
 ### Clear suggestions on new user message
@@ -154,4 +168,3 @@ const handleSend = (text: string) => {
 - Fail silently — never block the chat UI if suggestions fail
 - Clear on send — stale suggestions from a previous turn are confusing
 - Language matching — instruct the model to match the user's language
-

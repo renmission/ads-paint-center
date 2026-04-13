@@ -5,7 +5,9 @@ export default function SalesPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Sales History</h1>
-        <p className="text-muted-foreground">View and manage all sales transactions.</p>
+        <p className="text-muted-foreground">
+          View and manage all sales transactions.
+        </p>
       </div>
       <SalesTable />
     </div>

@@ -8,20 +8,20 @@ Templates for building agent-based AI applications with tool visualization.
 
 ```typescript
 // ai/assistant.ts
-import { ToolLoopAgent, tool, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { ToolLoopAgent, tool, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
 export const assistantAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
+  model: anthropic("claude-sonnet-4-6"),
   instructions: `You are a helpful AI assistant with access to various tools.
     Use tools when needed to provide accurate information.
     Always explain what you're doing before using a tool.`,
   tools: {
     searchWeb: tool({
-      description: 'Search the web for information',
+      description: "Search the web for information",
       inputSchema: z.object({
-        query: z.string().describe('Search query'),
+        query: z.string().describe("Search query"),
       }),
       execute: async ({ query }) => {
         // Implement web search
@@ -29,23 +29,23 @@ export const assistantAgent = new ToolLoopAgent({
       },
     }),
     calculateMath: tool({
-      description: 'Perform mathematical calculations',
+      description: "Perform mathematical calculations",
       inputSchema: z.object({
-        expression: z.string().describe('Math expression to evaluate'),
+        expression: z.string().describe("Math expression to evaluate"),
       }),
       execute: async ({ expression }) => {
         // Use mathjs for safe expression evaluation
-        const { evaluate } = await import('mathjs');
+        const { evaluate } = await import("mathjs");
         try {
           const result = evaluate(expression);
           return { result: String(result) };
         } catch {
-          return { error: 'Invalid expression' };
+          return { error: "Invalid expression" };
         }
       },
     }),
     getCurrentTime: tool({
-      description: 'Get the current date and time',
+      description: "Get the current date and time",
       inputSchema: z.object({}),
       execute: async () => {
         return { time: new Date().toISOString() };
@@ -60,8 +60,8 @@ export const assistantAgent = new ToolLoopAgent({
 
 ```typescript
 // app/api/chat/route.ts
-import { createAgentUIStreamResponse } from 'ai';
-import { assistantAgent } from '@/ai/assistant';
+import { createAgentUIStreamResponse } from "ai";
+import { assistantAgent } from "@/ai/assistant";
 
 export const maxDuration = 30;
 
@@ -83,19 +83,19 @@ export async function POST(request: Request) {
 
 ```tsx
 // app/page.tsx
-'use client';
-import { useChat } from '@ai-sdk/react';
-import { DefaultChatTransport } from 'ai';
+"use client";
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
 import {
   Conversation,
   ConversationContent,
   ConversationScrollButton,
-} from '@/components/ai-elements/conversation';
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from '@/components/ai-elements/message';
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputBody,
@@ -103,32 +103,32 @@ import {
   PromptInputFooter,
   PromptInputSubmit,
   type PromptInputMessage,
-} from '@/components/ai-elements/prompt-input';
+} from "@/components/ai-elements/prompt-input";
 import {
   Tool,
   ToolHeader,
   ToolContent,
   ToolInput,
   ToolOutput,
-} from '@/components/ai-elements/tool';
+} from "@/components/ai-elements/tool";
 import {
   Reasoning,
   ReasoningTrigger,
   ReasoningContent,
-} from '@/components/ai-elements/reasoning';
-import { Loader } from '@/components/ai-elements/loader';
-import { useState } from 'react';
+} from "@/components/ai-elements/reasoning";
+import { Loader } from "@/components/ai-elements/loader";
+import { useState } from "react";
 
 export default function AgentDashboard() {
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const { messages, sendMessage, status } = useChat({
-    transport: new DefaultChatTransport({ api: '/api/chat' }),
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
   });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (!message.text.trim()) return;
     sendMessage({ text: message.text });
-    setInput('');
+    setInput("");
   };
 
   return (
@@ -154,7 +154,7 @@ export default function AgentDashboard() {
               <div key={message.id} className="flex flex-col gap-2">
                 {message.parts.map((part, i) => {
                   switch (part.type) {
-                    case 'text':
+                    case "text":
                       return (
                         <Message key={i} from={message.role}>
                           <MessageContent>
@@ -163,12 +163,12 @@ export default function AgentDashboard() {
                         </Message>
                       );
 
-                    case 'reasoning':
+                    case "reasoning":
                       return (
                         <Reasoning
                           key={i}
                           isStreaming={
-                            status === 'streaming' &&
+                            status === "streaming" &&
                             message.id === messages.at(-1)?.id
                           }
                         >
@@ -179,7 +179,7 @@ export default function AgentDashboard() {
 
                     default:
                       // Handle tool parts
-                      if (part.type.startsWith('tool-')) {
+                      if (part.type.startsWith("tool-")) {
                         return (
                           <Tool key={i}>
                             <ToolHeader
@@ -202,7 +202,7 @@ export default function AgentDashboard() {
                 })}
               </div>
             ))}
-            {status === 'submitted' && <Loader />}
+            {status === "submitted" && <Loader />}
           </ConversationContent>
           <ConversationScrollButton />
         </Conversation>
@@ -236,16 +236,16 @@ export default function AgentDashboard() {
 
 ```typescript
 // ai/research.ts
-import { ToolLoopAgent, tool, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { ToolLoopAgent, tool, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
 export const researchAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
-  instructions: 'You are a research assistant. Find and summarize information.',
+  model: anthropic("claude-sonnet-4-6"),
+  instructions: "You are a research assistant. Find and summarize information.",
   tools: {
     searchWeb: tool({
-      description: 'Search for information',
+      description: "Search for information",
       inputSchema: z.object({ query: z.string() }),
       execute: async ({ query }) => ({ results: [`Found: ${query}`] }),
     }),
@@ -256,16 +256,16 @@ export const researchAgent = new ToolLoopAgent({
 
 ```typescript
 // ai/code.ts
-import { ToolLoopAgent, tool, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { ToolLoopAgent, tool, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
 export const codeAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
-  instructions: 'You are a coding assistant. Write and review code.',
+  model: anthropic("claude-sonnet-4-6"),
+  instructions: "You are a coding assistant. Write and review code.",
   tools: {
     runCode: tool({
-      description: 'Execute code',
+      description: "Execute code",
       inputSchema: z.object({ code: z.string(), language: z.string() }),
       execute: async ({ code, language }) => ({
         output: `Executed ${language} code`,
@@ -278,12 +278,12 @@ export const codeAgent = new ToolLoopAgent({
 
 ```typescript
 // ai/writing.ts
-import { ToolLoopAgent, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
+import { ToolLoopAgent, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
 
 export const writingAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
-  instructions: 'You are a writing assistant. Help with content creation.',
+  model: anthropic("claude-sonnet-4-6"),
+  instructions: "You are a writing assistant. Help with content creation.",
   tools: {},
   stopWhen: stepCountIs(10),
 });
@@ -293,10 +293,10 @@ export const writingAgent = new ToolLoopAgent({
 
 ```typescript
 // app/api/chat/route.ts
-import { createAgentUIStreamResponse } from 'ai';
-import { researchAgent } from '@/ai/research';
-import { codeAgent } from '@/ai/code';
-import { writingAgent } from '@/ai/writing';
+import { createAgentUIStreamResponse } from "ai";
+import { researchAgent } from "@/ai/research";
+import { codeAgent } from "@/ai/code";
+import { writingAgent } from "@/ai/writing";
 
 export const maxDuration = 30;
 
@@ -307,7 +307,7 @@ const agents = {
 };
 
 export async function POST(request: Request) {
-  const { messages, agentType = 'research' } = await request.json();
+  const { messages, agentType = "research" } = await request.json();
 
   const agent = agents[agentType as keyof typeof agents] || researchAgent;
 
@@ -323,29 +323,28 @@ export async function POST(request: Request) {
 
 ```tsx
 // Add to dashboard
-const [agentType, setAgentType] = useState<'research' | 'code' | 'writing'>('research');
+const [agentType, setAgentType] = useState<"research" | "code" | "writing">(
+  "research",
+);
 
 // In handleSubmit:
-sendMessage(
-  { text: message.text },
-  { body: { agentType } }
-);
+sendMessage({ text: message.text }, { body: { agentType } });
 
 // Agent selector component
 <div className="flex gap-2 mb-4">
-  {['research', 'code', 'writing'].map((type) => (
+  {["research", "code", "writing"].map((type) => (
     <button
       key={type}
       onClick={() => setAgentType(type as any)}
       className={cn(
-        'px-3 py-1 rounded-full text-sm',
-        agentType === type ? 'bg-primary text-primary-foreground' : 'bg-muted'
+        "px-3 py-1 rounded-full text-sm",
+        agentType === type ? "bg-primary text-primary-foreground" : "bg-muted",
       )}
     >
       {type.charAt(0).toUpperCase() + type.slice(1)}
     </button>
   ))}
-</div>
+</div>;
 ```
 
 ---
@@ -360,28 +359,29 @@ In AI SDK, tools requiring approval **omit the `execute` function**. The agent l
 
 ```typescript
 // ai/admin-agent.ts
-import { ToolLoopAgent, tool, stepCountIs } from 'ai';
-import { anthropic } from '@ai-sdk/anthropic';
-import { z } from 'zod';
+import { ToolLoopAgent, tool, stepCountIs } from "ai";
+import { anthropic } from "@ai-sdk/anthropic";
+import { z } from "zod";
 
 export const adminAgent = new ToolLoopAgent({
-  model: anthropic('claude-sonnet-4-6'),
-  instructions: 'You are an admin assistant with access to sensitive operations.',
+  model: anthropic("claude-sonnet-4-6"),
+  instructions:
+    "You are an admin assistant with access to sensitive operations.",
   tools: {
     // Tool requiring approval - NO execute function
     deleteFile: tool({
-      description: 'Delete a file (requires approval)',
+      description: "Delete a file (requires approval)",
       inputSchema: z.object({
-        path: z.string().describe('File path to delete'),
+        path: z.string().describe("File path to delete"),
       }),
       outputSchema: z.string(),
       // NO execute - agent loop pauses, client handles approval
     }),
     // Tool with automatic execution
     readFile: tool({
-      description: 'Read file contents',
+      description: "Read file contents",
       inputSchema: z.object({
-        path: z.string().describe('File path to read'),
+        path: z.string().describe("File path to read"),
       }),
       execute: async ({ path }) => {
         return { content: `Contents of ${path}` };
@@ -395,7 +395,7 @@ export const adminAgent = new ToolLoopAgent({
 ### Approval UI
 
 ```tsx
-import { useChat } from '@ai-sdk/react';
+import { useChat } from "@ai-sdk/react";
 import {
   Confirmation,
   ConfirmationTitle,
@@ -404,15 +404,15 @@ import {
   ConfirmationRejected,
   ConfirmationActions,
   ConfirmationAction,
-} from '@/components/ai-elements/confirmation';
+} from "@/components/ai-elements/confirmation";
 
 // In your component:
 const { messages, sendMessage, addToolOutput } = useChat({
-  transport: new DefaultChatTransport({ api: '/api/chat' }),
+  transport: new DefaultChatTransport({ api: "/api/chat" }),
 });
 
 // In message parts rendering - check for 'input-available' state
-if (part.type === 'tool-invocation' && part.state === 'input-available') {
+if (part.type === "tool-invocation" && part.state === "input-available") {
   return (
     <Confirmation key={i} state={part.state}>
       <ConfirmationTitle>
@@ -428,7 +428,7 @@ if (part.type === 'tool-invocation' && part.state === 'input-available') {
             onClick={() => {
               addToolOutput({
                 toolCallId: part.toolCallId,
-                output: 'Denied by user',
+                output: "Denied by user",
               });
               sendMessage();
             }}
@@ -438,8 +438,8 @@ if (part.type === 'tool-invocation' && part.state === 'input-available') {
           <ConfirmationAction
             onClick={async () => {
               // Execute the actual operation after approval
-              const result = await fetch('/api/delete-file', {
-                method: 'POST',
+              const result = await fetch("/api/delete-file", {
+                method: "POST",
                 body: JSON.stringify({ path: part.input.path }),
               }).then((r) => r.json());
 
@@ -472,6 +472,7 @@ See [Human-in-the-Loop Cookbook](https://ai-sdk.dev/cookbook/next/human-in-the-l
 ## Reference
 
 For more details, see:
+
 - `/ai-sdk-6` skill → [agents.md](../../ai-sdk-6/references/agents.md) - Full agent API
 - `/ai-sdk-6` skill → [tools.md](../../ai-sdk-6/references/tools.md) - Tool definitions
 - `/ai-elements` skill → [chatbot.md](../../ai-elements/references/chatbot.md) - Tool component

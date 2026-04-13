@@ -33,11 +33,16 @@ interface Props {
 }
 
 function fmt(n: number | string) {
-  return parseFloat(String(n)).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  return parseFloat(String(n)).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+  });
 }
 
 function ToggleServiceButton({ service }: { service: ServiceRow }) {
-  const [state, formAction, isPending] = useActionState(toggleServiceAction, undefined);
+  const [state, formAction, isPending] = useActionState(
+    toggleServiceAction,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success) toast.success(state.success);
@@ -47,15 +52,21 @@ function ToggleServiceButton({ service }: { service: ServiceRow }) {
   return (
     <form action={formAction}>
       <input type="hidden" name="id" value={service.id} />
-      <input type="hidden" name="isActive" value={service.isActive ? "false" : "true"} />
+      <input
+        type="hidden"
+        name="isActive"
+        value={service.isActive ? "false" : "true"}
+      />
       <Button
         type="submit"
         variant="ghost"
         size="sm"
         disabled={isPending}
-        className={service.isActive
-          ? "text-muted-foreground hover:text-destructive"
-          : "text-muted-foreground hover:text-green-600"}
+        className={
+          service.isActive
+            ? "text-muted-foreground hover:text-destructive"
+            : "text-muted-foreground hover:text-green-600"
+        }
       >
         {service.isActive ? "Deactivate" : "Activate"}
       </Button>
@@ -70,10 +81,11 @@ export function ServicesTableClient({ initialData, userRole }: Props) {
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
-    return initialData.filter((row) =>
-      !q ||
-      row.name.toLowerCase().includes(q) ||
-      row.category.toLowerCase().includes(q)
+    return initialData.filter(
+      (row) =>
+        !q ||
+        row.name.toLowerCase().includes(q) ||
+        row.category.toLowerCase().includes(q),
     );
   }, [initialData, search]);
 
@@ -106,29 +118,45 @@ export function ServicesTableClient({ initialData, userRole }: Props) {
               <TableHead className="text-right">Price</TableHead>
               <TableHead>Duration</TableHead>
               <TableHead>Status</TableHead>
-              {userRole === "administrator" && <TableHead className="text-right">Actions</TableHead>}
+              {userRole === "administrator" && (
+                <TableHead className="text-right">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={userRole === "administrator" ? 6 : 5} className="h-24 text-center text-muted-foreground">
-                  {initialData.length === 0 ? "No services yet. Click 'New Service' to add one." : "No results match your search."}
+                <TableCell
+                  colSpan={userRole === "administrator" ? 6 : 5}
+                  className="h-24 text-center text-muted-foreground"
+                >
+                  {initialData.length === 0
+                    ? "No services yet. Click 'New Service' to add one."
+                    : "No results match your search."}
                 </TableCell>
               </TableRow>
             ) : (
               filtered.map((row) => (
-                <TableRow key={row.id} className={!row.isActive ? "opacity-60" : ""}>
+                <TableRow
+                  key={row.id}
+                  className={!row.isActive ? "opacity-60" : ""}
+                >
                   <TableCell>
                     <div className="font-medium">{row.name}</div>
                     {row.description && (
-                      <div className="text-xs text-muted-foreground truncate max-w-xs">{row.description}</div>
+                      <div className="text-xs text-muted-foreground truncate max-w-xs">
+                        {row.description}
+                      </div>
                     )}
                   </TableCell>
                   <TableCell>
-                    <span className="text-sm">{SERVICE_CATEGORIES[row.category] ?? row.category}</span>
+                    <span className="text-sm">
+                      {SERVICE_CATEGORIES[row.category] ?? row.category}
+                    </span>
                   </TableCell>
-                  <TableCell className="text-right tabular-nums font-medium">₱{fmt(row.price)}</TableCell>
+                  <TableCell className="text-right tabular-nums font-medium">
+                    ₱{fmt(row.price)}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Clock className="h-3 w-3" />
@@ -136,17 +164,24 @@ export function ServicesTableClient({ initialData, userRole }: Props) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge className={row.isActive
-                      ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
-                      : "bg-muted text-muted-foreground"
-                    }>
+                    <Badge
+                      className={
+                        row.isActive
+                          ? "bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300"
+                          : "bg-muted text-muted-foreground"
+                      }
+                    >
                       {row.isActive ? "Active" : "Inactive"}
                     </Badge>
                   </TableCell>
                   {userRole === "administrator" && (
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end gap-1">
-                        <Button variant="ghost" size="sm" onClick={() => setEditTarget(row)}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setEditTarget(row)}
+                        >
                           <Pencil className="h-3.5 w-3.5" />
                         </Button>
                         <ToggleServiceButton service={row} />
@@ -163,7 +198,9 @@ export function ServicesTableClient({ initialData, userRole }: Props) {
       <CreateServiceDialog open={createOpen} onOpenChange={setCreateOpen} />
       <EditServiceDialog
         open={!!editTarget}
-        onOpenChange={(o) => { if (!o) setEditTarget(null); }}
+        onOpenChange={(o) => {
+          if (!o) setEditTarget(null);
+        }}
         service={editTarget}
       />
     </div>

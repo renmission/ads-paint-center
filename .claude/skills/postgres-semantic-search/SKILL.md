@@ -152,31 +152,35 @@ Embedding model?
 
 ## Operators
 
-| Operator | Distance | Use Case |
-|----------|----------|----------|
-| `<=>` | Cosine | Text embeddings (default) |
-| `<->` | L2/Euclidean | Image embeddings |
-| `<#>` | Inner product | Normalized vectors |
+| Operator | Distance      | Use Case                  |
+| -------- | ------------- | ------------------------- |
+| `<=>`    | Cosine        | Text embeddings (default) |
+| `<->`    | L2/Euclidean  | Image embeddings          |
+| `<#>`    | Inner product | Normalized vectors        |
 
 ## SQL Functions
 
 ### Semantic Search
+
 - `match_documents(query_vec, threshold, limit)` - Basic search
 - `match_documents_filtered(query_vec, metadata_filter, threshold, limit)` - With JSONB filter
 - `match_chunks(query_vec, threshold, limit)` - Search document chunks
 
 ### Fuzzy Search (pg_trgm)
+
 - `fuzzy_search_trigram(query_text, threshold, limit)` - Trigram similarity search
 - `autocomplete_search(prefix, limit)` - Prefix + fuzzy autocomplete
 - `hybrid_search_fuzzy_semantic(query_text, query_vec, limit, rrf_k)` - Fuzzy + vector RRF
 - `weighted_fts_search(query_text, language, limit)` - FTS with title/content weighting
 
 ### Hybrid Search (FTS)
+
 - `hybrid_search_fts(query_vec, query_text, limit, rrf_k, language)` - FTS + RRF
 - `hybrid_search_weighted(query_vec, query_text, limit, sem_weight, kw_weight)` - Linear combination
 - `hybrid_search_fallback(query_vec, query_text, limit)` - Graceful degradation
 
 ### Hybrid Search (BM25)
+
 - `hybrid_search_bm25(query_vec, query_text, limit, rrf_k)` - BM25 + RRF
 - `hybrid_search_bm25_highlighted(...)` - With snippet highlighting
 - `hybrid_search_chunks_bm25(...)` - For RAG with chunks
@@ -193,25 +197,25 @@ Two-stage retrieval improves precision: fast recall → precise rerank.
 
 ### Options
 
-| Method | Latency | Quality |
-|--------|---------|---------|
-| Cohere Rerank v4.0 | ~150-300ms | Best |
-| Zerank 2 | ~100ms | Best |
-| Voyage Rerank 2.5 | ~100ms | Excellent |
-| Cross-encoder (local) | ~500ms | Very Good |
+| Method                | Latency    | Quality   |
+| --------------------- | ---------- | --------- |
+| Cohere Rerank v4.0    | ~150-300ms | Best      |
+| Zerank 2              | ~100ms     | Best      |
+| Voyage Rerank 2.5     | ~100ms     | Excellent |
+| Cross-encoder (local) | ~500ms     | Very Good |
 
 Check provider docs for current pricing. Cohere has a free tier (1000 searches/month).
 
 ### TypeScript Example (Cohere)
 
 ```typescript
-import { CohereClient } from 'cohere-ai';
+import { CohereClient } from "cohere-ai";
 
 const cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
 
 async function rerankResults(query: string, documents: string[]) {
   const response = await cohere.rerank({
-    model: 'rerank-v4.0-fast',  // or 'rerank-v4.0-pro' for best quality
+    model: "rerank-v4.0-fast", // or 'rerank-v4.0-pro' for best quality
     query,
     documents,
     topN: 10,
@@ -246,26 +250,26 @@ async function rerankResults(query: string, documents: string[]) {
 
 ```typescript
 // Semantic search
-const { data } = await supabase.rpc('match_documents', {
+const { data } = await supabase.rpc("match_documents", {
   query_embedding: embedding,
   match_threshold: 0.7,
-  match_count: 10
+  match_count: 10,
 });
 
 // Hybrid search
-const { data } = await supabase.rpc('hybrid_search_fts', {
+const { data } = await supabase.rpc("hybrid_search_fts", {
   query_embedding: embedding,
   query_text: userQuery,
   match_count: 10,
   rrf_k: 60,
-  fts_language: 'simple'
+  fts_language: "simple",
 });
 ```
 
 ### Drizzle ORM
 
 ```typescript
-import { sql } from 'drizzle-orm';
+import { sql } from "drizzle-orm";
 
 const results = await db.execute(sql`
   SELECT * FROM match_documents(
@@ -278,18 +282,18 @@ const results = await db.execute(sql`
 
 ## Troubleshooting
 
-| Symptom | Cause | Solution |
-|---------|-------|----------|
-| Index not used | < 10k rows or planner choice | Normal for small tables, check with EXPLAIN |
-| Slow first query (30-60s) | HNSW cold-start | `SELECT pg_prewarm('idx_name')` or preload query |
-| Poor recall | Low ef_search | `SET hnsw.ef_search = 100` or higher |
-| FTS returns nothing | Wrong language config | Use `'simple'` for mixed/unknown languages |
-| Memory error on index build | maintenance_work_mem too low | Increase to 2GB+ |
-| Cosine similarity > 1 | Vectors not normalized | Normalize before insert or use L2 |
-| Slow inserts | Index overhead | Batch inserts, consider IVFFlat |
-| Fuzzy search slow | Missing trigram index | `CREATE INDEX USING gin (col gin_trgm_ops)` |
-| ILIKE '%x%' slow | No pg_trgm GIN index | Enable pg_trgm + create GIN trigram index |
-| `%` operator error | pg_trgm not installed | `CREATE EXTENSION IF NOT EXISTS pg_trgm` |
+| Symptom                     | Cause                        | Solution                                         |
+| --------------------------- | ---------------------------- | ------------------------------------------------ |
+| Index not used              | < 10k rows or planner choice | Normal for small tables, check with EXPLAIN      |
+| Slow first query (30-60s)   | HNSW cold-start              | `SELECT pg_prewarm('idx_name')` or preload query |
+| Poor recall                 | Low ef_search                | `SET hnsw.ef_search = 100` or higher             |
+| FTS returns nothing         | Wrong language config        | Use `'simple'` for mixed/unknown languages       |
+| Memory error on index build | maintenance_work_mem too low | Increase to 2GB+                                 |
+| Cosine similarity > 1       | Vectors not normalized       | Normalize before insert or use L2                |
+| Slow inserts                | Index overhead               | Batch inserts, consider IVFFlat                  |
+| Fuzzy search slow           | Missing trigram index        | `CREATE INDEX USING gin (col gin_trgm_ops)`      |
+| ILIKE '%x%' slow            | No pg_trgm GIN index         | Enable pg_trgm + create GIN trigram index        |
+| `%` operator error          | pg_trgm not installed        | `CREATE EXTENSION IF NOT EXISTS pg_trgm`         |
 
 ## Compatibility
 

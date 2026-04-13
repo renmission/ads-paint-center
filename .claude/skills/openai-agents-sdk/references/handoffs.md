@@ -88,12 +88,12 @@ result = await Runner.run(
 
 ## Handoff vs Agents as Tools
 
-| Feature | Handoffs | Agents as Tools |
-|---------|----------|-----------------|
+| Feature      | Handoffs                     | Agents as Tools                     |
+| ------------ | ---------------------------- | ----------------------------------- |
 | Control flow | LLM decides when to delegate | Parent agent calls child explicitly |
-| Return | Child agent takes over | Returns result to parent |
-| Use case | Specialized routing | Orchestration, parallel tasks |
-| Conversation | Child continues conversation | Parent continues after tool result |
+| Return       | Child agent takes over       | Returns result to parent            |
+| Use case     | Specialized routing          | Orchestration, parallel tasks       |
+| Conversation | Child continues conversation | Parent continues after tool result  |
 
 ### Handoff Example
 

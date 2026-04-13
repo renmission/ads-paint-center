@@ -1,6 +1,12 @@
 import { notFound } from "next/navigation";
 import { db } from "@/shared/lib/db";
-import { salesTransactions, salesTransactionItems, customers, users, products } from "@/shared/lib/db/schema";
+import {
+  salesTransactions,
+  salesTransactionItems,
+  customers,
+  users,
+  products,
+} from "@/shared/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { auth } from "@/shared/lib/auth";
 import Link from "next/link";
@@ -12,7 +18,9 @@ import { InvoicePrintButton } from "./invoice-print-button";
 import { MarkCreditPaymentDialog } from "./mark-credit-payment-dialog";
 
 function fmt(n: number | string) {
-  return parseFloat(String(n)).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  return parseFloat(String(n)).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+  });
 }
 
 function fmtDate(d: string | Date | null) {
@@ -76,7 +84,9 @@ export default async function InvoicePage({
   const paid = parseFloat(txn.amountPaid ?? txn.totalAmount);
   const balance = Math.max(0, total - paid);
   const isCredit = txn.paymentMethod === "credit";
-  const isOverdue = txn.dueDate ? new Date(txn.dueDate) < new Date() && balance > 0 : false;
+  const isOverdue = txn.dueDate
+    ? new Date(txn.dueDate) < new Date() && balance > 0
+    : false;
 
   const METHOD_LABELS: Record<string, string> = {
     cash: "Cash",
@@ -106,29 +116,52 @@ export default async function InvoicePage({
             </Link>
           </Button>
           <div className="flex items-center gap-2">
-            {isCredit && balance > 0 && session?.user?.role === "administrator" && (
-              <MarkCreditPaymentDialog transactionId={txn.id} balance={balance} />
-            )}
-            <InvoicePrintButton id={txn.id} transactionNumber={txn.transactionNumber} />
+            {isCredit &&
+              balance > 0 &&
+              session?.user?.role === "administrator" && (
+                <MarkCreditPaymentDialog
+                  transactionId={txn.id}
+                  balance={balance}
+                />
+              )}
+            <InvoicePrintButton
+              id={txn.id}
+              transactionNumber={txn.transactionNumber}
+            />
           </div>
         </div>
 
         {/* Invoice card */}
-        <div id="invoice-print-area" className="rounded-xl border bg-card shadow-sm p-8 space-y-6">
+        <div
+          id="invoice-print-area"
+          className="rounded-xl border bg-card shadow-sm p-8 space-y-6"
+        >
           {/* Header */}
           <div className="flex items-start justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground">ADS Paint Center</h1>
-              <p className="text-sm text-muted-foreground mt-0.5">Paint & Coatings Specialist</p>
+              <h1 className="text-2xl font-bold text-foreground">
+                ADS Paint Center
+              </h1>
+              <p className="text-sm text-muted-foreground mt-0.5">
+                Paint & Coatings Specialist
+              </p>
             </div>
             <div className="text-right">
-              <p className="text-lg font-bold font-mono">{txn.transactionNumber}</p>
+              <p className="text-lg font-bold font-mono">
+                {txn.transactionNumber}
+              </p>
               <p className="text-xs text-muted-foreground">
                 {txn.status === "voided" ? (
                   <span className="text-destructive font-semibold">VOIDED</span>
                 ) : isCredit ? (
                   balance > 0 ? (
-                    <span className={isOverdue ? "text-destructive font-semibold" : "text-amber-600 font-semibold"}>
+                    <span
+                      className={
+                        isOverdue
+                          ? "text-destructive font-semibold"
+                          : "text-amber-600 font-semibold"
+                      }
+                    >
                       {isOverdue ? "OVERDUE" : "UNPAID"}
                     </span>
                   ) : (
@@ -146,19 +179,29 @@ export default async function InvoicePage({
           {/* Invoice meta */}
           <div className="grid grid-cols-2 gap-6 text-sm">
             <div className="space-y-1">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Bill To</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Bill To
+              </p>
               {txn.customerName ? (
                 <>
                   <p className="font-semibold">{txn.customerName}</p>
-                  {txn.customerPhone && <p className="text-muted-foreground">{txn.customerPhone}</p>}
-                  {txn.customerAddress && <p className="text-muted-foreground text-xs">{txn.customerAddress}</p>}
+                  {txn.customerPhone && (
+                    <p className="text-muted-foreground">{txn.customerPhone}</p>
+                  )}
+                  {txn.customerAddress && (
+                    <p className="text-muted-foreground text-xs">
+                      {txn.customerAddress}
+                    </p>
+                  )}
                 </>
               ) : (
                 <p className="text-muted-foreground italic">Walk-in Customer</p>
               )}
             </div>
             <div className="space-y-1 text-right">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Invoice Details</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                Invoice Details
+              </p>
               <div className="space-y-0.5">
                 <div className="flex justify-end gap-8">
                   <span className="text-muted-foreground">Date</span>
@@ -166,8 +209,20 @@ export default async function InvoicePage({
                 </div>
                 {isCredit && txn.dueDate && (
                   <div className="flex justify-end gap-8">
-                    <span className={isOverdue ? "text-destructive" : "text-muted-foreground"}>Due Date</span>
-                    <span className={isOverdue ? "text-destructive font-semibold" : ""}>{fmtDate(txn.dueDate)}</span>
+                    <span
+                      className={
+                        isOverdue ? "text-destructive" : "text-muted-foreground"
+                      }
+                    >
+                      Due Date
+                    </span>
+                    <span
+                      className={
+                        isOverdue ? "text-destructive font-semibold" : ""
+                      }
+                    >
+                      {fmtDate(txn.dueDate)}
+                    </span>
                   </div>
                 )}
                 <div className="flex justify-end gap-8">
@@ -176,7 +231,9 @@ export default async function InvoicePage({
                 </div>
                 <div className="flex justify-end gap-8">
                   <span className="text-muted-foreground">Payment</span>
-                  <span>{METHOD_LABELS[txn.paymentMethod] ?? txn.paymentMethod}</span>
+                  <span>
+                    {METHOD_LABELS[txn.paymentMethod] ?? txn.paymentMethod}
+                  </span>
                 </div>
               </div>
             </div>
@@ -191,7 +248,9 @@ export default async function InvoicePage({
                 <tr className="border-b text-xs text-muted-foreground uppercase tracking-wide">
                   <th className="text-left pb-2 font-medium">Product</th>
                   <th className="text-center pb-2 font-medium w-16">Qty</th>
-                  <th className="text-right pb-2 font-medium w-28">Unit Price</th>
+                  <th className="text-right pb-2 font-medium w-28">
+                    Unit Price
+                  </th>
                   <th className="text-right pb-2 font-medium w-28">Total</th>
                 </tr>
               </thead>
@@ -199,9 +258,15 @@ export default async function InvoicePage({
                 {items.map((item, i) => (
                   <tr key={i}>
                     <td className="py-2.5">{item.productName}</td>
-                    <td className="py-2.5 text-center tabular-nums">{item.quantity}</td>
-                    <td className="py-2.5 text-right tabular-nums">₱{fmt(item.unitPrice)}</td>
-                    <td className="py-2.5 text-right tabular-nums font-medium">₱{fmt(item.lineTotal)}</td>
+                    <td className="py-2.5 text-center tabular-nums">
+                      {item.quantity}
+                    </td>
+                    <td className="py-2.5 text-right tabular-nums">
+                      ₱{fmt(item.unitPrice)}
+                    </td>
+                    <td className="py-2.5 text-right tabular-nums font-medium">
+                      ₱{fmt(item.lineTotal)}
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -220,7 +285,9 @@ export default async function InvoicePage({
               {parseFloat(txn.discountAmount) > 0 && (
                 <div className="flex justify-between text-muted-foreground">
                   <span>Discount</span>
-                  <span className="tabular-nums text-green-600">−₱{fmt(txn.discountAmount)}</span>
+                  <span className="tabular-nums text-green-600">
+                    −₱{fmt(txn.discountAmount)}
+                  </span>
                 </div>
               )}
               <Separator />
@@ -232,13 +299,25 @@ export default async function InvoicePage({
                 <>
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Amount Paid</span>
-                    <span className="tabular-nums text-green-600">₱{fmt(paid)}</span>
+                    <span className="tabular-nums text-green-600">
+                      ₱{fmt(paid)}
+                    </span>
                   </div>
                   <div className="flex justify-between font-semibold text-sm">
-                    <span className={balance > 0 ? (isOverdue ? "text-destructive" : "text-amber-600") : "text-green-600"}>
+                    <span
+                      className={
+                        balance > 0
+                          ? isOverdue
+                            ? "text-destructive"
+                            : "text-amber-600"
+                          : "text-green-600"
+                      }
+                    >
                       Balance Due
                     </span>
-                    <span className={`tabular-nums ${balance > 0 ? (isOverdue ? "text-destructive" : "text-amber-600") : "text-green-600"}`}>
+                    <span
+                      className={`tabular-nums ${balance > 0 ? (isOverdue ? "text-destructive" : "text-amber-600") : "text-green-600"}`}
+                    >
                       ₱{fmt(balance)}
                     </span>
                   </div>
@@ -248,12 +327,16 @@ export default async function InvoicePage({
                 <>
                   <div className="flex justify-between text-muted-foreground text-xs">
                     <span>Tendered</span>
-                    <span className="tabular-nums">₱{fmt(txn.amountTendered)}</span>
+                    <span className="tabular-nums">
+                      ₱{fmt(txn.amountTendered)}
+                    </span>
                   </div>
                   {txn.changeAmount && (
                     <div className="flex justify-between text-muted-foreground text-xs">
                       <span>Change</span>
-                      <span className="tabular-nums">₱{fmt(txn.changeAmount)}</span>
+                      <span className="tabular-nums">
+                        ₱{fmt(txn.changeAmount)}
+                      </span>
                     </div>
                   )}
                 </>
@@ -265,13 +348,17 @@ export default async function InvoicePage({
           {isOverdue && balance > 0 && (
             <div className="flex items-start gap-2 rounded-lg bg-destructive/10 text-destructive p-3 text-sm">
               <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-              <span>This invoice is overdue. Please settle the outstanding balance of ₱{fmt(balance)}.</span>
+              <span>
+                This invoice is overdue. Please settle the outstanding balance
+                of ₱{fmt(balance)}.
+              </span>
             </div>
           )}
 
           {txn.notes && (
             <div className="text-sm text-muted-foreground">
-              <span className="font-medium">Notes: </span>{txn.notes}
+              <span className="font-medium">Notes: </span>
+              {txn.notes}
             </div>
           )}
 

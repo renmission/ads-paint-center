@@ -1,5 +1,4 @@
-const BASE_URL =
-  process.env.IPROGSMS_BASE_URL ?? "https://iprogsms.com/api";
+const BASE_URL = process.env.IPROGSMS_BASE_URL ?? "https://iprogsms.com/api";
 
 /**
  * Send an SMS via the iPROGSMS API.
@@ -26,7 +25,7 @@ export async function sendSMS(phone: string, message: string): Promise<void> {
     });
     if (!res.ok) {
       console.error(
-        `[SMS] Failed to send to ${phone}: HTTP ${res.status} — ${await res.text()}`
+        `[SMS] Failed to send to ${phone}: HTTP ${res.status} — ${await res.text()}`,
       );
     }
   } catch (err) {

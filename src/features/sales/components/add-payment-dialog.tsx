@@ -31,7 +31,9 @@ interface Props {
 }
 
 function fmt(n: number | string) {
-  return parseFloat(String(n)).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  return parseFloat(String(n)).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+  });
 }
 
 interface DialogInnerProps {
@@ -40,8 +42,15 @@ interface DialogInnerProps {
   transaction: SalesRow;
 }
 
-function AddPaymentDialogInner({ open, onOpenChange, transaction }: DialogInnerProps) {
-  const [state, formAction, isPending] = useActionState(addPaymentAction, undefined);
+function AddPaymentDialogInner({
+  open,
+  onOpenChange,
+  transaction,
+}: DialogInnerProps) {
+  const [state, formAction, isPending] = useActionState(
+    addPaymentAction,
+    undefined,
+  );
   const [paymentMethod, setPaymentMethod] = useState("cash");
 
   useEffect(() => {
@@ -66,11 +75,15 @@ function AddPaymentDialogInner({ open, onOpenChange, transaction }: DialogInnerP
         <div className="text-sm space-y-1.5">
           <div className="flex justify-between text-muted-foreground">
             <span>Transaction</span>
-            <span className="font-mono font-medium">{transaction.transactionNumber}</span>
+            <span className="font-mono font-medium">
+              {transaction.transactionNumber}
+            </span>
           </div>
           <div className="flex justify-between text-muted-foreground">
             <span>Total</span>
-            <span className="tabular-nums">₱{fmt(transaction.totalAmount)}</span>
+            <span className="tabular-nums">
+              ₱{fmt(transaction.totalAmount)}
+            </span>
           </div>
           <div className="flex justify-between text-muted-foreground">
             <span>Paid</span>
@@ -129,7 +142,11 @@ function AddPaymentDialogInner({ open, onOpenChange, transaction }: DialogInnerP
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" disabled={isPending}>

@@ -9,7 +9,12 @@ import {
   customers,
   users,
 } from "@/shared/lib/db/schema";
-import { completeSaleSchema, voidSaleSchema, markCreditPaymentSchema, addPaymentSchema } from "./schemas";
+import {
+  completeSaleSchema,
+  voidSaleSchema,
+  markCreditPaymentSchema,
+  addPaymentSchema,
+} from "./schemas";
 import { auth } from "@/shared/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -19,7 +24,7 @@ type ActionResult = { error?: string; success?: string };
 
 export async function completeSaleAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user?.id) return { error: "Unauthorized" };
@@ -28,14 +33,23 @@ export async function completeSaleAction(
   const parsed = completeSaleSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
-  const { cartJson: items, customerId, discountAmount, paymentMethod, amountTendered, notes, dueDate } = parsed.data;
+  const {
+    cartJson: items,
+    customerId,
+    discountAmount,
+    paymentMethod,
+    amountTendered,
+    notes,
+    dueDate,
+  } = parsed.data;
 
   // Validate stock for all items before writing anything
   for (const item of items) {
     const inv = await db.query.inventory.findFirst({
       where: eq(inventory.productId, item.productId),
     });
-    if (!inv) return { error: `Inventory record not found for "${item.productName}".` };
+    if (!inv)
+      return { error: `Inventory record not found for "${item.productName}".` };
     if (inv.quantityOnHand < item.quantity) {
       return {
         error: `Insufficient stock for "${item.productName}". Available: ${inv.quantityOnHand}, requested: ${item.quantity}.`,
@@ -77,7 +91,10 @@ export async function completeSaleAction(
             ? tendered.toFixed(2)
             : total.toFixed(2),
       dueDate: paymentMethod === "credit" && dueDate ? dueDate : null,
-      status: paymentMethod !== "credit" && tendered < total ? "pending" : "completed",
+      status:
+        paymentMethod !== "credit" && tendered < total
+          ? "pending"
+          : "completed",
       notes: notes || null,
     })
     .returning({ id: salesTransactions.id });
@@ -89,7 +106,7 @@ export async function completeSaleAction(
       quantity: item.quantity,
       unitPrice: item.unitPrice.toFixed(2),
       lineTotal: item.lineTotal.toFixed(2),
-    }))
+    })),
   );
 
   // Record initial payment row for partial/full non-credit payments
@@ -114,8 +131,8 @@ export async function completeSaleAction(
       .where(
         and(
           eq(inventory.productId, item.productId),
-          sql`quantity_on_hand >= ${item.quantity}`
-        )
+          sql`quantity_on_hand >= ${item.quantity}`,
+        ),
       );
   }
 
@@ -131,7 +148,7 @@ export async function completeSaleAction(
     if (customer?.phone) {
       await sendSMS(
         customer.phone,
-        `Hi ${customer.name}! Your purchase of P${total.toFixed(2)} (Ref: ${transactionNumber}) at ADS Paint Center has been completed. Thank you!`
+        `Hi ${customer.name}! Your purchase of P${total.toFixed(2)} (Ref: ${transactionNumber}) at ADS Paint Center has been completed. Thank you!`,
       );
     }
   }
@@ -153,7 +170,7 @@ export async function completeSaleAction(
         for (const phone of adminPhones) {
           await sendSMS(
             phone,
-            `[ADS Paint Center] Low stock alert: "${inv.product.name}" now has ${inv.quantityOnHand} ${inv.product.unit}(s) remaining (threshold: ${inv.lowStockThreshold}).`
+            `[ADS Paint Center] Low stock alert: "${inv.product.name}" now has ${inv.quantityOnHand} ${inv.product.unit}(s) remaining (threshold: ${inv.lowStockThreshold}).`,
           );
         }
       }
@@ -165,7 +182,7 @@ export async function completeSaleAction(
 
 export async function voidSaleAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
@@ -183,7 +200,8 @@ export async function voidSaleAction(
   });
 
   if (!txn) return { error: "Transaction not found." };
-  if (txn.status === "voided") return { error: "Transaction is already voided." };
+  if (txn.status === "voided")
+    return { error: "Transaction is already voided." };
 
   await db
     .update(salesTransactions)
@@ -203,12 +221,14 @@ export async function voidSaleAction(
 
   revalidatePath("/sales");
   revalidatePath("/inventory");
-  return { success: `Transaction ${txn.transactionNumber} voided and inventory restored.` };
+  return {
+    success: `Transaction ${txn.transactionNumber} voided and inventory restored.`,
+  };
 }
 
 export async function markCreditPaymentAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
@@ -225,7 +245,8 @@ export async function markCreditPaymentAction(
   });
 
   if (!txn) return { error: "Transaction not found." };
-  if (txn.status === "voided") return { error: "Cannot record payment on a voided transaction." };
+  if (txn.status === "voided")
+    return { error: "Cannot record payment on a voided transaction." };
   if (txn.paymentMethod !== "credit") {
     return { error: "This transaction is not a credit sale." };
   }
@@ -254,7 +275,7 @@ export async function markCreditPaymentAction(
 
 export async function addPaymentAction(
   _prevState: ActionResult | undefined,
-  formData: FormData
+  formData: FormData,
 ): Promise<ActionResult> {
   const session = await auth();
   if (!session?.user?.id) return { error: "Unauthorized" };

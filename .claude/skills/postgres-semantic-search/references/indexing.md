@@ -2,11 +2,11 @@
 
 ## Index Selection
 
-| Documents | Index Type | Notes |
-|-----------|-----------|-------|
-| < 10,000 | None | Sequential scan is fast enough |
-| 10k - 1M | HNSW | Best recall, fast queries |
-| > 1M | IVFFlat or HNSW | IVFFlat saves memory |
+| Documents | Index Type      | Notes                          |
+| --------- | --------------- | ------------------------------ |
+| < 10,000  | None            | Sequential scan is fast enough |
+| 10k - 1M  | HNSW            | Best recall, fast queries      |
+| > 1M      | IVFFlat or HNSW | IVFFlat saves memory           |
 
 ## HNSW (Hierarchical Navigable Small World)
 
@@ -14,21 +14,23 @@ Best for most production workloads.
 
 ### Parameters
 
-| Parameter | Default | Range | Description |
-|-----------|---------|-------|-------------|
-| `m` | 16 | 4-64 | Connections per layer. Higher = better recall, larger index |
-| `ef_construction` | 64 | 4-400 | Build-time quality. Higher = better index, slower build |
-| `ef_search` | 40 | 1-1000 | Query-time depth. Higher = better recall, slower queries |
+| Parameter         | Default | Range  | Description                                                 |
+| ----------------- | ------- | ------ | ----------------------------------------------------------- |
+| `m`               | 16      | 4-64   | Connections per layer. Higher = better recall, larger index |
+| `ef_construction` | 64      | 4-400  | Build-time quality. Higher = better index, slower build     |
+| `ef_search`       | 40      | 1-1000 | Query-time depth. Higher = better recall, slower queries    |
 
 ### Recommended Settings
 
 **Development:**
+
 ```sql
 CREATE INDEX ON documents USING hnsw (embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 64);
 ```
 
 **Production (< 100k vectors):**
+
 ```sql
 CREATE INDEX ON documents USING hnsw (embedding vector_cosine_ops)
 WITH (m = 16, ef_construction = 200);
@@ -37,6 +39,7 @@ SET hnsw.ef_search = 100;
 ```
 
 **Production (100k - 1M vectors):**
+
 ```sql
 CREATE INDEX ON documents USING hnsw (embedding vector_cosine_ops)
 WITH (m = 24, ef_construction = 200);
@@ -46,19 +49,19 @@ SET hnsw.ef_search = 100;
 
 ### Operator Classes
 
-| Operator | Class | Distance |
-|----------|-------|----------|
-| `<=>` | `vector_cosine_ops` | Cosine (most common) |
-| `<->` | `vector_l2_ops` | Euclidean/L2 |
-| `<#>` | `vector_ip_ops` | Inner product |
+| Operator | Class               | Distance             |
+| -------- | ------------------- | -------------------- |
+| `<=>`    | `vector_cosine_ops` | Cosine (most common) |
+| `<->`    | `vector_l2_ops`     | Euclidean/L2         |
+| `<#>`    | `vector_ip_ops`     | Inner product        |
 
 ### halfvec Operator Classes
 
-| Operator | Class |
-|----------|-------|
-| `<=>` | `halfvec_cosine_ops` |
-| `<->` | `halfvec_l2_ops` |
-| `<#>` | `halfvec_ip_ops` |
+| Operator | Class                |
+| -------- | -------------------- |
+| `<=>`    | `halfvec_cosine_ops` |
+| `<->`    | `halfvec_l2_ops`     |
+| `<#>`    | `halfvec_ip_ops`     |
 
 ## IVFFlat
 
@@ -66,10 +69,10 @@ Use for very large datasets where memory is critical.
 
 ### Parameters
 
-| Parameter | Recommendation |
-|-----------|---------------|
-| `lists` | `sqrt(rows)` or `rows / 1000` |
-| `probes` | `sqrt(lists)` at query time |
+| Parameter | Recommendation                |
+| --------- | ----------------------------- |
+| `lists`   | `sqrt(rows)` or `rows / 1000` |
+| `probes`  | `sqrt(lists)` at query time   |
 
 ```sql
 -- For 1M rows: lists = 1000
@@ -169,9 +172,9 @@ ON documents USING hnsw (embedding vector_cosine_ops);
 ## Build Time Estimates
 
 | Vectors | HNSW (m=16) | IVFFlat (lists=100) |
-|---------|-------------|---------------------|
-| 10k | ~30 sec | ~10 sec |
-| 100k | ~5 min | ~1 min |
-| 1M | ~1 hour | ~10 min |
+| ------- | ----------- | ------------------- |
+| 10k     | ~30 sec     | ~10 sec             |
+| 100k    | ~5 min      | ~1 min              |
+| 1M      | ~1 hour     | ~10 min             |
 
 Build times vary by hardware. HNSW is slower to build but faster to query.

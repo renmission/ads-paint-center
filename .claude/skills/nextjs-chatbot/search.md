@@ -45,11 +45,13 @@ LIMIT 20;
 ```
 
 Required PostgreSQL extensions:
+
 ```sql
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 ```
 
 Required indexes:
+
 ```sql
 -- GIN index for full-text search
 CREATE INDEX ON services USING GIN(
@@ -85,20 +87,27 @@ Separate query construction from execution so benchmarks can test SQL without an
 // lib/ai/tools/search-services.ts
 
 // Returns the SQL string + params — testable without a DB connection
-export function buildSearchServicesQuery(params: { query: string; provider?: string }) {
+export function buildSearchServicesQuery(params: {
+  query: string;
+  provider?: string;
+}) {
   const { query, provider } = params;
   // ... build parameterized SQL
   return { sql, values };
 }
 
 // Actual DB execution
-export async function searchServices(params: { query: string; provider?: string }) {
+export async function searchServices(params: {
+  query: string;
+  provider?: string;
+}) {
   const { sql, values } = buildSearchServicesQuery(params);
   return db.execute(sql, values);
 }
 ```
 
 Benchmark test example:
+
 ```ts
 // benchmarks/search.bench.ts
 const { sql, values } = buildSearchServicesQuery({ query: "supercomputing" });
@@ -120,7 +129,9 @@ export const searchServicesTool = tool({
     total: z.number(),
   }),
   execute: async ({ query, provider, category }) => {
-    const normalizedProvider = provider ? normalizeProvider(provider) : undefined;
+    const normalizedProvider = provider
+      ? normalizeProvider(provider)
+      : undefined;
     return searchServices({ query, provider: normalizedProvider, category });
   },
 });
@@ -143,16 +154,25 @@ If content is unstructured prose (documents, FAQs, long text), use embeddings + 
 
 ```ts
 // lib/db/schema/embeddings.ts
-import { pgTable, text, vector, index } from 'drizzle-orm/pg-core';
+import { pgTable, text, vector, index } from "drizzle-orm/pg-core";
 
-export const embeddings = pgTable('embeddings', {
-  id: text('id').primaryKey(),
-  resourceId: text('resource_id').references(() => resources.id, { onDelete: 'cascade' }),
-  content: text('content').notNull(),
-  embedding: vector('embedding', { dimensions: 1536 }).notNull(),
-}, (t) => ({
-  embeddingIndex: index('embeddingIndex').using('hnsw', t.embedding.op('vector_cosine_ops')),
-}));
+export const embeddings = pgTable(
+  "embeddings",
+  {
+    id: text("id").primaryKey(),
+    resourceId: text("resource_id").references(() => resources.id, {
+      onDelete: "cascade",
+    }),
+    content: text("content").notNull(),
+    embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+  },
+  (t) => ({
+    embeddingIndex: index("embeddingIndex").using(
+      "hnsw",
+      t.embedding.op("vector_cosine_ops"),
+    ),
+  }),
+);
 ```
 
 Requires: `CREATE EXTENSION IF NOT EXISTS vector;`
@@ -161,12 +181,12 @@ Requires: `CREATE EXTENSION IF NOT EXISTS vector;`
 
 ```ts
 // lib/ai/embedding.ts
-import { embed, embedMany } from 'ai';
-import { openai } from '@ai-sdk/openai';
-import { cosineDistance, desc, gt, sql } from 'drizzle-orm';
-import { embeddings } from '../db/schema/embeddings';
+import { embed, embedMany } from "ai";
+import { openai } from "@ai-sdk/openai";
+import { cosineDistance, desc, gt, sql } from "drizzle-orm";
+import { embeddings } from "../db/schema/embeddings";
 
-const embeddingModel = openai.embedding('text-embedding-3-small');
+const embeddingModel = openai.embedding("text-embedding-3-small");
 
 export async function generateEmbedding(value: string): Promise<number[]> {
   const { embedding } = await embed({ model: embeddingModel, value });
@@ -174,8 +194,14 @@ export async function generateEmbedding(value: string): Promise<number[]> {
 }
 
 export async function generateEmbeddings(content: string) {
-  const chunks = content.split('.').map(c => c.trim()).filter(Boolean);
-  const { embeddings: vecs } = await embedMany({ model: embeddingModel, values: chunks });
+  const chunks = content
+    .split(".")
+    .map((c) => c.trim())
+    .filter(Boolean);
+  const { embeddings: vecs } = await embedMany({
+    model: embeddingModel,
+    values: chunks,
+  });
   return vecs.map((e, i) => ({ content: chunks[i], embedding: e }));
 }
 
@@ -192,4 +218,3 @@ export async function findRelevantContent(query: string) {
 ```
 
 For advanced patterns (HNSW tuning, hybrid BM25+vector, reranking) → see `/postgres-semantic-search`.
-

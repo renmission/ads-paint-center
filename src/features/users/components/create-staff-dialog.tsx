@@ -41,7 +41,7 @@ export function CreateStaffDialog({ open, onOpenChange }: Props) {
   const [showPassword, setShowPassword] = useState(false);
   const [state, formAction, isPending] = useActionState(
     createStaffAction,
-    undefined
+    undefined,
   );
 
   const form = useForm<CreateStaffInput>({
@@ -123,7 +123,9 @@ export function CreateStaffDialog({ open, onOpenChange }: Props) {
                         onClick={() => setShowPassword((v) => !v)}
                         className="absolute inset-y-0 right-0 flex items-center px-3 text-muted-foreground hover:text-foreground transition-colors"
                         tabIndex={-1}
-                        aria-label={showPassword ? "Hide password" : "Show password"}
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
                       >
                         {showPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -144,7 +146,11 @@ export function CreateStaffDialog({ open, onOpenChange }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Role</FormLabel>
-                    <Select name="role" defaultValue={field.value} onValueChange={field.onChange}>
+                    <Select
+                      name="role"
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select role" />
@@ -152,7 +158,9 @@ export function CreateStaffDialog({ open, onOpenChange }: Props) {
                       </FormControl>
                       <SelectContent>
                         <SelectItem value="staff">Staff</SelectItem>
-                        <SelectItem value="administrator">Administrator</SelectItem>
+                        <SelectItem value="administrator">
+                          Administrator
+                        </SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />

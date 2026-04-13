@@ -82,15 +82,15 @@ agent = Agent(
 
 ## ModelSettings Options
 
-| Option | Description |
-|--------|-------------|
-| `max_tokens` | Maximum tokens in response |
-| `temperature` | Randomness (0.0-2.0) |
-| `top_p` | Nucleus sampling |
-| `tool_choice` | "auto", "required", "none" |
-| `reasoning` | Reasoning effort for GPT-5 models |
-| `presence_penalty` | Penalize repeated topics |
-| `frequency_penalty` | Penalize repeated tokens |
+| Option              | Description                       |
+| ------------------- | --------------------------------- |
+| `max_tokens`        | Maximum tokens in response        |
+| `temperature`       | Randomness (0.0-2.0)              |
+| `top_p`             | Nucleus sampling                  |
+| `tool_choice`       | "auto", "required", "none"        |
+| `reasoning`         | Reasoning effort for GPT-5 models |
+| `presence_penalty`  | Penalize repeated topics          |
+| `frequency_penalty` | Penalize repeated tokens          |
 
 ## Non-Strict Output
 

@@ -10,7 +10,11 @@ export default function InventoryPage() {
           Manage your product catalog and stock levels.
         </p>
       </div>
-      <Suspense fallback={<p className="text-muted-foreground text-sm">Loading inventory...</p>}>
+      <Suspense
+        fallback={
+          <p className="text-muted-foreground text-sm">Loading inventory...</p>
+        }
+      >
         <InventoryTable />
       </Suspense>
     </div>

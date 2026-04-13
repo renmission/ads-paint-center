@@ -17,13 +17,37 @@ const styles = StyleSheet.create({
   companyName: { fontSize: 18, fontFamily: "Helvetica-Bold" },
   companyTagline: { fontSize: 9, color: "#6b7280", marginTop: 2 },
   txnNumber: { fontSize: 13, fontFamily: "Helvetica-Bold", textAlign: "right" },
-  statusBadge: { fontSize: 9, fontFamily: "Helvetica-Bold", textAlign: "right", marginTop: 3 },
-  divider: { borderBottomWidth: 1, borderBottomColor: "#e5e7eb", marginVertical: 14 },
-  metaSection: { flexDirection: "row", justifyContent: "space-between", marginBottom: 4 },
-  metaLabel: { fontSize: 8, fontFamily: "Helvetica-Bold", color: "#9ca3af", textTransform: "uppercase", marginBottom: 5 },
+  statusBadge: {
+    fontSize: 9,
+    fontFamily: "Helvetica-Bold",
+    textAlign: "right",
+    marginTop: 3,
+  },
+  divider: {
+    borderBottomWidth: 1,
+    borderBottomColor: "#e5e7eb",
+    marginVertical: 14,
+  },
+  metaSection: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 4,
+  },
+  metaLabel: {
+    fontSize: 8,
+    fontFamily: "Helvetica-Bold",
+    color: "#9ca3af",
+    textTransform: "uppercase",
+    marginBottom: 5,
+  },
   metaValue: { fontSize: 10 },
   metaValueBold: { fontSize: 10, fontFamily: "Helvetica-Bold" },
-  metaRow: { flexDirection: "row", justifyContent: "flex-end", gap: 32, marginBottom: 2 },
+  metaRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    gap: 32,
+    marginBottom: 2,
+  },
   metaKey: { color: "#6b7280" },
   tableHeader: {
     flexDirection: "row",
@@ -42,10 +66,19 @@ const styles = StyleSheet.create({
   colQty: { width: 40, textAlign: "center" },
   colPrice: { width: 72, textAlign: "right" },
   colTotal: { width: 72, textAlign: "right" },
-  thText: { fontSize: 8, color: "#9ca3af", fontFamily: "Helvetica-Bold", textTransform: "uppercase" },
+  thText: {
+    fontSize: 8,
+    color: "#9ca3af",
+    fontFamily: "Helvetica-Bold",
+    textTransform: "uppercase",
+  },
   totalsSection: { alignItems: "flex-end", marginTop: 8 },
   totalsBox: { width: 200 },
-  totalsRow: { flexDirection: "row", justifyContent: "space-between", marginBottom: 3 },
+  totalsRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginBottom: 3,
+  },
   totalsLabel: { color: "#6b7280" },
   totalsBold: { fontFamily: "Helvetica-Bold", fontSize: 12 },
   balanceLabel: { fontFamily: "Helvetica-Bold" },
@@ -78,16 +111,27 @@ export type InvoicePdfData = {
   customerPhone: string | null;
   customerAddress: string | null;
   staffName: string;
-  items: { productName: string; quantity: number; unitPrice: string; lineTotal: string }[];
+  items: {
+    productName: string;
+    quantity: number;
+    unitPrice: string;
+    lineTotal: string;
+  }[];
 };
 
 function fmt(n: number | string) {
-  return parseFloat(String(n)).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+  return parseFloat(String(n)).toLocaleString("en-PH", {
+    minimumFractionDigits: 2,
+  });
 }
 
 function fmtDate(d: string | Date | null) {
   if (!d) return "—";
-  return new Date(d).toLocaleDateString("en-PH", { month: "long", day: "numeric", year: "numeric" });
+  return new Date(d).toLocaleDateString("en-PH", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  });
 }
 
 const METHOD_LABELS: Record<string, string> = {
@@ -102,12 +146,16 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
   const paid = parseFloat(data.amountPaid ?? data.totalAmount);
   const balance = Math.max(0, total - paid);
   const isCredit = data.paymentMethod === "credit";
-  const isOverdue = data.dueDate ? new Date(data.dueDate) < new Date() && balance > 0 : false;
+  const isOverdue = data.dueDate
+    ? new Date(data.dueDate) < new Date() && balance > 0
+    : false;
 
   let statusLabel = "PAID";
   let statusColor = "#16a34a";
-  if (data.status === "voided") { statusLabel = "VOIDED"; statusColor = "#dc2626"; }
-  else if (isCredit && balance > 0) {
+  if (data.status === "voided") {
+    statusLabel = "VOIDED";
+    statusColor = "#dc2626";
+  } else if (isCredit && balance > 0) {
     statusLabel = isOverdue ? "OVERDUE" : "UNPAID";
     statusColor = isOverdue ? "#dc2626" : "#d97706";
   }
@@ -119,11 +167,15 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
         <View style={styles.header}>
           <View>
             <Text style={styles.companyName}>ADS Paint Center</Text>
-            <Text style={styles.companyTagline}>Paint &amp; Coatings Specialist</Text>
+            <Text style={styles.companyTagline}>
+              Paint &amp; Coatings Specialist
+            </Text>
           </View>
           <View>
             <Text style={styles.txnNumber}>{data.transactionNumber}</Text>
-            <Text style={[styles.statusBadge, { color: statusColor }]}>{statusLabel}</Text>
+            <Text style={[styles.statusBadge, { color: statusColor }]}>
+              {statusLabel}
+            </Text>
           </View>
         </View>
 
@@ -136,23 +188,50 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
             {data.customerName ? (
               <>
                 <Text style={styles.metaValueBold}>{data.customerName}</Text>
-                {data.customerPhone ? <Text style={[styles.metaValue, { color: "#6b7280" }]}>{data.customerPhone}</Text> : null}
-                {data.customerAddress ? <Text style={[styles.metaValue, { color: "#6b7280", fontSize: 9 }]}>{data.customerAddress}</Text> : null}
+                {data.customerPhone ? (
+                  <Text style={[styles.metaValue, { color: "#6b7280" }]}>
+                    {data.customerPhone}
+                  </Text>
+                ) : null}
+                {data.customerAddress ? (
+                  <Text
+                    style={[
+                      styles.metaValue,
+                      { color: "#6b7280", fontSize: 9 },
+                    ]}
+                  >
+                    {data.customerAddress}
+                  </Text>
+                ) : null}
               </>
             ) : (
-              <Text style={[styles.metaValue, { color: "#9ca3af" }]}>Walk-in Customer</Text>
+              <Text style={[styles.metaValue, { color: "#9ca3af" }]}>
+                Walk-in Customer
+              </Text>
             )}
           </View>
           <View>
-            <Text style={[styles.metaLabel, { textAlign: "right" }]}>Invoice Details</Text>
+            <Text style={[styles.metaLabel, { textAlign: "right" }]}>
+              Invoice Details
+            </Text>
             <View style={styles.metaRow}>
               <Text style={styles.metaKey}>Date</Text>
               <Text>{fmtDate(data.createdAt)}</Text>
             </View>
             {isCredit && data.dueDate ? (
               <View style={styles.metaRow}>
-                <Text style={isOverdue ? { color: "#dc2626" } : styles.metaKey}>Due Date</Text>
-                <Text style={isOverdue ? { color: "#dc2626", fontFamily: "Helvetica-Bold" } : {}}>{fmtDate(data.dueDate)}</Text>
+                <Text style={isOverdue ? { color: "#dc2626" } : styles.metaKey}>
+                  Due Date
+                </Text>
+                <Text
+                  style={
+                    isOverdue
+                      ? { color: "#dc2626", fontFamily: "Helvetica-Bold" }
+                      : {}
+                  }
+                >
+                  {fmtDate(data.dueDate)}
+                </Text>
               </View>
             ) : null}
             <View style={styles.metaRow}>
@@ -161,7 +240,9 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
             </View>
             <View style={styles.metaRow}>
               <Text style={styles.metaKey}>Payment</Text>
-              <Text>{METHOD_LABELS[data.paymentMethod] ?? data.paymentMethod}</Text>
+              <Text>
+                {METHOD_LABELS[data.paymentMethod] ?? data.paymentMethod}
+              </Text>
             </View>
           </View>
         </View>
@@ -180,7 +261,9 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
             <Text style={styles.colProduct}>{item.productName}</Text>
             <Text style={styles.colQty}>{item.quantity}</Text>
             <Text style={styles.colPrice}>₱{fmt(item.unitPrice)}</Text>
-            <Text style={[styles.colTotal, { fontFamily: "Helvetica-Bold" }]}>₱{fmt(item.lineTotal)}</Text>
+            <Text style={[styles.colTotal, { fontFamily: "Helvetica-Bold" }]}>
+              ₱{fmt(item.lineTotal)}
+            </Text>
           </View>
         ))}
 
@@ -196,10 +279,22 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
             {parseFloat(data.discountAmount) > 0 ? (
               <View style={styles.totalsRow}>
                 <Text style={styles.totalsLabel}>Discount</Text>
-                <Text style={{ color: "#16a34a" }}>−₱{fmt(data.discountAmount)}</Text>
+                <Text style={{ color: "#16a34a" }}>
+                  −₱{fmt(data.discountAmount)}
+                </Text>
               </View>
             ) : null}
-            <View style={[styles.totalsRow, { borderTopWidth: 1, borderTopColor: "#e5e7eb", paddingTop: 5, marginTop: 3 }]}>
+            <View
+              style={[
+                styles.totalsRow,
+                {
+                  borderTopWidth: 1,
+                  borderTopColor: "#e5e7eb",
+                  paddingTop: 5,
+                  marginTop: 3,
+                },
+              ]}
+            >
               <Text style={styles.totalsBold}>Total</Text>
               <Text style={styles.totalsBold}>₱{fmt(data.totalAmount)}</Text>
             </View>
@@ -210,21 +305,57 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
                   <Text style={{ color: "#16a34a" }}>₱{fmt(paid)}</Text>
                 </View>
                 <View style={styles.totalsRow}>
-                  <Text style={[styles.balanceLabel, { color: balance > 0 ? (isOverdue ? "#dc2626" : "#d97706") : "#16a34a" }]}>Balance Due</Text>
-                  <Text style={[styles.balanceLabel, { color: balance > 0 ? (isOverdue ? "#dc2626" : "#d97706") : "#16a34a" }]}>₱{fmt(balance)}</Text>
+                  <Text
+                    style={[
+                      styles.balanceLabel,
+                      {
+                        color:
+                          balance > 0
+                            ? isOverdue
+                              ? "#dc2626"
+                              : "#d97706"
+                            : "#16a34a",
+                      },
+                    ]}
+                  >
+                    Balance Due
+                  </Text>
+                  <Text
+                    style={[
+                      styles.balanceLabel,
+                      {
+                        color:
+                          balance > 0
+                            ? isOverdue
+                              ? "#dc2626"
+                              : "#d97706"
+                            : "#16a34a",
+                      },
+                    ]}
+                  >
+                    ₱{fmt(balance)}
+                  </Text>
                 </View>
               </>
             ) : null}
             {data.paymentMethod === "cash" && data.amountTendered ? (
               <>
                 <View style={styles.totalsRow}>
-                  <Text style={[styles.totalsLabel, { fontSize: 9 }]}>Tendered</Text>
-                  <Text style={{ fontSize: 9 }}>₱{fmt(data.amountTendered)}</Text>
+                  <Text style={[styles.totalsLabel, { fontSize: 9 }]}>
+                    Tendered
+                  </Text>
+                  <Text style={{ fontSize: 9 }}>
+                    ₱{fmt(data.amountTendered)}
+                  </Text>
                 </View>
                 {data.changeAmount ? (
                   <View style={styles.totalsRow}>
-                    <Text style={[styles.totalsLabel, { fontSize: 9 }]}>Change</Text>
-                    <Text style={{ fontSize: 9 }}>₱{fmt(data.changeAmount)}</Text>
+                    <Text style={[styles.totalsLabel, { fontSize: 9 }]}>
+                      Change
+                    </Text>
+                    <Text style={{ fontSize: 9 }}>
+                      ₱{fmt(data.changeAmount)}
+                    </Text>
                   </View>
                 ) : null}
               </>
@@ -236,7 +367,8 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
         {isOverdue && balance > 0 ? (
           <View style={styles.overdueBox}>
             <Text style={styles.overdueText}>
-              This invoice is overdue. Please settle the outstanding balance of ₱{fmt(balance)}.
+              This invoice is overdue. Please settle the outstanding balance of
+              ₱{fmt(balance)}.
             </Text>
           </View>
         ) : null}
@@ -247,7 +379,9 @@ export function InvoicePdfDocument({ data }: { data: InvoicePdfData }) {
 
         {/* Footer */}
         <View style={styles.divider} />
-        <Text style={styles.footer}>Thank you for your business! — ADS Paint Center</Text>
+        <Text style={styles.footer}>
+          Thank you for your business! — ADS Paint Center
+        </Text>
       </Page>
     </Document>
   );

@@ -21,7 +21,10 @@ interface Props {
 }
 
 export function VoidSaleDialog({ open, onOpenChange, transaction }: Props) {
-  const [state, formAction, isPending] = useActionState(voidSaleAction, undefined);
+  const [state, formAction, isPending] = useActionState(
+    voidSaleAction,
+    undefined,
+  );
 
   useEffect(() => {
     if (state?.success) {
@@ -40,8 +43,10 @@ export function VoidSaleDialog({ open, onOpenChange, transaction }: Props) {
           <DialogTitle>Void Transaction</DialogTitle>
           <DialogDescription>
             Are you sure you want to void{" "}
-            <span className="font-mono font-semibold">{transaction.transactionNumber}</span>?
-            This will restore all inventory quantities and cannot be undone.
+            <span className="font-mono font-semibold">
+              {transaction.transactionNumber}
+            </span>
+            ? This will restore all inventory quantities and cannot be undone.
           </DialogDescription>
         </DialogHeader>
 
@@ -53,7 +58,10 @@ export function VoidSaleDialog({ open, onOpenChange, transaction }: Props) {
           <div className="flex justify-between">
             <span className="text-muted-foreground">Total</span>
             <span className="font-medium">
-              ₱{parseFloat(transaction.totalAmount).toLocaleString("en-PH", { minimumFractionDigits: 2 })}
+              ₱
+              {parseFloat(transaction.totalAmount).toLocaleString("en-PH", {
+                minimumFractionDigits: 2,
+              })}
             </span>
           </div>
           <div className="flex justify-between">
@@ -65,7 +73,11 @@ export function VoidSaleDialog({ open, onOpenChange, transaction }: Props) {
         <form action={formAction}>
           <input type="hidden" name="transactionId" value={transaction.id} />
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => onOpenChange(false)}
+            >
               Cancel
             </Button>
             <Button type="submit" variant="destructive" disabled={isPending}>

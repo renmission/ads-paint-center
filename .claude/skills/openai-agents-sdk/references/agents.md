@@ -88,14 +88,14 @@ agent = Agent(
 
 ## Agent Configuration Options
 
-| Option | Description |
-|--------|-------------|
-| `name` | Agent identifier |
-| `instructions` | System prompt (string or function) |
-| `model` | Model name or LitellmModel instance |
-| `tools` | List of tools the agent can use |
-| `handoffs` | List of agents to delegate to |
-| `output_type` | Pydantic model for structured output |
-| `model_settings` | ModelSettings for fine-tuning |
-| `input_guardrails` | Input validation functions |
-| `output_guardrails` | Output validation functions |
+| Option              | Description                          |
+| ------------------- | ------------------------------------ |
+| `name`              | Agent identifier                     |
+| `instructions`      | System prompt (string or function)   |
+| `model`             | Model name or LitellmModel instance  |
+| `tools`             | List of tools the agent can use      |
+| `handoffs`          | List of agents to delegate to        |
+| `output_type`       | Pydantic model for structured output |
+| `model_settings`    | ModelSettings for fine-tuning        |
+| `input_guardrails`  | Input validation functions           |
+| `output_guardrails` | Output validation functions          |
