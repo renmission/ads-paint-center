@@ -8,8 +8,11 @@ export default auth((req) => {
   const isLoggedIn = !!req.auth;
   const isAuthRoute = pathname.startsWith("/login");
   const isApiAuthRoute = pathname.startsWith("/api/auth");
+  const isPublicRoute =
+    pathname.startsWith("/shop") || pathname.startsWith("/checkout");
 
   if (isApiAuthRoute) return;
+  if (isPublicRoute) return;
 
   if (isAuthRoute) {
     if (isLoggedIn) {
