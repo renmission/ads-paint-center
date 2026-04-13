@@ -11,7 +11,7 @@ export const createAppointmentSchema = z.object({
 
 export const updateAppointmentSchema = z.object({
   id: z.string().uuid("Invalid appointment ID"),
-  action: z.enum(["confirm", "start", "complete", "cancel"]),
+  action: z.enum(["confirm", "start", "complete", "cancel", "reassign"]),
   staffId: z.string().optional().or(z.literal("")),
   notes: z.string().optional().or(z.literal("")),
 });

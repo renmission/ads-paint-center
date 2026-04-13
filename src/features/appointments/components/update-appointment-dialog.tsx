@@ -39,13 +39,18 @@ import { Badge } from "@/shared/components/ui/badge";
 const STATUS_ACTIONS: Record<string, { value: string; label: string }[]> = {
   scheduled: [
     { value: "confirm", label: "Confirm" },
+    { value: "reassign", label: "Reassign Staff / Edit Notes" },
     { value: "cancel", label: "Cancel" },
   ],
   confirmed: [
     { value: "start", label: "Start (In Progress)" },
+    { value: "reassign", label: "Reassign Staff / Edit Notes" },
     { value: "cancel", label: "Cancel" },
   ],
-  in_progress: [{ value: "complete", label: "Complete" }],
+  in_progress: [
+    { value: "complete", label: "Complete" },
+    { value: "reassign", label: "Reassign Staff / Edit Notes" },
+  ],
 };
 
 const STATUS_LABELS: Record<string, string> = {
