@@ -1,33 +1,45 @@
-const BASE_URL = process.env.IPROGSMS_BASE_URL ?? "https://iprogsms.com/api";
+const IPROGSMS_API_URL = "https://www.iprogsms.com/api/v1/sms_messages";
 
 /**
- * Send an SMS via the iPROGSMS API.
+ * Send an SMS via the iPROGSMS v1 API.
  * Fails silently so a messaging error never blocks a core operation.
- * Set ENABLE_SMS=true in .env to activate; all other values disable sending.
+ * Without IPROGSMS_API_TOKEN, logs a simulation message instead of sending.
  */
 export async function sendSMS(phone: string, message: string): Promise<void> {
-  if (process.env.ENABLE_SMS !== "true") {
-    console.log(`[SMS] Disabled — would have sent to ${phone}: ${message}`);
-    return;
-  }
+  const token = process.env.IPROGSMS_API_TOKEN;
 
-  const apiKey = process.env.IPROGSMS_API_KEY;
-  if (!apiKey) {
-    console.warn("[SMS] IPROGSMS_API_KEY is not configured — skipping.");
+  if (!token) {
+    console.log("[SMS] No API token — simulating send:", {
+      to: phone,
+      message,
+    });
     return;
   }
 
   try {
-    const res = await fetch(`${BASE_URL}/send-sms`, {
+    const res = await fetch(`${IPROGSMS_API_URL}?api_token=${token}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apikey: apiKey, number: phone, message }),
+      body: JSON.stringify({ phone_number: phone, message }),
     });
+
     if (!res.ok) {
-      console.error(
-        `[SMS] Failed to send to ${phone}: HTTP ${res.status} — ${await res.text()}`,
-      );
+      console.error(`[SMS] HTTP ${res.status}:`, await res.text());
+      return;
     }
+
+    const data = (await res.json()) as {
+      status: string;
+      message: string;
+      message_id?: string | number;
+    };
+
+    if (!data.message_id) {
+      console.error("[SMS] Rejected by API:", data.message);
+      return;
+    }
+
+    console.log(`[SMS] Sent — id: ${data.message_id}`);
   } catch (err) {
     console.error("[SMS] Network error:", err);
   }
