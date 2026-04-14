@@ -18,10 +18,10 @@ export async function sendSMS(phone: string, message: string): Promise<void> {
   }
 
   try {
-    const res = await fetch(`${BASE_URL}/send`, {
+    const res = await fetch(`${BASE_URL}/send-sms`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ apikey: apiKey, to: phone, message }),
+      body: JSON.stringify({ apikey: apiKey, number: phone, message }),
     });
     if (!res.ok) {
       console.error(

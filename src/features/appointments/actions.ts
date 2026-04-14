@@ -253,6 +253,24 @@ export async function requestAppointmentAction(
     console.error("SMS send failed:", err);
   }
 
+  // SMS: alert admins of new quote/appointment request
+  const admins = await db.query.users.findMany({
+    where: and(eq(users.role, "administrator"), eq(users.isActive, true)),
+    columns: { phone: true },
+  });
+  for (const admin of admins) {
+    if (admin.phone) {
+      try {
+        await sendSMS(
+          admin.phone,
+          `[ADS Paint Center] New quote request ${appointmentNumber} from ${parsed.data.name} (${parsed.data.phone}) — ${serviceName} on ${scheduledDate}.`,
+        );
+      } catch (err) {
+        console.error("Admin SMS send failed:", err);
+      }
+    }
+  }
+
   return {
     success: `Request ${appointmentNumber} submitted! We'll confirm your appointment shortly.`,
   };

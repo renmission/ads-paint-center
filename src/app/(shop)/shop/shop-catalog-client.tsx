@@ -2,7 +2,14 @@
 
 import { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { ShoppingCart, Plus, Minus, Trash2, ArrowRight } from "lucide-react";
+import {
+  ShoppingCart,
+  Plus,
+  Minus,
+  ArrowRight,
+  X,
+  ShoppingBag,
+} from "lucide-react";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { Input } from "@/shared/components/ui/input";
@@ -35,6 +42,17 @@ const CATEGORY_LABELS: Record<string, string> = {
   tool: "Tools",
   supply: "Supplies",
   other: "Other",
+};
+
+const CATEGORY_COLORS: Record<string, string> = {
+  paint: "bg-orange-100 text-orange-700 border-orange-200",
+  coating: "bg-blue-100 text-blue-700 border-blue-200",
+  primer: "bg-green-100 text-green-700 border-green-200",
+  varnish: "bg-yellow-100 text-yellow-700 border-yellow-200",
+  thinner: "bg-stone-100 text-stone-600 border-stone-200",
+  tool: "bg-red-100 text-red-700 border-red-200",
+  supply: "bg-purple-100 text-purple-700 border-purple-200",
+  other: "bg-slate-100 text-slate-600 border-slate-200",
 };
 
 export function ShopCatalogClient({ products }: { products: Product[] }) {
@@ -127,85 +145,126 @@ export function ShopCatalogClient({ products }: { products: Product[] }) {
         </div>
         <Sheet open={cartOpen} onOpenChange={setCartOpen}>
           <SheetTrigger asChild>
-            <Button variant="outline" className="relative">
+            <Button
+              variant="default"
+              className="relative bg-orange-500 hover:bg-orange-600 text-white"
+            >
               <ShoppingCart className="mr-2 h-4 w-4" />
               Cart
               {cartCount > 0 && (
-                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-slate-900 text-[10px] font-bold text-white">
+                <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-white border-2 border-orange-500 text-[10px] font-bold text-orange-600 shadow-sm">
                   {cartCount}
                 </span>
               )}
             </Button>
           </SheetTrigger>
-          <SheetContent className="flex flex-col">
-            <SheetHeader>
+          <SheetContent className="flex flex-col gap-0 bg-white border-l border-slate-200 p-0">
+            {/* Hidden accessible title for screen readers */}
+            <SheetHeader className="sr-only">
               <SheetTitle>Your Cart</SheetTitle>
             </SheetHeader>
+
+            {/* Visual header */}
+            <div className="flex items-center px-5 py-4 border-b border-slate-100">
+              <h2 className="text-lg font-semibold tracking-tight text-slate-900">
+                Your Cart
+              </h2>
+            </div>
+
             {cart.length === 0 ? (
-              <p className="mt-8 text-center text-sm text-slate-400">
-                Your cart is empty.
-              </p>
+              <div className="flex flex-1 flex-col items-center justify-center gap-3 px-6 py-16">
+                <ShoppingBag
+                  className="h-14 w-14 text-slate-300"
+                  strokeWidth={1.25}
+                />
+                <p className="text-base font-medium text-slate-400">
+                  No items yet
+                </p>
+                <p className="text-xs text-slate-400 text-center">
+                  Add products from the catalog to get started.
+                </p>
+              </div>
             ) : (
               <>
-                <div className="flex-1 overflow-y-auto py-4">
+                <div className="flex-1 overflow-y-auto px-4 py-4">
                   <ul className="space-y-3">
                     {cart.map((item) => (
                       <li
                         key={item.productId}
-                        className="flex items-center gap-3 rounded-lg border p-3"
+                        className="flex items-stretch gap-0 rounded-xl border border-slate-100 bg-slate-50 overflow-hidden"
                       >
-                        <div className="flex-1 min-w-0">
-                          <p className="truncate text-sm font-medium">
-                            {item.productName}
+                        {/* Orange accent stripe */}
+                        <div className="w-1 shrink-0 bg-orange-500 rounded-full my-3 ml-3" />
+
+                        {/* Item content */}
+                        <div className="flex flex-1 min-w-0 flex-col justify-center py-3 px-3 gap-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <p className="truncate text-sm font-medium text-slate-800 leading-snug">
+                              {item.productName}
+                            </p>
+                            <button
+                              type="button"
+                              className="shrink-0 text-slate-400 hover:text-red-500 transition-colors mt-0.5 cursor-pointer"
+                              onClick={() => removeFromCart(item.productId)}
+                              aria-label="Remove item"
+                            >
+                              <X className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+
+                          <p className="text-xs text-slate-400">
+                            ₱{item.unitPrice.toFixed(2)} / unit
                           </p>
-                          <p className="text-xs text-slate-500">
-                            ₱{item.unitPrice.toFixed(2)} each
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-6 w-6"
-                            onClick={() => updateQty(item.productId, -1)}
-                          >
-                            <Minus className="h-3 w-3" />
-                          </Button>
-                          <span className="w-6 text-center text-sm font-medium">
-                            {item.quantity}
-                          </span>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-6 w-6"
-                            onClick={() => updateQty(item.productId, 1)}
-                          >
-                            <Plus className="h-3 w-3" />
-                          </Button>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-sm font-semibold">
-                            ₱{item.lineTotal.toFixed(2)}
-                          </p>
-                          <Button
-                            size="icon"
-                            variant="ghost"
-                            className="h-6 w-6 text-red-500 hover:text-red-600"
-                            onClick={() => removeFromCart(item.productId)}
-                          >
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
+
+                          <div className="flex items-center justify-between">
+                            {/* Qty pill */}
+                            <div className="flex items-center gap-1 rounded-full bg-white border border-slate-200 px-1 py-0.5">
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-6 w-6 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                                onClick={() => updateQty(item.productId, -1)}
+                              >
+                                <Minus className="h-3 w-3" />
+                              </Button>
+                              <span className="w-6 text-center text-sm font-semibold text-slate-800">
+                                {item.quantity}
+                              </span>
+                              <Button
+                                size="icon"
+                                variant="ghost"
+                                className="h-6 w-6 rounded-full text-slate-500 hover:bg-slate-100 hover:text-slate-900"
+                                onClick={() => updateQty(item.productId, 1)}
+                              >
+                                <Plus className="h-3 w-3" />
+                              </Button>
+                            </div>
+
+                            {/* Line total */}
+                            <p className="text-sm font-bold text-orange-600">
+                              ₱{item.lineTotal.toFixed(2)}
+                            </p>
+                          </div>
                         </div>
                       </li>
                     ))}
                   </ul>
                 </div>
-                <div className="border-t pt-4">
-                  <div className="mb-4 flex items-center justify-between text-base font-semibold">
-                    <span>Total</span>
-                    <span>₱{cartTotal.toFixed(2)}</span>
+
+                {/* Footer / total */}
+                <div className="border-t border-slate-100 px-5 py-4 space-y-4">
+                  <div className="flex items-baseline justify-between">
+                    <span className="text-sm text-slate-500 font-medium">
+                      Order Total
+                    </span>
+                    <span className="text-2xl font-bold text-slate-900">
+                      ₱{cartTotal.toFixed(2)}
+                    </span>
                   </div>
-                  <Button className="w-full" onClick={proceedToCheckout}>
+                  <Button
+                    className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold h-11 text-base"
+                    onClick={proceedToCheckout}
+                  >
                     Proceed to Checkout
                     <ArrowRight className="ml-2 h-4 w-4" />
                   </Button>
@@ -228,6 +287,12 @@ export function ShopCatalogClient({ products }: { products: Product[] }) {
           <Button
             size="sm"
             variant={selectedCategory === "all" ? "default" : "outline"}
+            className={cn(
+              "rounded-full",
+              selectedCategory === "all"
+                ? "bg-orange-500 hover:bg-orange-600 text-white border-transparent"
+                : "bg-white border border-stone-200 text-stone-700 hover:bg-stone-50",
+            )}
             onClick={() => setSelectedCategory("all")}
           >
             All
@@ -237,6 +302,12 @@ export function ShopCatalogClient({ products }: { products: Product[] }) {
               key={cat}
               size="sm"
               variant={selectedCategory === cat ? "default" : "outline"}
+              className={cn(
+                "rounded-full",
+                selectedCategory === cat
+                  ? "bg-orange-500 hover:bg-orange-600 text-white border-transparent"
+                  : "bg-white border border-stone-200 text-stone-700 hover:bg-stone-50",
+              )}
               onClick={() => setSelectedCategory(cat)}
             >
               {CATEGORY_LABELS[cat] ?? cat}
@@ -261,7 +332,14 @@ export function ShopCatalogClient({ products }: { products: Product[] }) {
                   <h3 className="font-semibold text-slate-900 leading-tight">
                     {product.name}
                   </h3>
-                  <Badge variant="secondary" className="shrink-0 text-xs">
+                  <Badge
+                    variant="outline"
+                    className={cn(
+                      "shrink-0 text-xs border",
+                      CATEGORY_COLORS[product.category] ??
+                        "bg-slate-100 text-slate-600 border-slate-200",
+                    )}
+                  >
                     {CATEGORY_LABELS[product.category] ?? product.category}
                   </Badge>
                 </div>
@@ -283,24 +361,22 @@ export function ShopCatalogClient({ products }: { products: Product[] }) {
                     <p className="text-xs text-slate-400">per {product.unit}</p>
                   </div>
                   {inCart ? (
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 rounded-lg bg-orange-50 border border-orange-200 px-1 py-0.5">
                       <Button
                         size="icon"
-                        variant="outline"
-                        className="h-8 w-8"
+                        variant="ghost"
+                        className="h-8 w-8 text-orange-600 hover:bg-orange-100"
                         onClick={() => updateQty(product.id, -1)}
                       >
                         <Minus className="h-3 w-3" />
                       </Button>
-                      <span
-                        className={cn("w-8 text-center text-sm font-semibold")}
-                      >
+                      <span className="w-8 text-center text-sm font-semibold text-orange-700">
                         {inCart.quantity}
                       </span>
                       <Button
                         size="icon"
-                        variant="outline"
-                        className="h-8 w-8"
+                        variant="ghost"
+                        className="h-8 w-8 text-orange-600 hover:bg-orange-100"
                         onClick={() => updateQty(product.id, 1)}
                       >
                         <Plus className="h-3 w-3" />
