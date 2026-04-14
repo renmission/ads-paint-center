@@ -9,7 +9,9 @@ export default auth((req) => {
   const isAuthRoute = pathname.startsWith("/login");
   const isApiAuthRoute = pathname.startsWith("/api/auth");
   const isPublicRoute =
-    pathname.startsWith("/shop") || pathname.startsWith("/checkout");
+    pathname === "/" ||
+    pathname.startsWith("/shop") ||
+    pathname.startsWith("/checkout");
 
   if (isApiAuthRoute) return;
   if (isPublicRoute) return;

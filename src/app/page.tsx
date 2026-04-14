@@ -1,5 +1,11 @@
-import { redirect } from "next/navigation";
+import { LandingHero } from "./landing-hero";
 
-export default function Home() {
-  redirect("/dashboard");
+export const metadata = {
+  title: "ADS Paint Center — Quality Paint & Supplies",
+  description:
+    "Premium paint products, expert service, and fast delivery. Shop interior, exterior, primers, and tools.",
+};
+
+export default function HomePage() {
+  return <LandingHero />;
 }
