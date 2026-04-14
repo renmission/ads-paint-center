@@ -18,3 +18,14 @@ export const updateAppointmentSchema = z.object({
 
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;
 export type UpdateAppointmentInput = z.infer<typeof updateAppointmentSchema>;
+
+export const requestAppointmentSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  phone: z.string().min(7, "Valid phone number is required"),
+  serviceId: z.string().optional().or(z.literal("")),
+  scheduledAt: z.string().min(1, "Preferred date & time is required"),
+  address: z.string().optional().or(z.literal("")),
+  notes: z.string().optional().or(z.literal("")),
+});
+
+export type RequestAppointmentInput = z.infer<typeof requestAppointmentSchema>;
