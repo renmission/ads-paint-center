@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function ShopLayout({
   children,
 }: {
@@ -7,12 +9,12 @@ export default function ShopLayout({
     <div className="min-h-screen bg-slate-50">
       <header className="border-b bg-white shadow-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-4">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900">
+          <Link href="/" className="group">
+            <h1 className="text-xl font-bold text-slate-900 transition-colors group-hover:text-orange-600">
               ADS Paint Center
             </h1>
             <p className="text-xs text-slate-500">Online Store</p>
-          </div>
+          </Link>
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
