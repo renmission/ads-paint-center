@@ -164,7 +164,7 @@ export function LandingHero({ services }: LandingHeroProps) {
               className="hidden sm:flex items-center gap-1.5 text-sm text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
             >
               <Phone className="h-3.5 w-3.5 text-primary" />
-              <span className="text-xs font-medium">(123) 456-7890</span>
+              <span className="text-xs font-medium">(+63) 905-728-3389</span>
             </a>
 
             <Link
@@ -255,7 +255,7 @@ export function LandingHero({ services }: LandingHeroProps) {
             <div className="flex items-center gap-6 flex-wrap">
               <div className="flex flex-col">
                 <span className="text-2xl font-extrabold text-slate-900">
-                  1,550+
+                  500+
                 </span>
                 <span className="text-xs text-slate-500">
                   Projects completed
@@ -278,7 +278,7 @@ export function LandingHero({ services }: LandingHeroProps) {
               <div className="w-px h-8 bg-slate-200" />
               <div className="flex flex-col">
                 <span className="text-2xl font-extrabold text-slate-900">
-                  15+
+                  13+
                 </span>
                 <span className="text-xs text-slate-500">Years experience</span>
               </div>
