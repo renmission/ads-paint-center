@@ -20,7 +20,11 @@ import { eq, sql, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { sendSMS } from "@/shared/lib/sms";
 
-type ActionResult = { error?: string; success?: string };
+type ActionResult = {
+  error?: string;
+  success?: string;
+  transactionId?: string;
+};
 
 export async function completeSaleAction(
   _prevState: ActionResult | undefined,
@@ -177,7 +181,10 @@ export async function completeSaleAction(
     }
   }
 
-  return { success: `Sale ${transactionNumber} completed successfully.` };
+  return {
+    success: `Sale ${transactionNumber} completed successfully.`,
+    transactionId: txn.id,
+  };
 }
 
 export async function voidSaleAction(

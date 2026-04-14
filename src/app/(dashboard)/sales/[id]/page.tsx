@@ -16,6 +16,7 @@ import { Badge } from "@/shared/components/ui/badge";
 import { ArrowLeft, AlertCircle } from "lucide-react";
 import { InvoicePrintButton } from "./invoice-print-button";
 import { MarkCreditPaymentDialog } from "./mark-credit-payment-dialog";
+import { AutoPrintInvoice } from "./auto-print-invoice";
 
 function fmt(n: number | string) {
   return parseFloat(String(n)).toLocaleString("en-PH", {
@@ -34,10 +35,13 @@ function fmtDate(d: string | Date | null) {
 
 export default async function InvoicePage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ from?: string }>;
 }) {
   const { id } = await params;
+  const { from } = await searchParams;
   const session = await auth();
 
   const txn = await db
@@ -97,6 +101,7 @@ export default async function InvoicePage({
 
   return (
     <>
+      {from === "pos" && <AutoPrintInvoice />}
       {/* Print isolation CSS — hides everything except invoice when printing */}
       <style>{`
         @media print {

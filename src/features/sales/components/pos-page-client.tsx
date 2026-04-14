@@ -170,10 +170,10 @@ export function PosPageClient({ products, customers }: Props) {
   }, []);
 
   useEffect(() => {
-    if (state?.success) {
+    if (state?.success && state.transactionId) {
       toast.success(state.success);
       resetForm();
-      router.refresh();
+      router.push(`/sales/${state.transactionId}?from=pos`);
     }
     if (state?.error) toast.error(state.error);
   }, [state, resetForm, router]);
