@@ -7,7 +7,11 @@ import {
   services,
   users,
 } from "@/shared/lib/db/schema";
-import { createAppointmentSchema, updateAppointmentSchema } from "./schemas";
+import {
+  createAppointmentSchema,
+  updateAppointmentSchema,
+  requestAppointmentSchema,
+} from "./schemas";
 import { auth } from "@/shared/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
@@ -173,4 +177,83 @@ export async function updateAppointmentAction(
             : "cancelled";
 
   return { success: `Appointment ${appointment.appointmentNumber} ${label}.` };
+}
+
+export async function requestAppointmentAction(
+  _prevState: ActionResult | undefined,
+  formData: FormData,
+): Promise<ActionResult> {
+  const raw = Object.fromEntries(formData);
+  const parsed = requestAppointmentSchema.safeParse(raw);
+  if (!parsed.success) return { error: parsed.error.issues[0].message };
+
+  // Find or create customer by phone
+  let customerId: string;
+  const existing = await db.query.customers.findFirst({
+    where: eq(customers.phone, parsed.data.phone),
+    columns: { id: true },
+  });
+  if (existing) {
+    customerId = existing.id;
+  } else {
+    const [newCustomer] = await db
+      .insert(customers)
+      .values({ name: parsed.data.name, phone: parsed.data.phone })
+      .returning({ id: customers.id });
+    customerId = newCustomer.id;
+  }
+
+  // Generate appointment number
+  const countResult = await db
+    .select({ count: sql<number>`count(*)` })
+    .from(appointments)
+    .where(sql`DATE(created_at) = CURRENT_DATE`);
+  const seq = (Number(countResult[0].count) + 1).toString().padStart(4, "0");
+  const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+  const appointmentNumber = `APT-${dateStr}-${seq}`;
+
+  await db.insert(appointments).values({
+    appointmentNumber,
+    customerId,
+    serviceId: parsed.data.serviceId || null,
+    staffId: null,
+    scheduledAt: new Date(parsed.data.scheduledAt),
+    notes: parsed.data.notes || null,
+    address: parsed.data.address || null,
+    status: "scheduled",
+  });
+
+  // SMS confirmation to customer
+  let serviceName = "appointment";
+  if (parsed.data.serviceId) {
+    const svc = await db.query.services.findFirst({
+      where: eq(services.id, parsed.data.serviceId),
+      columns: { name: true },
+    });
+    if (svc) serviceName = svc.name;
+  }
+
+  const scheduledDate = new Date(parsed.data.scheduledAt).toLocaleString(
+    "en-PH",
+    {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    },
+  );
+
+  try {
+    await sendSMS(
+      parsed.data.phone,
+      `Hi ${parsed.data.name}! Your ${serviceName} request (${appointmentNumber}) at ADS Paint Center has been received for ${scheduledDate}. We'll confirm shortly!`,
+    );
+  } catch (err) {
+    console.error("SMS send failed:", err);
+  }
+
+  return {
+    success: `Request ${appointmentNumber} submitted! We'll confirm your appointment shortly.`,
+  };
 }

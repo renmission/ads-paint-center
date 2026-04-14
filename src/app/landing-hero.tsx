@@ -12,6 +12,25 @@ import {
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
 import { cn } from "@/shared/lib/utils";
+import { RequestAppointmentDialog } from "@/features/appointments/components/request-appointment-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/shared/components/ui/dialog";
+import { Card, CardContent } from "@/shared/components/ui/card";
+import { Clock } from "lucide-react";
+
+type Service = { id: string; name: string; price: string; duration: number };
+
+interface LandingHeroProps {
+  services: Service[];
+}
+
+function fmt(n: string) {
+  return parseFloat(n).toLocaleString("en-PH", { minimumFractionDigits: 2 });
+}
 
 const SLIDE_BG_CLASSES = [
   "bg-[url(/images/pexels-n-voitkevich-5641411.webp)]",
@@ -22,9 +41,7 @@ const SLIDE_BG_CLASSES = [
 
 const NAV_LINKS = [
   { label: "Home", href: "/" },
-  { label: "Services", href: "/shop" },
   { label: "Products", href: "/shop" },
-  { label: "About", href: "/" },
 ];
 
 const SLIDES = [
@@ -66,10 +83,12 @@ const SLIDES = [
   },
 ];
 
-export function LandingHero() {
+export function LandingHero({ services }: LandingHeroProps) {
   const [active, setActive] = useState(0);
   const [animating, setAnimating] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [quoteOpen, setQuoteOpen] = useState(false);
+  const [servicesOpen, setServicesOpen] = useState(false);
 
   const goTo = useCallback(
     (index: number) => {
@@ -129,6 +148,13 @@ export function LandingHero() {
                 {label}
               </Link>
             ))}
+            <button
+              type="button"
+              onClick={() => setServicesOpen(true)}
+              className="px-3 py-1.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-50 rounded-lg transition-colors cursor-pointer"
+            >
+              Services
+            </button>
           </nav>
 
           {/* Right actions */}
@@ -150,8 +176,12 @@ export function LandingHero() {
               <span className="absolute right-1.5 top-1.5 h-1.5 w-1.5 rounded-full bg-primary" />
             </Link>
 
-            <Button asChild size="sm" className="rounded-xl text-xs px-4">
-              <Link href="/shop">Get a Quote</Link>
+            <Button
+              size="sm"
+              className="rounded-xl text-xs px-4"
+              onClick={() => setQuoteOpen(true)}
+            >
+              Get a Quote
             </Button>
           </div>
         </div>
@@ -325,6 +355,64 @@ export function LandingHero() {
           </div>
         </div>
       </div>
+
+      {/* Get Quote dialog */}
+      <RequestAppointmentDialog
+        open={quoteOpen}
+        onOpenChange={setQuoteOpen}
+        services={services}
+      />
+
+      {/* Services list dialog */}
+      <Dialog open={servicesOpen} onOpenChange={setServicesOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Our Services</DialogTitle>
+            <p className="text-sm text-muted-foreground">
+              Choose a service and get a quote from us.
+            </p>
+          </DialogHeader>
+
+          {services.length === 0 ? (
+            <p className="py-6 text-center text-sm text-slate-400">
+              No services available at the moment.
+            </p>
+          ) : (
+            <div className="grid gap-3 py-2 max-h-[60vh] overflow-y-auto pr-1">
+              {services.map((s) => (
+                <Card key={s.id} className="border-slate-100 shadow-none">
+                  <CardContent className="flex items-center justify-between gap-4 p-4">
+                    <div className="min-w-0">
+                      <p className="font-medium text-slate-900 truncate">
+                        {s.name}
+                      </p>
+                      <div className="mt-0.5 flex items-center gap-2 text-xs text-slate-500">
+                        <Clock className="h-3 w-3 shrink-0" />
+                        <span>{s.duration} min</span>
+                      </div>
+                    </div>
+                    <div className="shrink-0 text-right">
+                      <span className="text-sm font-semibold text-primary">
+                        ₱{fmt(s.price)}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setServicesOpen(false);
+                          setQuoteOpen(true);
+                        }}
+                        className="mt-1 block text-xs text-slate-400 hover:text-primary transition-colors cursor-pointer"
+                      >
+                        Book →
+                      </button>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
