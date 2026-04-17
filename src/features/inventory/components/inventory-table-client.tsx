@@ -23,7 +23,7 @@ import { Search, Plus, Pencil, SlidersHorizontal } from "lucide-react";
 import { CreateProductDialog } from "./create-product-dialog";
 import { EditProductDialog } from "./edit-product-dialog";
 import { StockAdjustSheet } from "./stock-adjust-sheet";
-import type { InventoryRow } from "./inventory-table";
+import type { InventoryRow, UnitOption } from "./inventory-table";
 
 const CATEGORIES = [
   "all",
@@ -39,9 +39,10 @@ const CATEGORIES = [
 
 interface Props {
   initialData: InventoryRow[];
+  units: UnitOption[];
 }
 
-export function InventoryTableClient({ initialData }: Props) {
+export function InventoryTableClient({ initialData, units }: Props) {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [statusFilter, setStatusFilter] = useState("active");
@@ -222,13 +223,18 @@ export function InventoryTableClient({ initialData }: Props) {
         Showing {filtered.length} of {initialData.length} products
       </p>
 
-      <CreateProductDialog open={createOpen} onOpenChange={setCreateOpen} />
+      <CreateProductDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        units={units}
+      />
 
       {editTarget && (
         <EditProductDialog
           open={!!editTarget}
           onOpenChange={(open) => !open && setEditTarget(null)}
           row={editTarget}
+          units={units}
         />
       )}
 

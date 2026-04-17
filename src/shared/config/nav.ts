@@ -11,14 +11,23 @@ import {
   Settings,
   Landmark,
   ShoppingBag,
+  Ruler,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+
+export type NavChild = {
+  title: string;
+  href: string;
+  icon: LucideIcon;
+  roles: ("administrator" | "staff")[];
+};
 
 export type NavItem = {
   title: string;
   href: string;
   icon: LucideIcon;
   roles: ("administrator" | "staff")[];
+  children?: NavChild[];
 };
 
 export const navItems: NavItem[] = [
@@ -87,5 +96,13 @@ export const navItems: NavItem[] = [
     href: "/settings",
     icon: Settings,
     roles: ["administrator"],
+    children: [
+      {
+        title: "Units",
+        href: "/settings/units",
+        icon: Ruler,
+        roles: ["administrator"],
+      },
+    ],
   },
 ];

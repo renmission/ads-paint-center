@@ -70,6 +70,17 @@ export const orderPaymentStatusEnum = pgEnum("order_payment_status", [
   "paid",
 ]);
 
+// ─── Units ────────────────────────────────────────────────────────────────────
+
+export const units = pgTable("units", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  abbreviation: varchar("abbreviation", { length: 20 }).notNull(),
+  isActive: boolean("is_active").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
 // ─── Users / Staff ────────────────────────────────────────────────────────────
 
 export const users = pgTable("users", {
