@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState, useEffect } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import {
@@ -32,6 +32,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { Input } from "@/shared/components/ui/input";
 import { Textarea } from "@/shared/components/ui/textarea";
 import { Button } from "@/shared/components/ui/button";
 import { Badge } from "@/shared/components/ui/badge";
@@ -39,16 +40,19 @@ import { Badge } from "@/shared/components/ui/badge";
 const STATUS_ACTIONS: Record<string, { value: string; label: string }[]> = {
   scheduled: [
     { value: "confirm", label: "Confirm" },
+    { value: "record_downpayment", label: "Record Downpayment" },
     { value: "reassign", label: "Reassign Staff / Edit Notes" },
     { value: "cancel", label: "Cancel" },
   ],
   confirmed: [
     { value: "start", label: "Start (In Progress)" },
+    { value: "record_downpayment", label: "Record Downpayment" },
     { value: "reassign", label: "Reassign Staff / Edit Notes" },
     { value: "cancel", label: "Cancel" },
   ],
   in_progress: [
     { value: "complete", label: "Complete" },
+    { value: "record_downpayment", label: "Record Downpayment" },
     { value: "reassign", label: "Reassign Staff / Edit Notes" },
   ],
 };
@@ -98,8 +102,18 @@ function UpdateAppointmentDialogInner({
       action: defaultAction as UpdateAppointmentInput["action"],
       staffId: appointment.staffId ?? "",
       notes: appointment.notes ?? "",
+      downpaymentAmount: appointment.downpaymentAmount
+        ? parseFloat(appointment.downpaymentAmount)
+        : undefined,
+      downpaymentPaid: appointment.downpaymentPaid
+        ? parseFloat(appointment.downpaymentPaid)
+        : undefined,
+      downpaymentMethod: appointment.downpaymentMethod ?? undefined,
     },
   });
+
+  const selectedAction = useWatch({ control: form.control, name: "action" });
+  const showDownpayment = selectedAction === "record_downpayment";
 
   useEffect(() => {
     if (state?.success) {
@@ -186,24 +200,122 @@ function UpdateAppointmentDialogInner({
                 )}
               />
             )}
-            <FormField
-              control={form.control}
-              name="notes"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Notes (optional)</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      rows={2}
-                      placeholder="Add any notes…"
-                      {...field}
-                      name="notes"
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {!showDownpayment && (
+              <FormField
+                control={form.control}
+                name="notes"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Notes (optional)</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        rows={2}
+                        placeholder="Add any notes…"
+                        {...field}
+                        name="notes"
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
+            {showDownpayment && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <FormField
+                    control={form.control}
+                    name="downpaymentAmount"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Required Amount</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            placeholder="0.00"
+                            name="downpaymentAmount"
+                            value={field.value ?? ""}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseFloat(e.target.value),
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="downpaymentPaid"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Amount Paid</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            step="0.01"
+                            placeholder="0.00"
+                            name="downpaymentPaid"
+                            value={field.value ?? ""}
+                            onChange={(e) =>
+                              field.onChange(
+                                e.target.value === ""
+                                  ? undefined
+                                  : parseFloat(e.target.value),
+                              )
+                            }
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <FormField
+                  control={form.control}
+                  name="downpaymentMethod"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Payment Method</FormLabel>
+                      <input
+                        type="hidden"
+                        name="downpaymentMethod"
+                        value={field.value ?? ""}
+                      />
+                      <Select
+                        value={field.value ?? "none"}
+                        onValueChange={(v) =>
+                          field.onChange(v === "none" ? undefined : v)
+                        }
+                      >
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select method…" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">— None —</SelectItem>
+                          <SelectItem value="cash">Cash</SelectItem>
+                          <SelectItem value="gcash">GCash</SelectItem>
+                          <SelectItem value="credit">Credit</SelectItem>
+                          <SelectItem value="other">Other</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            )}
+
             <DialogFooter>
               <Button
                 type="button"

@@ -64,6 +64,13 @@
       "when": 1776420813017,
       "tag": "0008_bitter_monster_badoon",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1776448010023,
+      "tag": "0009_green_green_goblin",
+      "breakpoints": true
     }
   ]
 }
