@@ -13,6 +13,7 @@ export async function PosPage() {
       id: products.id,
       name: products.name,
       sku: products.sku,
+      imageUrl: products.imageUrl,
       unit: products.unit,
       price: products.price,
       category: products.category,

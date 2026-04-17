@@ -115,6 +115,7 @@ export const products = pgTable("products", {
   name: varchar("name", { length: 255 }).notNull(),
   sku: varchar("sku", { length: 100 }).unique(),
   description: text("description"),
+  imageUrl: varchar("image_url", { length: 500 }),
   category: productCategoryEnum("category").notNull().default("other"),
   unit: varchar("unit", { length: 50 }).notNull().default("piece"),
   price: numeric("price", { precision: 10, scale: 2 }).notNull(),
