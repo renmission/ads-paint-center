@@ -30,19 +30,40 @@ export function Sidebar({ role }: SidebarProps) {
               ? pathname === "/dashboard"
               : pathname.startsWith(item.href);
           return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                isActive
-                  ? "bg-primary text-primary-foreground"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
-              )}
-            >
-              <item.icon className="h-4 w-4 shrink-0" />
-              {item.title}
-            </Link>
+            <div key={item.href}>
+              <Link
+                href={item.href}
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                  isActive
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                )}
+              >
+                <item.icon className="h-4 w-4 shrink-0" />
+                {item.title}
+              </Link>
+              {item.children
+                ?.filter((child) => child.roles.includes(role))
+                .map((child) => {
+                  const isChildActive = pathname.startsWith(child.href);
+                  return (
+                    <Link
+                      key={child.href}
+                      href={child.href}
+                      className={cn(
+                        "mt-1 flex items-center gap-3 rounded-md py-2 pl-8 pr-3 text-sm font-medium transition-colors",
+                        isChildActive
+                          ? "bg-primary text-primary-foreground"
+                          : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                      )}
+                    >
+                      <child.icon className="h-4 w-4 shrink-0" />
+                      {child.title}
+                    </Link>
+                  );
+                })}
+            </div>
           );
         })}
       </nav>

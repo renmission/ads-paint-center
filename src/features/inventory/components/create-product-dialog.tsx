@@ -43,12 +43,19 @@ const CATEGORIES = [
   "other",
 ] as const;
 
+type UnitOption = {
+  id: string;
+  name: string;
+  abbreviation: string;
+};
+
 interface Props {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  units: UnitOption[];
 }
 
-export function CreateProductDialog({ open, onOpenChange }: Props) {
+export function CreateProductDialog({ open, onOpenChange, units }: Props) {
   const [state, formAction, isPending] = useActionState(
     createProductAction,
     undefined,
@@ -150,9 +157,24 @@ export function CreateProductDialog({ open, onOpenChange }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unit</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g. liter, piece" {...field} />
-                    </FormControl>
+                    <Select
+                      name="unit"
+                      defaultValue={field.value}
+                      onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select unit" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {units.map((u) => (
+                          <SelectItem key={u.id} value={u.name}>
+                            {u.name} ({u.abbreviation})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                     <FormMessage />
                   </FormItem>
                 )}

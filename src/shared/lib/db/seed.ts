@@ -1,6 +1,6 @@
 import { neon } from "@neondatabase/serverless";
 import { drizzle } from "drizzle-orm/neon-http";
-import { users, products, inventory } from "./schema";
+import { users, products, inventory, units } from "./schema";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
@@ -129,7 +129,7 @@ const SAMPLE_PRODUCTS = [
 
 async function seed() {
   const sql = neon(process.env.DATABASE_URL!);
-  const db = drizzle(sql, { schema: { users, products, inventory } });
+  const db = drizzle(sql, { schema: { users, products, inventory, units } });
 
   // --- Admin user ---
   const hashedPassword = await bcrypt.hash("admin123", 12);
@@ -179,6 +179,24 @@ async function seed() {
 
       console.log(`  added: ${item.name} (qty: ${item.qty})`);
     }
+  }
+
+  // --- Default Units ---
+  const DEFAULT_UNITS = [
+    { name: "piece", abbreviation: "pc" },
+    { name: "liter", abbreviation: "L" },
+    { name: "gallon", abbreviation: "gal" },
+    { name: "kilogram", abbreviation: "kg" },
+    { name: "gram", abbreviation: "g" },
+    { name: "meter", abbreviation: "m" },
+    { name: "can", abbreviation: "can" },
+    { name: "bucket", abbreviation: "bkt" },
+    { name: "set", abbreviation: "set" },
+    { name: "roll", abbreviation: "roll" },
+    { name: "kilo", abbreviation: "kg" },
+  ];
+  for (const unit of DEFAULT_UNITS) {
+    await db.insert(units).values(unit).onConflictDoNothing();
   }
 
   console.log("\nSeed complete.");

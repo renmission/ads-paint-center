@@ -1,5 +1,5 @@
 import { db } from "@/shared/lib/db";
-import { products, inventory } from "@/shared/lib/db/schema";
+import { products, inventory, units } from "@/shared/lib/db/schema";
 import { eq, asc } from "drizzle-orm";
 import { InventoryTableClient } from "./inventory-table-client";
 
@@ -26,17 +26,34 @@ export type InventoryRow = {
   } | null;
 };
 
+export type UnitOption = {
+  id: string;
+  name: string;
+  abbreviation: string;
+};
+
 export async function InventoryTable() {
-  const rows = await db
-    .select()
-    .from(products)
-    .leftJoin(inventory, eq(inventory.productId, products.id))
-    .orderBy(asc(products.createdAt));
+  const [rows, unitRows] = await Promise.all([
+    db
+      .select()
+      .from(products)
+      .leftJoin(inventory, eq(inventory.productId, products.id))
+      .orderBy(asc(products.createdAt)),
+    db
+      .select({
+        id: units.id,
+        name: units.name,
+        abbreviation: units.abbreviation,
+      })
+      .from(units)
+      .where(eq(units.isActive, true))
+      .orderBy(asc(units.name)),
+  ]);
 
   const data: InventoryRow[] = rows.map((r) => ({
     product: r.products,
     inventory: r.inventory,
   }));
 
-  return <InventoryTableClient initialData={data} />;
+  return <InventoryTableClient initialData={data} units={unitRows} />;
 }
