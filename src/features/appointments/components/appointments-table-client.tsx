@@ -139,6 +139,7 @@ export function AppointmentsTableClient({
               <TableHead>Customer</TableHead>
               <TableHead>Service</TableHead>
               <TableHead>Staff</TableHead>
+              <TableHead>Downpayment</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -147,7 +148,7 @@ export function AppointmentsTableClient({
             {filtered.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={7}
+                  colSpan={8}
                   className="h-24 text-center text-muted-foreground"
                 >
                   {initialData.length === 0
@@ -209,6 +210,25 @@ export function AppointmentsTableClient({
                     <TableCell>
                       {row.staffName ?? (
                         <span className="text-muted-foreground">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {!row.downpaymentAmount ? (
+                        <span className="text-muted-foreground">—</span>
+                      ) : parseFloat(row.downpaymentPaid ?? "0") >=
+                        parseFloat(row.downpaymentAmount) ? (
+                        <Badge className="bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          Paid ₱{fmt(row.downpaymentPaid!)}
+                        </Badge>
+                      ) : parseFloat(row.downpaymentPaid ?? "0") > 0 ? (
+                        <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300">
+                          Partial ₱{fmt(row.downpaymentPaid!)} / ₱
+                          {fmt(row.downpaymentAmount)}
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-300">
+                          Due ₱{fmt(row.downpaymentAmount)}
+                        </Badge>
                       )}
                     </TableCell>
                     <TableCell>

@@ -7,13 +7,26 @@ export const createAppointmentSchema = z.object({
   scheduledAt: z.string().min(1, "Scheduled date/time is required"),
   notes: z.string().optional().or(z.literal("")),
   address: z.string().optional().or(z.literal("")),
+  downpaymentAmount: z.number().nonnegative().optional(),
+  downpaymentPaid: z.number().nonnegative().optional(),
+  downpaymentMethod: z.enum(["cash", "gcash", "credit", "other"]).optional(),
 });
 
 export const updateAppointmentSchema = z.object({
   id: z.string().uuid("Invalid appointment ID"),
-  action: z.enum(["confirm", "start", "complete", "cancel", "reassign"]),
+  action: z.enum([
+    "confirm",
+    "start",
+    "complete",
+    "cancel",
+    "reassign",
+    "record_downpayment",
+  ]),
   staffId: z.string().optional().or(z.literal("")),
   notes: z.string().optional().or(z.literal("")),
+  downpaymentAmount: z.number().nonnegative().optional(),
+  downpaymentPaid: z.number().nonnegative().optional(),
+  downpaymentMethod: z.enum(["cash", "gcash", "credit", "other"]).optional(),
 });
 
 export type CreateAppointmentInput = z.infer<typeof createAppointmentSchema>;

@@ -72,6 +72,9 @@ export function CreateAppointmentDialog({
       scheduledAt: "",
       notes: "",
       address: "",
+      downpaymentAmount: undefined,
+      downpaymentPaid: undefined,
+      downpaymentMethod: undefined,
     },
   });
 
@@ -242,6 +245,100 @@ export function CreateAppointmentDialog({
                 </FormItem>
               )}
             />
+
+            <div className="space-y-3 rounded-md border p-3">
+              <p className="text-sm font-medium">Downpayment (optional)</p>
+              <div className="grid grid-cols-2 gap-3">
+                <FormField
+                  control={form.control}
+                  name="downpaymentAmount"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Required Amount</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          placeholder="0.00"
+                          name="downpaymentAmount"
+                          value={field.value ?? ""}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? undefined
+                                : parseFloat(e.target.value),
+                            )
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="downpaymentPaid"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Amount Paid</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min={0}
+                          step="0.01"
+                          placeholder="0.00"
+                          name="downpaymentPaid"
+                          value={field.value ?? ""}
+                          onChange={(e) =>
+                            field.onChange(
+                              e.target.value === ""
+                                ? undefined
+                                : parseFloat(e.target.value),
+                            )
+                          }
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <FormField
+                control={form.control}
+                name="downpaymentMethod"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Payment Method</FormLabel>
+                    <input
+                      type="hidden"
+                      name="downpaymentMethod"
+                      value={field.value ?? ""}
+                    />
+                    <Select
+                      value={field.value ?? "none"}
+                      onValueChange={(v) =>
+                        field.onChange(v === "none" ? undefined : v)
+                      }
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select method…" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="none">— None —</SelectItem>
+                        <SelectItem value="cash">Cash</SelectItem>
+                        <SelectItem value="gcash">GCash</SelectItem>
+                        <SelectItem value="credit">Credit</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <DialogFooter>
               <Button

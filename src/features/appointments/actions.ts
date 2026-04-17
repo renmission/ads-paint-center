@@ -19,6 +19,17 @@ import { sendSMS } from "@/shared/lib/sms";
 
 type ActionResult = { error?: string; success?: string };
 
+function coerceDownpaymentFields(raw: Record<string, unknown>) {
+  const out = { ...raw };
+  for (const key of ["downpaymentAmount", "downpaymentPaid"] as const) {
+    const v = out[key];
+    if (v === "" || v === undefined || v === null) delete out[key];
+    else out[key] = parseFloat(String(v));
+  }
+  if (out.downpaymentMethod === "") delete out.downpaymentMethod;
+  return out;
+}
+
 export async function createAppointmentAction(
   _prevState: ActionResult | undefined,
   formData: FormData,
@@ -26,7 +37,7 @@ export async function createAppointmentAction(
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
 
-  const raw = Object.fromEntries(formData);
+  const raw = coerceDownpaymentFields(Object.fromEntries(formData));
   const parsed = createAppointmentSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
@@ -38,6 +49,8 @@ export async function createAppointmentAction(
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
   const appointmentNumber = `APT-${dateStr}-${seq}`;
 
+  const { downpaymentAmount, downpaymentPaid, downpaymentMethod } = parsed.data;
+
   await db.insert(appointments).values({
     appointmentNumber,
     customerId: parsed.data.customerId,
@@ -47,6 +60,12 @@ export async function createAppointmentAction(
     notes: parsed.data.notes || null,
     address: parsed.data.address || null,
     status: "scheduled",
+    downpaymentAmount:
+      downpaymentAmount != null ? String(downpaymentAmount) : null,
+    downpaymentPaid: downpaymentPaid != null ? String(downpaymentPaid) : null,
+    downpaymentMethod: downpaymentMethod ?? null,
+    downpaymentPaidAt:
+      downpaymentPaid && downpaymentPaid > 0 ? new Date() : null,
   });
 
   revalidatePath("/appointments");
@@ -97,7 +116,7 @@ export async function updateAppointmentAction(
   const session = await auth();
   if (!session?.user) return { error: "Unauthorized" };
 
-  const raw = Object.fromEntries(formData);
+  const raw = coerceDownpaymentFields(Object.fromEntries(formData));
   const parsed = updateAppointmentSchema.safeParse(raw);
   if (!parsed.success) return { error: parsed.error.issues[0].message };
 
@@ -116,10 +135,34 @@ export async function updateAppointmentAction(
     complete: ["in_progress", "confirmed"],
     cancel: ["scheduled", "confirmed"],
     reassign: ["scheduled", "confirmed", "in_progress"],
+    record_downpayment: ["scheduled", "confirmed", "in_progress"],
   };
   if (!validTransitions[action]?.includes(appointment.status)) {
     return {
       error: `Cannot ${action} an appointment with status "${appointment.status}".`,
+    };
+  }
+
+  // Handle downpayment recording without changing appointment status
+  if (action === "record_downpayment") {
+    const { downpaymentAmount, downpaymentPaid, downpaymentMethod } =
+      parsed.data;
+    await db
+      .update(appointments)
+      .set({
+        downpaymentAmount:
+          downpaymentAmount != null ? String(downpaymentAmount) : null,
+        downpaymentPaid:
+          downpaymentPaid != null ? String(downpaymentPaid) : null,
+        downpaymentMethod: downpaymentMethod ?? null,
+        downpaymentPaidAt:
+          downpaymentPaid && downpaymentPaid > 0 ? new Date() : null,
+        updatedAt: new Date(),
+      })
+      .where(eq(appointments.id, parsed.data.id));
+    revalidatePath("/appointments");
+    return {
+      success: `Downpayment recorded for ${appointment.appointmentNumber}.`,
     };
   }
 

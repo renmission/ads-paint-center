@@ -214,6 +214,10 @@ export const appointments = pgTable("appointments", {
   notes: text("notes"),
   address: text("address"),
   remindedAt: timestamp("reminded_at"),
+  downpaymentAmount: numeric("downpayment_amount", { precision: 10, scale: 2 }),
+  downpaymentPaid: numeric("downpayment_paid", { precision: 10, scale: 2 }),
+  downpaymentMethod: paymentMethodEnum("downpayment_method"),
+  downpaymentPaidAt: timestamp("downpayment_paid_at"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

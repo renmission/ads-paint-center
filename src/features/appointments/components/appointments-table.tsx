@@ -23,6 +23,10 @@ export type AppointmentRow = {
   staffName: string | null;
   notes: string | null;
   address: string | null;
+  downpaymentAmount: string | null;
+  downpaymentPaid: string | null;
+  downpaymentMethod: "cash" | "gcash" | "credit" | "other" | null;
+  downpaymentPaidAt: Date | null;
   createdAt: Date;
 };
 
@@ -46,6 +50,10 @@ export async function AppointmentsTable() {
       staffName: staffAlias.name,
       notes: appointments.notes,
       address: appointments.address,
+      downpaymentAmount: appointments.downpaymentAmount,
+      downpaymentPaid: appointments.downpaymentPaid,
+      downpaymentMethod: appointments.downpaymentMethod,
+      downpaymentPaidAt: appointments.downpaymentPaidAt,
       createdAt: appointments.createdAt,
     })
     .from(appointments)
@@ -60,6 +68,10 @@ export async function AppointmentsTable() {
     servicePrice: r.servicePrice ?? null,
     staffId: r.staffId ?? null,
     staffName: r.staffName ?? null,
+    downpaymentAmount: r.downpaymentAmount ?? null,
+    downpaymentPaid: r.downpaymentPaid ?? null,
+    downpaymentMethod: r.downpaymentMethod ?? null,
+    downpaymentPaidAt: r.downpaymentPaidAt ?? null,
   }));
 
   const allCustomers = await db
