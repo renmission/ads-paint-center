@@ -24,7 +24,7 @@ export type NavChild = {
 
 export type NavItem = {
   title: string;
-  href: string;
+  href?: string;
   icon: LucideIcon;
   roles: ("administrator" | "staff")[];
   children?: NavChild[];
@@ -93,7 +93,6 @@ export const navItems: NavItem[] = [
   },
   {
     title: "Settings",
-    href: "/settings",
     icon: Settings,
     roles: ["administrator"],
     children: [
