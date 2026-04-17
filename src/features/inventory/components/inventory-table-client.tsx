@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   Table,
   TableBody,
@@ -19,7 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
-import { Search, Plus, Pencil, SlidersHorizontal } from "lucide-react";
+import {
+  Search,
+  Plus,
+  Pencil,
+  SlidersHorizontal,
+  ImageIcon,
+} from "lucide-react";
 import { CreateProductDialog } from "./create-product-dialog";
 import { EditProductDialog } from "./edit-product-dialog";
 import { StockAdjustSheet } from "./stock-adjust-sheet";
@@ -114,6 +121,7 @@ export function InventoryTableClient({ initialData, units }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-14">Image</TableHead>
               <TableHead>Product</TableHead>
               <TableHead>SKU</TableHead>
               <TableHead>Category</TableHead>
@@ -129,7 +137,7 @@ export function InventoryTableClient({ initialData, units }: Props) {
             {filtered.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={9}
+                  colSpan={10}
                   className="h-24 text-center text-muted-foreground"
                 >
                   {search ||
@@ -142,6 +150,21 @@ export function InventoryTableClient({ initialData, units }: Props) {
             ) : (
               filtered.map((row) => (
                 <TableRow key={row.product.id}>
+                  <TableCell>
+                    <div className="relative h-10 w-10 overflow-hidden rounded-md border bg-muted flex items-center justify-center">
+                      {row.product.imageUrl ? (
+                        <Image
+                          src={row.product.imageUrl}
+                          alt={row.product.name}
+                          fill
+                          className="object-cover"
+                          sizes="40px"
+                        />
+                      ) : (
+                        <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                      )}
+                    </div>
+                  </TableCell>
                   <TableCell className="font-medium">
                     {row.product.name}
                   </TableCell>

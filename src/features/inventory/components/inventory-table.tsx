@@ -9,6 +9,7 @@ export type InventoryRow = {
     name: string;
     sku: string | null;
     description: string | null;
+    imageUrl: string | null;
     category: string;
     unit: string;
     price: string;

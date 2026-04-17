@@ -4,6 +4,7 @@ export const createProductSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
   sku: z.string().optional().or(z.literal("")),
   description: z.string().optional(),
+  imageUrl: z.string().url().optional().nullable().or(z.literal("")),
   category: z.enum([
     "paint",
     "coating",

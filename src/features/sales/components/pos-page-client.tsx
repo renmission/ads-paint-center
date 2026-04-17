@@ -7,6 +7,7 @@ import {
   useCallback,
   useMemo,
 } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { completeSaleAction } from "../actions";
@@ -35,6 +36,7 @@ type Product = {
   id: string;
   name: string;
   sku: string | null;
+  imageUrl: string | null;
   unit: string;
   price: string;
   category: string;
@@ -361,15 +363,25 @@ export function PosPageClient({ products, customers }: Props) {
                     }`}
                   >
                     <div
-                      className={`h-20 bg-gradient-to-br ${banner} flex items-center justify-center relative`}
+                      className={`h-20 bg-gradient-to-br ${banner} flex items-center justify-center relative overflow-hidden`}
                     >
-                      <span
-                        className={`text-4xl font-black opacity-15 select-none ${style.text}`}
-                      >
-                        {product.name.slice(0, 2).toUpperCase()}
-                      </span>
+                      {product.imageUrl ? (
+                        <Image
+                          src={product.imageUrl}
+                          alt={product.name}
+                          fill
+                          className="object-cover"
+                          sizes="160px"
+                        />
+                      ) : (
+                        <span
+                          className={`text-4xl font-black opacity-15 select-none ${style.text}`}
+                        >
+                          {product.name.slice(0, 2).toUpperCase()}
+                        </span>
+                      )}
                       {inCart > 0 && (
-                        <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow">
+                        <span className="absolute top-2 right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow z-10">
                           {inCart}
                         </span>
                       )}

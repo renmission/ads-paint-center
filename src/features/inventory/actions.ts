@@ -29,26 +29,25 @@ export async function createProductAction(
     if (existing) return { error: "A product with this SKU already exists." };
   }
 
-  await db.transaction(async (tx) => {
-    const [product] = await tx
-      .insert(products)
-      .values({
-        name: parsed.data.name,
-        sku: parsed.data.sku || null,
-        description: parsed.data.description || null,
-        category: parsed.data.category,
-        unit: parsed.data.unit,
-        price: parsed.data.price,
-      })
-      .returning({ id: products.id });
+  const [product] = await db
+    .insert(products)
+    .values({
+      name: parsed.data.name,
+      sku: parsed.data.sku || null,
+      description: parsed.data.description || null,
+      imageUrl: parsed.data.imageUrl || null,
+      category: parsed.data.category,
+      unit: parsed.data.unit,
+      price: parsed.data.price,
+    })
+    .returning({ id: products.id });
 
-    await tx.insert(inventory).values({
-      productId: product.id,
-      quantityOnHand: 0,
-      lowStockThreshold: parsed.data.lowStockThreshold
-        ? parseInt(parsed.data.lowStockThreshold)
-        : 10,
-    });
+  await db.insert(inventory).values({
+    productId: product.id,
+    quantityOnHand: 0,
+    lowStockThreshold: parsed.data.lowStockThreshold
+      ? parseInt(parsed.data.lowStockThreshold)
+      : 10,
   });
 
   revalidatePath("/inventory");
@@ -78,6 +77,7 @@ export async function updateProductAction(
       name: parsed.data.name,
       sku: parsed.data.sku || null,
       description: parsed.data.description || null,
+      imageUrl: parsed.data.imageUrl || null,
       category: parsed.data.category,
       unit: parsed.data.unit,
       price: parsed.data.price,

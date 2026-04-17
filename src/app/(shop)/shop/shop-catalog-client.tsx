@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import {
   ShoppingCart,
@@ -27,6 +28,7 @@ type Product = {
   id: string;
   name: string;
   sku: string | null;
+  imageUrl: string | null;
   description: string | null;
   category: string;
   unit: string;
@@ -326,68 +328,83 @@ export function ShopCatalogClient({ products }: { products: Product[] }) {
             return (
               <div
                 key={product.id}
-                className="flex flex-col rounded-xl border bg-white p-4 shadow-sm"
+                className="flex flex-col rounded-xl border bg-white shadow-sm overflow-hidden"
               >
-                <div className="mb-2 flex items-start justify-between gap-2">
-                  <h3 className="font-semibold text-slate-900 leading-tight">
-                    {product.name}
-                  </h3>
-                  <Badge
-                    variant="outline"
-                    className={cn(
-                      "shrink-0 text-xs border",
-                      CATEGORY_COLORS[product.category] ??
-                        "bg-slate-100 text-slate-600 border-slate-200",
-                    )}
-                  >
-                    {CATEGORY_LABELS[product.category] ?? product.category}
-                  </Badge>
-                </div>
-                {product.description && (
-                  <p className="mb-3 text-xs text-slate-500 line-clamp-2">
-                    {product.description}
-                  </p>
-                )}
-                {product.sku && (
-                  <p className="mb-2 text-xs text-slate-400">
-                    SKU: {product.sku}
-                  </p>
-                )}
-                <div className="mt-auto flex items-center justify-between pt-3">
-                  <div>
-                    <p className="text-lg font-bold text-slate-900">
-                      ₱{parseFloat(product.price).toFixed(2)}
-                    </p>
-                    <p className="text-xs text-slate-400">per {product.unit}</p>
+                {product.imageUrl && (
+                  <div className="relative h-40 w-full bg-slate-100">
+                    <Image
+                      src={product.imageUrl}
+                      alt={product.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    />
                   </div>
-                  {inCart ? (
-                    <div className="flex items-center gap-1 rounded-lg bg-orange-50 border border-orange-200 px-1 py-0.5">
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-orange-600 hover:bg-orange-100"
-                        onClick={() => updateQty(product.id, -1)}
-                      >
-                        <Minus className="h-3 w-3" />
-                      </Button>
-                      <span className="w-8 text-center text-sm font-semibold text-orange-700">
-                        {inCart.quantity}
-                      </span>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        className="h-8 w-8 text-orange-600 hover:bg-orange-100"
-                        onClick={() => updateQty(product.id, 1)}
-                      >
-                        <Plus className="h-3 w-3" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <Button size="sm" onClick={() => addToCart(product)}>
-                      <Plus className="mr-1 h-3 w-3" />
-                      Add
-                    </Button>
+                )}
+                <div className="flex flex-col flex-1 p-4">
+                  <div className="mb-2 flex items-start justify-between gap-2">
+                    <h3 className="font-semibold text-slate-900 leading-tight">
+                      {product.name}
+                    </h3>
+                    <Badge
+                      variant="outline"
+                      className={cn(
+                        "shrink-0 text-xs border",
+                        CATEGORY_COLORS[product.category] ??
+                          "bg-slate-100 text-slate-600 border-slate-200",
+                      )}
+                    >
+                      {CATEGORY_LABELS[product.category] ?? product.category}
+                    </Badge>
+                  </div>
+                  {product.description && (
+                    <p className="mb-3 text-xs text-slate-500 line-clamp-2">
+                      {product.description}
+                    </p>
                   )}
+                  {product.sku && (
+                    <p className="mb-2 text-xs text-slate-400">
+                      SKU: {product.sku}
+                    </p>
+                  )}
+                  <div className="mt-auto flex items-center justify-between pt-3">
+                    <div>
+                      <p className="text-lg font-bold text-slate-900">
+                        ₱{parseFloat(product.price).toFixed(2)}
+                      </p>
+                      <p className="text-xs text-slate-400">
+                        per {product.unit}
+                      </p>
+                    </div>
+                    {inCart ? (
+                      <div className="flex items-center gap-1 rounded-lg bg-orange-50 border border-orange-200 px-1 py-0.5">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-orange-600 hover:bg-orange-100"
+                          onClick={() => updateQty(product.id, -1)}
+                        >
+                          <Minus className="h-3 w-3" />
+                        </Button>
+                        <span className="w-8 text-center text-sm font-semibold text-orange-700">
+                          {inCart.quantity}
+                        </span>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          className="h-8 w-8 text-orange-600 hover:bg-orange-100"
+                          onClick={() => updateQty(product.id, 1)}
+                        >
+                          <Plus className="h-3 w-3" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button size="sm" onClick={() => addToCart(product)}>
+                        <Plus className="mr-1 h-3 w-3" />
+                        Add
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             );

@@ -1,9 +1,11 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import Image from "next/image";
+import { ImageIcon, X } from "lucide-react";
 import { createProductSchema, type CreateProductInput } from "../schemas";
 import { createProductAction } from "../actions";
 import {
@@ -61,6 +63,10 @@ export function CreateProductDialog({ open, onOpenChange, units }: Props) {
     undefined,
   );
 
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const form = useForm<CreateProductInput>({
     resolver: zodResolver(createProductSchema),
     defaultValues: {
@@ -71,6 +77,7 @@ export function CreateProductDialog({ open, onOpenChange, units }: Props) {
       unit: "piece",
       price: "",
       lowStockThreshold: "10",
+      imageUrl: undefined,
     },
   });
 
@@ -78,10 +85,43 @@ export function CreateProductDialog({ open, onOpenChange, units }: Props) {
     if (state?.success) {
       toast.success(state.success);
       form.reset();
+      setImageUrl(null);
       onOpenChange(false);
     }
     if (state?.error) toast.error(state.error);
   }, [state]);
+
+  async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch("/api/inventory/upload", {
+        method: "POST",
+        body: fd,
+      });
+      const json = await res.json();
+      if (!res.ok) {
+        toast.error(json.error?.message ?? "Upload failed.");
+        return;
+      }
+      setImageUrl(json.url);
+      form.setValue("imageUrl", json.url);
+    } catch {
+      toast.error("Upload failed. Please try again.");
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  }
+
+  function removeImage() {
+    setImageUrl(null);
+    form.setValue("imageUrl", undefined);
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -91,6 +131,61 @@ export function CreateProductDialog({ open, onOpenChange, units }: Props) {
         </DialogHeader>
         <Form {...form}>
           <form action={formAction} className="space-y-4">
+            {imageUrl && (
+              <input type="hidden" name="imageUrl" value={imageUrl} />
+            )}
+
+            {/* Image upload */}
+            <FormItem>
+              <FormLabel>Product Image (optional)</FormLabel>
+              <div className="flex items-center gap-3">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border bg-muted flex items-center justify-center">
+                  {imageUrl ? (
+                    <>
+                      <Image
+                        src={imageUrl}
+                        alt="Product preview"
+                        fill
+                        className="object-cover"
+                        sizes="64px"
+                      />
+                      <button
+                        type="button"
+                        onClick={removeImage}
+                        className="absolute -right-1 -top-1 rounded-full bg-destructive p-0.5 text-destructive-foreground shadow"
+                        aria-label="Remove image"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </>
+                  ) : (
+                    <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                  )}
+                </div>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  disabled={isUploading}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {isUploading
+                    ? "Uploading..."
+                    : imageUrl
+                      ? "Replace"
+                      : "Upload Image"}
+                </Button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="hidden"
+                  aria-label="Upload product image"
+                  onChange={handleFileChange}
+                />
+              </div>
+            </FormItem>
+
             <FormField
               control={form.control}
               name="name"
@@ -244,7 +339,7 @@ export function CreateProductDialog({ open, onOpenChange, units }: Props) {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={isPending}>
+              <Button type="submit" disabled={isPending || isUploading}>
                 {isPending ? "Adding..." : "Add Product"}
               </Button>
             </DialogFooter>

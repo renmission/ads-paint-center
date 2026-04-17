@@ -110,6 +110,7 @@ export async function getShopProducts() {
       id: products.id,
       name: products.name,
       sku: products.sku,
+      imageUrl: products.imageUrl,
       description: products.description,
       category: products.category,
       unit: products.unit,
