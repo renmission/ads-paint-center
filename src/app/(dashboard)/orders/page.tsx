@@ -4,7 +4,11 @@ import { OrdersTable } from "@/features/orders/components/orders-table";
 
 export const metadata = { title: "Online Orders — ADS Paint Center" };
 
-export default function OrdersPage() {
+export default async function OrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -18,7 +22,7 @@ export default function OrdersPage() {
       </div>
 
       <Suspense fallback={<p className="text-sm text-slate-400">Loading…</p>}>
-        <OrdersTable />
+        <OrdersTable searchParams={await searchParams} />
       </Suspense>
     </div>
   );

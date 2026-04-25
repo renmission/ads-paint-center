@@ -1,6 +1,6 @@
 import { db } from "@/shared/lib/db";
 import { products, inventory, units } from "@/shared/lib/db/schema";
-import { eq, asc } from "drizzle-orm";
+import { eq, asc, ilike, or, and, sql } from "drizzle-orm";
 import { InventoryTableClient } from "./inventory-table-client";
 
 export type InventoryRow = {
@@ -33,13 +33,60 @@ export type UnitOption = {
   abbreviation: string;
 };
 
-export async function InventoryTable() {
-  const [rows, unitRows] = await Promise.all([
+const PAGE_SIZE = 10;
+
+export async function InventoryTable({
+  searchParams,
+}: {
+  searchParams: Record<string, string | undefined>;
+}) {
+  const page = Math.max(1, Number(searchParams.page ?? 1));
+  const search = searchParams.search?.trim() ?? "";
+  const category = searchParams.category ?? "all";
+  const status = searchParams.status ?? "active";
+  const offset = (page - 1) * PAGE_SIZE;
+
+  const conditions = [];
+  if (search)
+    conditions.push(
+      or(
+        ilike(products.name, `%${search}%`),
+        ilike(products.sku, `%${search}%`),
+      ),
+    );
+  if (category !== "all")
+    conditions.push(
+      eq(
+        products.category,
+        category as
+          | "paint"
+          | "coating"
+          | "primer"
+          | "varnish"
+          | "thinner"
+          | "tool"
+          | "supply"
+          | "other",
+      ),
+    );
+  if (status === "active") conditions.push(eq(products.isActive, true));
+  if (status === "inactive") conditions.push(eq(products.isActive, false));
+
+  const where = conditions.length > 0 ? and(...conditions) : undefined;
+
+  const [rows, countResult, unitRows] = await Promise.all([
     db
       .select()
       .from(products)
       .leftJoin(inventory, eq(inventory.productId, products.id))
-      .orderBy(asc(products.createdAt)),
+      .where(where)
+      .orderBy(asc(products.createdAt))
+      .limit(PAGE_SIZE)
+      .offset(offset),
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(products)
+      .where(where),
     db
       .select({
         id: units.id,
@@ -56,5 +103,16 @@ export async function InventoryTable() {
     inventory: r.inventory,
   }));
 
-  return <InventoryTableClient initialData={data} units={unitRows} />;
+  return (
+    <InventoryTableClient
+      data={data}
+      totalCount={Number(countResult[0]?.count ?? 0)}
+      page={page}
+      pageSize={PAGE_SIZE}
+      search={search}
+      category={category}
+      status={status}
+      units={unitRows}
+    />
+  );
 }

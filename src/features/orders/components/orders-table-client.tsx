@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   CheckCircle2,
   XCircle,
@@ -27,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { HandleOrderDialog } from "./handle-order-dialog";
 import type { OrderRow } from "@/features/orders/queries";
 
@@ -61,24 +63,38 @@ function StatusIcon({ status }: { status: OrderRow["status"] }) {
 }
 
 export function OrdersTableClient({
-  initialData,
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
   userRole,
 }: {
-  initialData: OrderRow[];
+  data: OrderRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
   userRole: "administrator" | "staff";
 }) {
-  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [dialogOrder, setDialogOrder] = useState<OrderRow | null>(null);
   const [dialogAction, setDialogAction] = useState<Action>("confirm");
 
-  const filtered = initialData.filter((o) => {
-    const q = search.toLowerCase();
-    return (
-      o.orderNumber.toLowerCase().includes(q) ||
-      o.customerName.toLowerCase().includes(q) ||
-      o.customerPhone.includes(q)
-    );
-  });
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
   function openDialog(order: OrderRow, action: Action) {
     setDialogOrder(order);
@@ -90,8 +106,8 @@ export function OrdersTableClient({
       <div className="mb-4">
         <Input
           placeholder="Search by order #, name, or phone..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
           className="max-w-sm"
         />
       </div>
@@ -113,7 +129,7 @@ export function OrdersTableClient({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={userRole === "administrator" ? 8 : 7}
@@ -123,7 +139,7 @@ export function OrdersTableClient({
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((order) => {
+              data.map((order) => {
                 const statusBadge = STATUS_BADGE[order.status];
                 const paymentBadge = PAYMENT_BADGE[order.paymentStatus];
                 return (
@@ -224,6 +240,12 @@ export function OrdersTableClient({
           </TableBody>
         </Table>
       </div>
+
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       {dialogOrder && (
         <HandleOrderDialog

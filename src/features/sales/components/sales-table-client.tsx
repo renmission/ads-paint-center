@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -20,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import {
   ShoppingCart,
   XCircle,
@@ -34,7 +36,13 @@ import { VoidSaleDialog } from "./void-sale-dialog";
 import { AddPaymentDialog } from "./add-payment-dialog";
 
 interface Props {
-  initialData: SalesRow[];
+  data: SalesRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
+  status: string;
+  method: string;
   userRole: "administrator" | "staff";
   dailyStats: DailyStats;
 }
@@ -67,27 +75,46 @@ function fmt(n: number) {
   return n.toLocaleString("en-PH", { minimumFractionDigits: 2 });
 }
 
-export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
-  const [methodFilter, setMethodFilter] = useState("all");
+export function SalesTableClient({
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+  status: initialStatus,
+  method: initialMethod,
+  userRole,
+  dailyStats,
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [voidTarget, setVoidTarget] = useState<SalesRow | null>(null);
   const [paymentTarget, setPaymentTarget] = useState<SalesRow | null>(null);
 
-  const filtered = useMemo(() => {
-    return initialData.filter((row) => {
-      const q = search.toLowerCase();
-      const matchSearch =
-        !q ||
-        row.transactionNumber.toLowerCase().includes(q) ||
-        (row.customerName?.toLowerCase().includes(q) ?? false) ||
-        row.staffName.toLowerCase().includes(q);
-      const matchStatus = statusFilter === "all" || row.status === statusFilter;
-      const matchMethod =
-        methodFilter === "all" || row.paymentMethod === methodFilter;
-      return matchSearch && matchStatus && matchMethod;
-    });
-  }, [initialData, search, statusFilter, methodFilter]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function setFilter(key: string, value: string) {
+    const next = new URLSearchParams(params.toString());
+    if (value === "all") next.delete(key);
+    else next.set(key, value);
+    next.set("page", "1");
+    router.replace(`${pathname}?${next.toString()}`);
+  }
+
+  const hasFilters =
+    initialSearch || initialStatus !== "all" || initialMethod !== "all";
 
   return (
     <div className="space-y-5">
@@ -141,12 +168,15 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search by transaction # or customer…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
               className="pl-8"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            value={initialStatus}
+            onValueChange={(v) => setFilter("status", v)}
+          >
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -157,7 +187,10 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
               <SelectItem value="voided">Voided</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={methodFilter} onValueChange={setMethodFilter}>
+          <Select
+            value={initialMethod}
+            onValueChange={(v) => setFilter("method", v)}
+          >
             <SelectTrigger className="w-32">
               <SelectValue placeholder="Method" />
             </SelectTrigger>
@@ -197,19 +230,19 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={userRole === "administrator" ? 9 : 8}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {initialData.length === 0
+                  {!hasFilters
                     ? "No sales yet. Click 'New Sale' to start."
                     : "No results match your filters."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((row) => {
+              data.map((row) => {
                 const status =
                   STATUS_LABELS[row.status] ?? STATUS_LABELS.completed;
                 return (
@@ -308,6 +341,12 @@ export function SalesTableClient({ initialData, userRole, dailyStats }: Props) {
           </TableBody>
         </Table>
       </div>
+
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <VoidSaleDialog
         open={!!voidTarget}

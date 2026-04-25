@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -12,25 +13,45 @@ import {
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { Search, Plus, Pencil } from "lucide-react";
 import { CreateUnitDialog } from "./create-unit-dialog";
 import { EditUnitDialog } from "./edit-unit-dialog";
 import type { UnitRow } from "./unit-table";
 
 interface Props {
-  initialData: UnitRow[];
+  data: UnitRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
 }
 
-export function UnitTableClient({ initialData }: Props) {
-  const [search, setSearch] = useState("");
+export function UnitTableClient({
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<UnitRow | null>(null);
 
-  const filtered = initialData.filter(
-    (u) =>
-      u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.abbreviation.toLowerCase().includes(search.toLowerCase()),
-  );
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -40,8 +61,8 @@ export function UnitTableClient({ initialData }: Props) {
           <Input
             placeholder="Search by name or abbreviation..."
             className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
         <Button onClick={() => setCreateOpen(true)}>
@@ -61,19 +82,19 @@ export function UnitTableClient({ initialData }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={4}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {search
+                  {initialSearch
                     ? "No units match your search."
                     : "No units found. Add one to get started."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((unit) => (
+              data.map((unit) => (
                 <TableRow key={unit.id}>
                   <TableCell className="font-medium capitalize">
                     {unit.name}
@@ -106,9 +127,11 @@ export function UnitTableClient({ initialData }: Props) {
         </Table>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Showing {filtered.length} of {initialData.length} units
-      </p>
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <CreateUnitDialog open={createOpen} onOpenChange={setCreateOpen} />
 

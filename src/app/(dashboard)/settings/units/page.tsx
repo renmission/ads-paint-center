@@ -1,6 +1,10 @@
 import { UnitTable } from "@/features/units/components/unit-table";
 
-export default function UnitsPage() {
+export default async function UnitsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +13,7 @@ export default function UnitsPage() {
           Manage units of measure used in inventory products.
         </p>
       </div>
-      <UnitTable />
+      <UnitTable searchParams={await searchParams} />
     </div>
   );
 }

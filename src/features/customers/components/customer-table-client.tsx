@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
   Table,
@@ -12,6 +13,7 @@ import {
 } from "@/shared/components/ui/table";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { Search, Plus, Pencil, ExternalLink } from "lucide-react";
 import { CreateCustomerDialog } from "./create-customer-dialog";
 import { EditCustomerDialog } from "./edit-customer-dialog";
@@ -28,20 +30,38 @@ type Customer = {
 };
 
 interface Props {
-  initialData: Customer[];
+  data: Customer[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
 }
 
-export function CustomerTableClient({ initialData }: Props) {
-  const [search, setSearch] = useState("");
+export function CustomerTableClient({
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<Customer | null>(null);
 
-  const filtered = initialData.filter(
-    (c) =>
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.phone.includes(search) ||
-      (c.email ?? "").toLowerCase().includes(search.toLowerCase()),
-  );
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -51,8 +71,8 @@ export function CustomerTableClient({ initialData }: Props) {
           <Input
             placeholder="Search by name, phone, or email..."
             className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
         <Button onClick={() => setCreateOpen(true)}>
@@ -73,19 +93,19 @@ export function CustomerTableClient({ initialData }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {search
+                  {initialSearch
                     ? "No customers match your search."
                     : "No customers registered yet."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((customer) => (
+              data.map((customer) => (
                 <TableRow key={customer.id}>
                   <TableCell className="font-medium">{customer.name}</TableCell>
                   <TableCell>{customer.phone}</TableCell>
@@ -120,9 +140,11 @@ export function CustomerTableClient({ initialData }: Props) {
         </Table>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Showing {filtered.length} of {initialData.length} customers
-      </p>
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <CreateCustomerDialog open={createOpen} onOpenChange={setCreateOpen} />
 

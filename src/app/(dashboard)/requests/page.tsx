@@ -1,6 +1,10 @@
 import { RequestsTable } from "@/features/requests/components/requests-table";
 
-export default function RequestsPage() {
+export default async function RequestsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +13,7 @@ export default function RequestsPage() {
           Manage customer product requests.
         </p>
       </div>
-      <RequestsTable />
+      <RequestsTable searchParams={await searchParams} />
     </div>
   );
 }

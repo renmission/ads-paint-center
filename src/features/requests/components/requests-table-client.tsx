@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
@@ -19,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { ClipboardList, Search, Truck } from "lucide-react";
 import type { RequestRow } from "./requests-table";
 import { CreateRequestDialog } from "./create-request-dialog";
@@ -29,7 +31,12 @@ type Product = { id: string; name: string; sku: string | null };
 type StaffMember = { id: string; name: string };
 
 interface Props {
-  initialData: RequestRow[];
+  data: RequestRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
+  status: string;
   customers: Customer[];
   products: Product[];
   staffList: StaffMember[];
@@ -64,35 +71,51 @@ const STATUS_CONFIG = {
 } as const;
 
 export function RequestsTableClient({
-  initialData,
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+  status: initialStatus,
   customers,
   products,
   staffList,
   userRole,
 }: Props) {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
   const [handleTarget, setHandleTarget] = useState<RequestRow | null>(null);
 
-  const filtered = useMemo(() => {
-    return initialData.filter((row) => {
-      const q = search.toLowerCase();
-      const matchSearch =
-        !q ||
-        row.requestNumber.toLowerCase().includes(q) ||
-        row.customerName.toLowerCase().includes(q) ||
-        (row.productName?.toLowerCase().includes(q) ?? false);
-      const matchStatus = statusFilter === "all" || row.status === statusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [initialData, search, statusFilter]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function setFilter(key: string, value: string) {
+    const next = new URLSearchParams(params.toString());
+    if (value === "all") next.delete(key);
+    else next.set(key, value);
+    next.set("page", "1");
+    router.replace(`${pathname}?${next.toString()}`);
+  }
 
   const canHandle = (row: RequestRow) =>
     userRole === "administrator" &&
     (row.status === "pending" ||
       row.status === "approved" ||
       row.status === "out_for_delivery");
+
+  const hasFilters = initialSearch || initialStatus !== "all";
 
   return (
     <div className="space-y-4">
@@ -102,12 +125,15 @@ export function RequestsTableClient({
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search by request # or customer…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
               className="pl-8"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            value={initialStatus}
+            onValueChange={(v) => setFilter("status", v)}
+          >
             <SelectTrigger className="w-44">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -145,19 +171,19 @@ export function RequestsTableClient({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={userRole === "administrator" ? 9 : 8}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {initialData.length === 0
+                  {!hasFilters
                     ? "No requests yet. Click 'New Request' to submit one."
                     : "No results match your filters."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((row) => {
+              data.map((row) => {
                 const statusCfg = STATUS_CONFIG[row.status];
                 return (
                   <TableRow key={row.id}>
@@ -237,6 +263,12 @@ export function RequestsTableClient({
           </TableBody>
         </Table>
       </div>
+
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <CreateRequestDialog
         open={createOpen}

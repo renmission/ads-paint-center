@@ -1,6 +1,10 @@
 import { AppointmentsTable } from "@/features/appointments/components/appointments-table";
 
-export default async function AppointmentsPage() {
+export default async function AppointmentsPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +13,7 @@ export default async function AppointmentsPage() {
           Schedule and manage service appointments.
         </p>
       </div>
-      <AppointmentsTable />
+      <AppointmentsTable searchParams={await searchParams} />
     </div>
   );
 }

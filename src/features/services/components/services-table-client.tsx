@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo, useActionState, useEffect } from "react";
+import { useState, useEffect, useActionState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { toggleServiceAction } from "../actions";
 import { Button } from "@/shared/components/ui/button";
@@ -14,6 +15,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { Search, PlusCircle, Clock, Pencil } from "lucide-react";
 import type { ServiceRow } from "./services-table";
 import { CreateServiceDialog } from "./create-service-dialog";
@@ -28,7 +30,11 @@ const SERVICE_CATEGORIES: Record<string, string> = {
 };
 
 interface Props {
-  initialData: ServiceRow[];
+  data: ServiceRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
   userRole: "administrator" | "staff";
 }
 
@@ -74,20 +80,32 @@ function ToggleServiceButton({ service }: { service: ServiceRow }) {
   );
 }
 
-export function ServicesTableClient({ initialData, userRole }: Props) {
-  const [search, setSearch] = useState("");
+export function ServicesTableClient({
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+  userRole,
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<ServiceRow | null>(null);
 
-  const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    return initialData.filter(
-      (row) =>
-        !q ||
-        row.name.toLowerCase().includes(q) ||
-        row.category.toLowerCase().includes(q),
-    );
-  }, [initialData, search]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="space-y-4">
@@ -96,8 +114,8 @@ export function ServicesTableClient({ initialData, userRole }: Props) {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search services…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
             className="pl-8"
           />
         </div>
@@ -124,19 +142,19 @@ export function ServicesTableClient({ initialData, userRole }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={userRole === "administrator" ? 6 : 5}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {initialData.length === 0
+                  {!initialSearch
                     ? "No services yet. Click 'New Service' to add one."
                     : "No results match your search."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((row) => (
+              data.map((row) => (
                 <TableRow
                   key={row.id}
                   className={!row.isActive ? "opacity-60" : ""}
@@ -194,6 +212,12 @@ export function ServicesTableClient({ initialData, userRole }: Props) {
           </TableBody>
         </Table>
       </div>
+
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <CreateServiceDialog open={createOpen} onOpenChange={setCreateOpen} />
       <EditServiceDialog

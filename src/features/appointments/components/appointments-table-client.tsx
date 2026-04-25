@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
@@ -19,6 +20,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { CalendarPlus, Search, MapPin } from "lucide-react";
 import type { AppointmentRow } from "./appointments-table";
 import { CreateAppointmentDialog } from "./create-appointment-dialog";
@@ -29,11 +31,15 @@ type Service = { id: string; name: string; price: string; duration: number };
 type StaffMember = { id: string; name: string };
 
 interface Props {
-  initialData: AppointmentRow[];
+  data: AppointmentRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
+  status: string;
   customers: Customer[];
   servicesList: Service[];
   staffList: StaffMember[];
-  userRole: "administrator" | "staff";
 }
 
 const STATUS_CONFIG = {
@@ -70,29 +76,42 @@ function fmt(n: string | number) {
 }
 
 export function AppointmentsTableClient({
-  initialData,
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+  status: initialStatus,
   customers,
   servicesList,
   staffList,
-  userRole,
 }: Props) {
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("all");
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
   const [updateTarget, setUpdateTarget] = useState<AppointmentRow | null>(null);
 
-  const filtered = useMemo(() => {
-    return initialData.filter((row) => {
-      const q = search.toLowerCase();
-      const matchSearch =
-        !q ||
-        row.appointmentNumber.toLowerCase().includes(q) ||
-        row.customerName.toLowerCase().includes(q) ||
-        (row.serviceName?.toLowerCase().includes(q) ?? false);
-      const matchStatus = statusFilter === "all" || row.status === statusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [initialData, search, statusFilter]);
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function setFilter(key: string, value: string) {
+    const next = new URLSearchParams(params.toString());
+    if (value === "all") next.delete(key);
+    else next.set(key, value);
+    next.set("page", "1");
+    router.replace(`${pathname}?${next.toString()}`);
+  }
 
   const canUpdate = (row: AppointmentRow) =>
     row.status !== "completed" && row.status !== "cancelled";
@@ -105,12 +124,15 @@ export function AppointmentsTableClient({
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Search by appointment # or customer…"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
               className="pl-8"
             />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            value={initialStatus}
+            onValueChange={(v) => setFilter("status", v)}
+          >
             <SelectTrigger className="w-40">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -145,19 +167,19 @@ export function AppointmentsTableClient({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={8}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {initialData.length === 0
+                  {totalCount === 0 && !initialSearch && initialStatus === "all"
                     ? "No appointments yet. Click 'New Appointment' to schedule one."
                     : "No results match your filters."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((row) => {
+              data.map((row) => {
                 const statusCfg = STATUS_CONFIG[row.status];
                 return (
                   <TableRow key={row.id}>
@@ -254,6 +276,12 @@ export function AppointmentsTableClient({
           </TableBody>
         </Table>
       </div>
+
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <CreateAppointmentDialog
         open={createOpen}

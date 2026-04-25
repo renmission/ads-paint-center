@@ -1,6 +1,10 @@
 import { ServicesTable } from "@/features/services/components/services-table";
 
-export default async function ServicesPage() {
+export default async function ServicesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +13,7 @@ export default async function ServicesPage() {
           Manage service catalog and pricing.
         </p>
       </div>
-      <ServicesTable />
+      <ServicesTable searchParams={await searchParams} />
     </div>
   );
 }

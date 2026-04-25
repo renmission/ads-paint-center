@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
@@ -20,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/shared/components/ui/table";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import {
   Search,
   FileText,
@@ -31,6 +33,11 @@ import type { ArRow, ArSummary } from "./ar-table";
 
 interface Props {
   data: ArRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
+  overdue: string;
   summary: ArSummary;
 }
 
@@ -49,26 +56,41 @@ function fmtDate(d: string | Date | null) {
   });
 }
 
-export function ArTableClient({ data, summary }: Props) {
-  const [search, setSearch] = useState("");
-  const [overdueFilter, setOverdueFilter] = useState<
-    "all" | "overdue" | "current"
-  >("all");
+export function ArTableClient({
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+  overdue: initialOverdue,
+  summary,
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
 
-  const filtered = useMemo(() => {
-    return data.filter((row) => {
-      const q = search.toLowerCase();
-      const matchSearch =
-        !q ||
-        row.transactionNumber.toLowerCase().includes(q) ||
-        (row.customerName?.toLowerCase().includes(q) ?? false);
-      const matchOverdue =
-        overdueFilter === "all" ||
-        (overdueFilter === "overdue" && row.isOverdue) ||
-        (overdueFilter === "current" && !row.isOverdue);
-      return matchSearch && matchOverdue;
-    });
-  }, [data, search, overdueFilter]);
+  const [searchValue, setSearchValue] = useState(initialSearch);
+
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function setFilter(key: string, value: string) {
+    const next = new URLSearchParams(params.toString());
+    if (value === "all") next.delete(key);
+    else next.set(key, value);
+    next.set("page", "1");
+    router.replace(`${pathname}?${next.toString()}`);
+  }
+
+  const hasFilters = initialSearch || initialOverdue !== "all";
 
   return (
     <div className="space-y-5">
@@ -121,14 +143,14 @@ export function ArTableClient({ data, summary }: Props) {
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search by transaction # or customer…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
             className="pl-8"
           />
         </div>
         <Select
-          value={overdueFilter}
-          onValueChange={(v) => setOverdueFilter(v as typeof overdueFilter)}
+          value={initialOverdue}
+          onValueChange={(v) => setFilter("overdue", v)}
         >
           <SelectTrigger className="w-40">
             <SelectValue placeholder="Status" />
@@ -158,19 +180,19 @@ export function ArTableClient({ data, summary }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={9}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {data.length === 0
+                  {!hasFilters
                     ? "No outstanding credit invoices."
                     : "No results match your filters."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((row) => (
+              data.map((row) => (
                 <TableRow key={row.id}>
                   <TableCell className="font-mono text-sm font-medium">
                     {row.transactionNumber}
@@ -238,6 +260,12 @@ export function ArTableClient({ data, summary }: Props) {
           </TableBody>
         </Table>
       </div>
+
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
     </div>
   );
 }

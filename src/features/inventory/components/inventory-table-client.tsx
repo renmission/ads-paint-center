@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import {
   Table,
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/shared/components/ui/select";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import {
   Search,
   Plus,
@@ -45,35 +47,61 @@ const CATEGORIES = [
 ] as const;
 
 interface Props {
-  initialData: InventoryRow[];
+  data: InventoryRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
+  category: string;
+  status: string;
   units: UnitOption[];
 }
 
-export function InventoryTableClient({ initialData, units }: Props) {
-  const [search, setSearch] = useState("");
-  const [categoryFilter, setCategoryFilter] = useState("all");
-  const [statusFilter, setStatusFilter] = useState("active");
+export function InventoryTableClient({
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+  category: initialCategory,
+  status: initialStatus,
+  units,
+}: Props) {
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<InventoryRow | null>(null);
   const [adjustTarget, setAdjustTarget] = useState<InventoryRow | null>(null);
 
-  const filtered = initialData.filter((row) => {
-    const matchesSearch =
-      row.product.name.toLowerCase().includes(search.toLowerCase()) ||
-      (row.product.sku ?? "").toLowerCase().includes(search.toLowerCase());
-    const matchesCategory =
-      categoryFilter === "all" || row.product.category === categoryFilter;
-    const matchesStatus =
-      statusFilter === "all" ||
-      (statusFilter === "active" && row.product.isActive) ||
-      (statusFilter === "inactive" && !row.product.isActive);
-    return matchesSearch && matchesCategory && matchesStatus;
-  });
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  function setFilter(key: string, value: string) {
+    const next = new URLSearchParams(params.toString());
+    if (value === "all") next.delete(key);
+    else next.set(key, value);
+    next.set("page", "1");
+    router.replace(`${pathname}?${next.toString()}`);
+  }
 
   function isLowStock(row: InventoryRow) {
     if (!row.inventory) return false;
     return row.inventory.quantityOnHand <= row.inventory.lowStockThreshold;
   }
+
+  const hasFilters =
+    initialSearch || initialCategory !== "all" || initialStatus !== "active";
 
   return (
     <>
@@ -84,11 +112,14 @@ export function InventoryTableClient({ initialData, units }: Props) {
             <Input
               placeholder="Search by name or SKU..."
               className="pl-8"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchValue}
+              onChange={(e) => setSearchValue(e.target.value)}
             />
           </div>
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
+          <Select
+            value={initialCategory}
+            onValueChange={(v) => setFilter("category", v)}
+          >
             <SelectTrigger className="w-36">
               <SelectValue placeholder="Category" />
             </SelectTrigger>
@@ -100,7 +131,10 @@ export function InventoryTableClient({ initialData, units }: Props) {
               ))}
             </SelectContent>
           </Select>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <Select
+            value={initialStatus}
+            onValueChange={(v) => setFilter("status", v)}
+          >
             <SelectTrigger className="w-28">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -134,21 +168,19 @@ export function InventoryTableClient({ initialData, units }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={10}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {search ||
-                  categoryFilter !== "all" ||
-                  statusFilter !== "active"
+                  {hasFilters
                     ? "No products match your filters."
                     : "No products in catalog yet."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((row) => (
+              data.map((row) => (
                 <TableRow key={row.product.id}>
                   <TableCell>
                     <div className="relative h-10 w-10 overflow-hidden rounded-md border bg-muted flex items-center justify-center">
@@ -242,9 +274,11 @@ export function InventoryTableClient({ initialData, units }: Props) {
         </Table>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Showing {filtered.length} of {initialData.length} products
-      </p>
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <CreateProductDialog
         open={createOpen}

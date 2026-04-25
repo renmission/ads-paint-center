@@ -1,7 +1,12 @@
 import { Suspense } from "react";
 import { InventoryTable } from "@/features/inventory/components/inventory-table";
 
-export default function InventoryPage() {
+export default async function InventoryPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
+  const resolvedParams = await searchParams;
   return (
     <div className="space-y-4">
       <div>
@@ -15,7 +20,7 @@ export default function InventoryPage() {
           <p className="text-muted-foreground text-sm">Loading inventory...</p>
         }
       >
-        <InventoryTable />
+        <InventoryTable searchParams={resolvedParams} />
       </Suspense>
     </div>
   );

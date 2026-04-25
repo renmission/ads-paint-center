@@ -1,6 +1,10 @@
 import { CustomerTable } from "@/features/customers/components/customer-table";
 
-export default async function CustomersPage() {
+export default async function CustomersPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +13,7 @@ export default async function CustomersPage() {
           Register and manage customer records.
         </p>
       </div>
-      <CustomerTable />
+      <CustomerTable searchParams={await searchParams} />
     </div>
   );
 }

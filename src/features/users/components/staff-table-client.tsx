@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
   Table,
@@ -13,6 +14,7 @@ import {
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
+import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { Search, Plus, Pencil, KeyRound } from "lucide-react";
 import { CreateStaffDialog } from "./create-staff-dialog";
 import { EditStaffDialog } from "./edit-staff-dialog";
@@ -30,23 +32,42 @@ type StaffMember = {
 };
 
 interface Props {
-  initialData: StaffMember[];
+  data: StaffMember[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  search: string;
 }
 
-export function StaffTableClient({ initialData }: Props) {
+export function StaffTableClient({
+  data,
+  totalCount,
+  page,
+  pageSize,
+  search: initialSearch,
+}: Props) {
   const { data: session } = useSession();
-  const [search, setSearch] = useState("");
+  const router = useRouter();
+  const pathname = usePathname();
+  const params = useSearchParams();
+
+  const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
   const [editTarget, setEditTarget] = useState<StaffMember | null>(null);
   const [passwordTarget, setPasswordTarget] = useState<StaffMember | null>(
     null,
   );
 
-  const filtered = initialData.filter(
-    (s) =>
-      s.name.toLowerCase().includes(search.toLowerCase()) ||
-      s.email.toLowerCase().includes(search.toLowerCase()),
-  );
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const next = new URLSearchParams(params.toString());
+      if (searchValue) next.set("search", searchValue);
+      else next.delete("search");
+      next.set("page", "1");
+      router.replace(`${pathname}?${next.toString()}`);
+    }, 300);
+    return () => clearTimeout(t);
+  }, [searchValue]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const currentUserId = session?.user?.id ?? "";
 
@@ -58,8 +79,8 @@ export function StaffTableClient({ initialData }: Props) {
           <Input
             placeholder="Search by name or email..."
             className="pl-8"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
           />
         </div>
         <Button onClick={() => setCreateOpen(true)}>
@@ -81,19 +102,19 @@ export function StaffTableClient({ initialData }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filtered.length === 0 ? (
+            {data.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
                   className="h-24 text-center text-muted-foreground"
                 >
-                  {search
+                  {initialSearch
                     ? "No staff members match your search."
                     : "No staff members found."}
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map((staff) => (
+              data.map((staff) => (
                 <TableRow key={staff.id}>
                   <TableCell className="font-medium">{staff.name}</TableCell>
                   <TableCell className="text-muted-foreground">
@@ -143,9 +164,11 @@ export function StaffTableClient({ initialData }: Props) {
         </Table>
       </div>
 
-      <p className="text-xs text-muted-foreground">
-        Showing {filtered.length} of {initialData.length} staff members
-      </p>
+      <TablePagination
+        page={page}
+        pageSize={pageSize}
+        totalCount={totalCount}
+      />
 
       <CreateStaffDialog open={createOpen} onOpenChange={setCreateOpen} />
 

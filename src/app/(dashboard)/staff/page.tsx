@@ -2,7 +2,11 @@ import { auth } from "@/shared/lib/auth";
 import { redirect } from "next/navigation";
 import { StaffTable } from "@/features/users/components/staff-table";
 
-export default async function StaffPage() {
+export default async function StaffPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const session = await auth();
   if (!session || session.user.role !== "administrator") {
     redirect("/dashboard");
@@ -16,7 +20,7 @@ export default async function StaffPage() {
           Manage store personnel and their access.
         </p>
       </div>
-      <StaffTable />
+      <StaffTable searchParams={await searchParams} />
     </div>
   );
 }

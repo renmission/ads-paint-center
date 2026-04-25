@@ -1,6 +1,10 @@
 import { SalesTable } from "@/features/sales/components/sales-table";
 
-export default function SalesPage() {
+export default async function SalesPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   return (
     <div className="space-y-6">
       <div>
@@ -9,7 +13,7 @@ export default function SalesPage() {
           View and manage all sales transactions.
         </p>
       </div>
-      <SalesTable />
+      <SalesTable searchParams={await searchParams} />
     </div>
   );
 }

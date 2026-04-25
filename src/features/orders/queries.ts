@@ -1,6 +1,6 @@
 import { db } from "@/shared/lib/db";
 import { orders, products, users } from "@/shared/lib/db/schema";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, or, ilike, sql } from "drizzle-orm";
 
 export type OrderRow = {
   id: string;
@@ -31,37 +31,63 @@ export type OrderDetail = OrderRow & {
   }[];
 };
 
-export async function getOrders(): Promise<OrderRow[]> {
-  const rows = await db
-    .select({
-      id: orders.id,
-      orderNumber: orders.orderNumber,
-      customerName: orders.customerName,
-      customerPhone: orders.customerPhone,
-      customerEmail: orders.customerEmail,
-      deliveryType: orders.deliveryType,
-      deliveryAddress: orders.deliveryAddress,
-      paymentMethod: orders.paymentMethod,
-      status: orders.status,
-      paymentStatus: orders.paymentStatus,
-      subtotal: orders.subtotal,
-      totalAmount: orders.totalAmount,
-      notes: orders.notes,
-      handlerName: users.name,
-      createdAt: orders.createdAt,
-      updatedAt: orders.updatedAt,
-    })
-    .from(orders)
-    .leftJoin(users, eq(orders.handledBy, users.id))
-    .orderBy(desc(orders.createdAt));
+const PAGE_SIZE = 10;
 
-  return rows.map((r) => ({
+export async function getOrders(params: {
+  page: number;
+  search: string;
+}): Promise<{ data: OrderRow[]; totalCount: number }> {
+  const offset = (params.page - 1) * PAGE_SIZE;
+
+  const where = params.search
+    ? or(
+        ilike(orders.orderNumber, `%${params.search}%`),
+        ilike(orders.customerName, `%${params.search}%`),
+        ilike(orders.customerPhone, `%${params.search}%`),
+      )
+    : undefined;
+
+  const [rows, countResult] = await Promise.all([
+    db
+      .select({
+        id: orders.id,
+        orderNumber: orders.orderNumber,
+        customerName: orders.customerName,
+        customerPhone: orders.customerPhone,
+        customerEmail: orders.customerEmail,
+        deliveryType: orders.deliveryType,
+        deliveryAddress: orders.deliveryAddress,
+        paymentMethod: orders.paymentMethod,
+        status: orders.status,
+        paymentStatus: orders.paymentStatus,
+        subtotal: orders.subtotal,
+        totalAmount: orders.totalAmount,
+        notes: orders.notes,
+        handlerName: users.name,
+        createdAt: orders.createdAt,
+        updatedAt: orders.updatedAt,
+      })
+      .from(orders)
+      .leftJoin(users, eq(orders.handledBy, users.id))
+      .where(where)
+      .orderBy(desc(orders.createdAt))
+      .limit(PAGE_SIZE)
+      .offset(offset),
+    db
+      .select({ count: sql<number>`count(*)` })
+      .from(orders)
+      .where(where),
+  ]);
+
+  const data: OrderRow[] = rows.map((r) => ({
     ...r,
     handlerName: r.handlerName ?? null,
     deliveryAddress: r.deliveryAddress ?? null,
     customerEmail: r.customerEmail ?? null,
     notes: r.notes ?? null,
   }));
+
+  return { data, totalCount: Number(countResult[0]?.count ?? 0) };
 }
 
 export async function getOrderDetail(id: string): Promise<OrderDetail | null> {

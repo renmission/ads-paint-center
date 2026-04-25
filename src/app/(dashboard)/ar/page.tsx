@@ -2,7 +2,11 @@ import { redirect } from "next/navigation";
 import { auth } from "@/shared/lib/auth";
 import { ArTable } from "@/features/sales/components/ar-table";
 
-export default async function ArPage() {
+export default async function ArPage({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | undefined>>;
+}) {
   const session = await auth();
   if (session?.user?.role !== "administrator") redirect("/dashboard");
 
@@ -16,7 +20,7 @@ export default async function ArPage() {
           Outstanding credit invoices with unpaid balances.
         </p>
       </div>
-      <ArTable />
+      <ArTable searchParams={await searchParams} />
     </div>
   );
 }
