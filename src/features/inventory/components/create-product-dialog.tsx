@@ -222,11 +222,8 @@ export function CreateProductDialog({ open, onOpenChange, units }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select
-                      name="category"
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <input type="hidden" name="category" value={field.value} />
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select category" />
@@ -252,11 +249,8 @@ export function CreateProductDialog({ open, onOpenChange, units }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unit</FormLabel>
-                    <Select
-                      name="unit"
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <input type="hidden" name="unit" value={field.value} />
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select unit" />

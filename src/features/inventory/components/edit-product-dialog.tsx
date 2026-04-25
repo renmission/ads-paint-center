@@ -1,6 +1,12 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import {
+  useActionState,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
@@ -67,10 +73,7 @@ export function EditProductDialog({ open, onOpenChange, row, units }: Props) {
     undefined,
   );
 
-  const [toggleState, toggleAction, isTogglePending] = useActionState(
-    toggleProductActiveAction,
-    undefined,
-  );
+  const [isTogglePending, startToggleTransition] = useTransition();
 
   const [imageUrl, setImageUrl] = useState<string | null>(
     product.imageUrl ?? null,
@@ -101,13 +104,19 @@ export function EditProductDialog({ open, onOpenChange, row, units }: Props) {
     if (state?.error) toast.error(state.error);
   }, [state]);
 
-  useEffect(() => {
-    if (toggleState?.success) {
-      toast.success(toggleState.success);
-      onOpenChange(false);
-    }
-    if (toggleState?.error) toast.error(toggleState.error);
-  }, [toggleState]);
+  function handleToggle() {
+    startToggleTransition(async () => {
+      const formData = new FormData();
+      formData.set("id", product.id);
+      formData.set("isActive", String(product.isActive));
+      const result = await toggleProductActiveAction(undefined, formData);
+      if (result?.success) {
+        toast.success(result.success);
+        onOpenChange(false);
+      }
+      if (result?.error) toast.error(result.error);
+    });
+  }
 
   async function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -238,11 +247,8 @@ export function EditProductDialog({ open, onOpenChange, row, units }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Category</FormLabel>
-                    <Select
-                      name="category"
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <input type="hidden" name="category" value={field.value} />
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue />
@@ -268,11 +274,8 @@ export function EditProductDialog({ open, onOpenChange, row, units }: Props) {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Unit</FormLabel>
-                    <Select
-                      name="unit"
-                      defaultValue={field.value}
-                      onValueChange={field.onChange}
-                    >
+                    <input type="hidden" name="unit" value={field.value} />
+                    <Select value={field.value} onValueChange={field.onChange}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select unit" />
@@ -318,30 +321,23 @@ export function EditProductDialog({ open, onOpenChange, row, units }: Props) {
               )}
             />
             <DialogFooter className="flex-col-reverse sm:flex-row gap-2">
-              <form action={toggleAction} className="mr-auto">
-                <input type="hidden" name="id" value={product.id} />
-                <input
-                  type="hidden"
-                  name="isActive"
-                  value={String(product.isActive)}
-                />
-                <Button
-                  type="submit"
-                  variant="outline"
-                  disabled={isTogglePending}
-                  className={
-                    product.isActive
-                      ? "text-destructive hover:text-destructive"
-                      : ""
-                  }
-                >
-                  {isTogglePending
-                    ? "..."
-                    : product.isActive
-                      ? "Archive"
-                      : "Restore"}
-                </Button>
-              </form>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={isTogglePending}
+                onClick={handleToggle}
+                className={
+                  product.isActive
+                    ? "mr-auto text-destructive hover:text-destructive"
+                    : "mr-auto"
+                }
+              >
+                {isTogglePending
+                  ? "..."
+                  : product.isActive
+                    ? "Archive"
+                    : "Restore"}
+              </Button>
               <Button
                 type="button"
                 variant="outline"
