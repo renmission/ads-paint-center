@@ -10,6 +10,7 @@ export default async function DashboardLayout({
 }) {
   const session = await auth();
   if (!session) redirect("/login");
+  if (session.user.role === "customer") redirect("/shop");
 
   const role = session.user.role;
 
