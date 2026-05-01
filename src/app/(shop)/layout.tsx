@@ -1,10 +1,14 @@
 import Link from "next/link";
+import { auth } from "@/shared/lib/auth";
+import { ShopHeaderNav } from "./shop-header-nav";
 
-export default function ShopLayout({
+export default async function ShopLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const session = await auth();
+
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="border-b bg-white shadow-sm">
@@ -15,6 +19,7 @@ export default function ShopLayout({
             </h1>
             <p className="text-xs text-slate-500">Online Store</p>
           </Link>
+          <ShopHeaderNav user={session?.user ?? null} />
         </div>
       </header>
       <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>

@@ -10,7 +10,7 @@ import { siteConfig } from "@/shared/config/site";
 import { Separator } from "@/shared/components/ui/separator";
 
 interface SidebarProps {
-  role: "administrator" | "staff";
+  role: "administrator" | "staff" | "customer";
 }
 
 export function Sidebar({ role }: SidebarProps) {

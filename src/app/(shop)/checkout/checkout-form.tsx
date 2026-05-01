@@ -17,7 +17,13 @@ import {
 import { placeOrderAction } from "@/features/orders/actions";
 import type { CartItem } from "@/features/orders/schemas";
 
-export function CheckoutForm() {
+type InitialContact = { name: string; email: string; phone: string };
+
+export function CheckoutForm({
+  initialContact,
+}: {
+  initialContact?: InitialContact;
+}) {
   const router = useRouter();
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartLoaded, setCartLoaded] = useState(false);
@@ -91,6 +97,7 @@ export function CheckoutForm() {
                   id="customerName"
                   name="customerName"
                   placeholder="Juan Dela Cruz"
+                  defaultValue={initialContact?.name ?? ""}
                   required
                 />
               </div>
@@ -100,6 +107,7 @@ export function CheckoutForm() {
                   id="customerPhone"
                   name="customerPhone"
                   placeholder="09XX XXX XXXX"
+                  defaultValue={initialContact?.phone ?? ""}
                   required
                 />
               </div>
@@ -110,6 +118,7 @@ export function CheckoutForm() {
                   name="customerEmail"
                   type="email"
                   placeholder="juan@example.com"
+                  defaultValue={initialContact?.email ?? ""}
                 />
               </div>
             </div>

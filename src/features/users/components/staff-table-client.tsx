@@ -24,11 +24,15 @@ type StaffMember = {
   id: string;
   name: string;
   email: string;
-  role: "administrator" | "staff";
+  role: "administrator" | "staff" | "customer";
   phone: string | null;
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+};
+
+type EditableStaff = Omit<StaffMember, "role"> & {
+  role: "administrator" | "staff";
 };
 
 interface Props {
@@ -53,7 +57,7 @@ export function StaffTableClient({
 
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [createOpen, setCreateOpen] = useState(false);
-  const [editTarget, setEditTarget] = useState<StaffMember | null>(null);
+  const [editTarget, setEditTarget] = useState<EditableStaff | null>(null);
   const [passwordTarget, setPasswordTarget] = useState<StaffMember | null>(
     null,
   );
@@ -142,7 +146,7 @@ export function StaffTableClient({
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => setEditTarget(staff)}
+                        onClick={() => setEditTarget(staff as EditableStaff)}
                       >
                         <Pencil className="h-4 w-4" />
                         <span className="sr-only">Edit</span>
