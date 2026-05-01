@@ -14,7 +14,7 @@ import { relations } from "drizzle-orm";
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
 
-export const userRoleEnum = pgEnum("user_role", ["administrator", "staff"]);
+export const userRoleEnum = pgEnum("user_role", ["administrator", "staff", "customer"]);
 
 export const productCategoryEnum = pgEnum("product_category", [
   "paint",

@@ -1,6 +1,6 @@
 import { db } from "@/shared/lib/db";
 import { users } from "@/shared/lib/db/schema";
-import { asc, ilike, or, sql } from "drizzle-orm";
+import { asc, ilike, or, sql, ne, and } from "drizzle-orm";
 import { StaffTableClient } from "./staff-table-client";
 
 const PAGE_SIZE = 10;
@@ -14,9 +14,10 @@ export async function StaffTable({
   const search = searchParams.search?.trim() ?? "";
   const offset = (page - 1) * PAGE_SIZE;
 
+  const staffOnly = ne(users.role, "customer");
   const where = search
-    ? or(ilike(users.name, `%${search}%`), ilike(users.email, `%${search}%`))
-    : undefined;
+    ? and(staffOnly, or(ilike(users.name, `%${search}%`), ilike(users.email, `%${search}%`)))
+    : staffOnly;
 
   const [data, countResult] = await Promise.all([
     db

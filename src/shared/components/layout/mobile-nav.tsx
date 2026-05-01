@@ -17,7 +17,7 @@ import { navItems } from "@/shared/config/nav";
 import { siteConfig } from "@/shared/config/site";
 
 interface MobileNavProps {
-  role: "administrator" | "staff";
+  role: "administrator" | "staff" | "customer";
 }
 
 export function MobileNav({ role }: MobileNavProps) {

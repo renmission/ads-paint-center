@@ -39,14 +39,14 @@ export const authConfig: NextAuthConfig = {
     jwt({ token, user }) {
       if (user) {
         token.id = user.id as string;
-        token.role = (user as { role: "administrator" | "staff" }).role;
+        token.role = (user as { role: "administrator" | "staff" | "customer" }).role;
       }
       return token;
     },
     session({ session, token }) {
       if (token) {
         session.user.id = token.id as string;
-        session.user.role = token.role as "administrator" | "staff";
+        session.user.role = token.role as "administrator" | "staff" | "customer";
       }
       return session;
     },

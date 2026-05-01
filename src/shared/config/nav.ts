@@ -19,14 +19,14 @@ export type NavChild = {
   title: string;
   href: string;
   icon: LucideIcon;
-  roles: ("administrator" | "staff")[];
+  roles: ("administrator" | "staff" | "customer")[];
 };
 
 export type NavItem = {
   title: string;
   href?: string;
   icon: LucideIcon;
-  roles: ("administrator" | "staff")[];
+  roles: ("administrator" | "staff" | "customer")[];
   children?: NavChild[];
 };
 

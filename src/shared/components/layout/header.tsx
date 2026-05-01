@@ -5,7 +5,7 @@ import type { Session } from "next-auth";
 
 interface HeaderProps {
   user: Session["user"];
-  role: "administrator" | "staff";
+  role: "administrator" | "staff" | "customer";
 }
 
 export function Header({ user, role }: HeaderProps) {
