@@ -131,8 +131,8 @@ export function ServicesTableClient({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Service</TableHead>
               <TableHead>Category</TableHead>
+              <TableHead>Service</TableHead>
               <TableHead className="text-right">Price</TableHead>
               <TableHead>Duration</TableHead>
               <TableHead>Status</TableHead>
@@ -160,17 +160,17 @@ export function ServicesTableClient({
                   className={!row.isActive ? "opacity-60" : ""}
                 >
                   <TableCell>
+                    <span className="text-sm">
+                      {SERVICE_CATEGORIES[row.category] ?? row.category}
+                    </span>
+                  </TableCell>
+                  <TableCell>
                     <div className="font-medium">{row.name}</div>
                     {row.description && (
                       <div className="text-xs text-muted-foreground truncate max-w-xs">
                         {row.description}
                       </div>
                     )}
-                  </TableCell>
-                  <TableCell>
-                    <span className="text-sm">
-                      {SERVICE_CATEGORIES[row.category] ?? row.category}
-                    </span>
                   </TableCell>
                   <TableCell className="text-right tabular-nums font-medium">
                     ₱{fmt(row.price)}
