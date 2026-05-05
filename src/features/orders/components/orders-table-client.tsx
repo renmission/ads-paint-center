@@ -30,6 +30,7 @@ import {
 } from "@/shared/components/ui/table";
 import { TablePagination } from "@/shared/components/ui/table-pagination";
 import { HandleOrderDialog } from "./handle-order-dialog";
+import { OrderDetailsDialog } from "./order-details-dialog";
 import type { OrderRow } from "@/features/orders/queries";
 
 type Action = "confirm" | "fulfil" | "cancel" | "mark_paid";
@@ -84,6 +85,7 @@ export function OrdersTableClient({
   const [searchValue, setSearchValue] = useState(initialSearch);
   const [dialogOrder, setDialogOrder] = useState<OrderRow | null>(null);
   const [dialogAction, setDialogAction] = useState<Action>("confirm");
+  const [detailsOrder, setDetailsOrder] = useState<OrderRow | null>(null);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -99,6 +101,12 @@ export function OrdersTableClient({
   function openDialog(order: OrderRow, action: Action) {
     setDialogOrder(order);
     setDialogAction(action);
+  }
+
+  function openDetailsFromRow(order: OrderRow, e: React.MouseEvent) {
+    const target = e.target as HTMLElement;
+    if (target.closest('[data-row-action="true"]')) return;
+    setDetailsOrder(order);
   }
 
   return (
@@ -143,7 +151,11 @@ export function OrdersTableClient({
                 const statusBadge = STATUS_BADGE[order.status];
                 const paymentBadge = PAYMENT_BADGE[order.paymentStatus];
                 return (
-                  <TableRow key={order.id}>
+                  <TableRow
+                    key={order.id}
+                    className="cursor-pointer hover:bg-slate-50"
+                    onClick={(e) => openDetailsFromRow(order, e)}
+                  >
                     <TableCell className="font-mono text-sm font-medium">
                       {order.orderNumber}
                     </TableCell>
@@ -179,7 +191,7 @@ export function OrdersTableClient({
                       {order.createdAt.toLocaleDateString()}
                     </TableCell>
                     {userRole === "administrator" && (
-                      <TableCell>
+                      <TableCell data-row-action="true">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button
@@ -246,6 +258,19 @@ export function OrdersTableClient({
         pageSize={pageSize}
         totalCount={totalCount}
       />
+
+      {detailsOrder && (
+        <OrderDetailsDialog
+          order={detailsOrder}
+          open={!!detailsOrder}
+          canManage={userRole === "administrator"}
+          onOpenChange={(open) => !open && setDetailsOrder(null)}
+          onAction={(order, action) => {
+            setDetailsOrder(null);
+            openDialog(order, action);
+          }}
+        />
+      )}
 
       {dialogOrder && (
         <HandleOrderDialog

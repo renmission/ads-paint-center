@@ -7,6 +7,18 @@ import { auth } from "@/shared/lib/auth";
 import { eq, sql, and } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { sendSMS } from "@/shared/lib/sms";
+import { getOrderDetail, type OrderDetail } from "./queries";
+
+export async function fetchOrderDetailAction(
+  id: string,
+): Promise<{ data?: OrderDetail; error?: string }> {
+  const session = await auth();
+  if (!session?.user) return { error: "Unauthorized" };
+
+  const detail = await getOrderDetail(id);
+  if (!detail) return { error: "Order not found." };
+  return { data: detail };
+}
 
 type ActionResult = { error?: string; success?: string; orderId?: string };
 
