@@ -45,6 +45,14 @@ export const appointmentStatusEnum = pgEnum("appointment_status", [
   "cancelled",
 ]);
 
+export const serviceJobStatusEnum = pgEnum("service_job_status", [
+  "pending",
+  "scheduled",
+  "in_progress",
+  "completed",
+  "cancelled",
+]);
+
 export const transactionStatusEnum = pgEnum("transaction_status", [
   "pending",
   "completed",
@@ -308,23 +316,65 @@ export const orderItems = pgTable("order_items", {
   lineTotal: numeric("line_total", { precision: 10, scale: 2 }).notNull(),
 });
 
+// ─── Service Jobs ─────────────────────────────────────────────────────────────
+
+export const serviceJobs = pgTable("service_jobs", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  jobNumber: varchar("job_number", { length: 50 }).notNull().unique(),
+  customerId: uuid("customer_id")
+    .notNull()
+    .references(() => customers.id, { onDelete: "cascade" }),
+  serviceId: uuid("service_id").references(() => services.id, {
+    onDelete: "set null",
+  }),
+  scheduledAt: timestamp("scheduled_at"),
+  status: serviceJobStatusEnum("status").notNull().default("pending"),
+  address: text("address"),
+  notes: text("notes"),
+  totalAmount: numeric("total_amount", { precision: 10, scale: 2 })
+    .notNull()
+    .default("0"),
+  handledBy: uuid("handled_by").references(() => users.id, {
+    onDelete: "set null",
+  }),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+export const serviceJobItems = pgTable("service_job_items", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  jobId: uuid("job_id")
+    .notNull()
+    .references(() => serviceJobs.id, { onDelete: "cascade" }),
+  productId: uuid("product_id").references(() => products.id, {
+    onDelete: "set null",
+  }),
+  description: varchar("description", { length: 255 }).notNull(),
+  quantity: integer("quantity").notNull(),
+  unitPrice: numeric("unit_price", { precision: 10, scale: 2 }).notNull(),
+  lineTotal: numeric("line_total", { precision: 10, scale: 2 }).notNull(),
+});
+
 // ─── Relations ────────────────────────────────────────────────────────────────
 
 export const usersRelations = relations(users, ({ many }) => ({
   handledTransactions: many(salesTransactions),
   handledRequests: many(requests, { relationName: "request_handler" }),
   drivenRequests: many(requests, { relationName: "request_driver" }),
+  serviceJobs: many(serviceJobs),
 }));
 
 export const customersRelations = relations(customers, ({ many }) => ({
   transactions: many(salesTransactions),
   requests: many(requests),
+  serviceJobs: many(serviceJobs),
 }));
 
 export const productsRelations = relations(products, ({ one, many }) => ({
   inventory: one(inventory),
   transactionItems: many(salesTransactionItems),
   requests: many(requests),
+  serviceJobItems: many(serviceJobItems),
 }));
 
 export const inventoryRelations = relations(inventory, ({ one }) => ({
@@ -377,6 +427,7 @@ export const salesTransactionItemsRelations = relations(
 
 export const servicesRelations = relations(services, ({ many }) => ({
   appointments: many(appointments),
+  serviceJobs: many(serviceJobs),
 }));
 
 export const appointmentsRelations = relations(appointments, ({ one }) => ({
@@ -434,6 +485,33 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
   }),
   product: one(products, {
     fields: [orderItems.productId],
+    references: [products.id],
+  }),
+}));
+
+export const serviceJobsRelations = relations(serviceJobs, ({ one, many }) => ({
+  customer: one(customers, {
+    fields: [serviceJobs.customerId],
+    references: [customers.id],
+  }),
+  service: one(services, {
+    fields: [serviceJobs.serviceId],
+    references: [services.id],
+  }),
+  handler: one(users, {
+    fields: [serviceJobs.handledBy],
+    references: [users.id],
+  }),
+  items: many(serviceJobItems),
+}));
+
+export const serviceJobItemsRelations = relations(serviceJobItems, ({ one }) => ({
+  job: one(serviceJobs, {
+    fields: [serviceJobItems.jobId],
+    references: [serviceJobs.id],
+  }),
+  product: one(products, {
+    fields: [serviceJobItems.productId],
     references: [products.id],
   }),
 }));
