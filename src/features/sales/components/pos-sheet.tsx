@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { completeSaleAction } from "../actions";
 import type { CartItem } from "../schemas";
+import { CartQtyInput } from "./cart-qty-input";
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Badge } from "@/shared/components/ui/badge";
@@ -239,6 +240,17 @@ export function PosSheet({ open, onOpenChange, products, customers }: Props) {
 
   function removeItem(productId: string) {
     setCart((prev) => prev.filter((i) => i.productId !== productId));
+  }
+
+  function setQtyDirect(productId: string, qty: number) {
+    if (qty <= 0) { removeItem(productId); return; }
+    setCart((prev) =>
+      prev.map((i) =>
+        i.productId === productId
+          ? { ...i, quantity: qty, lineTotal: qty * i.unitPrice }
+          : i,
+      ),
+    );
   }
 
   const subtotal = cart.reduce((sum, i) => sum + i.lineTotal, 0);
@@ -552,9 +564,13 @@ export function PosSheet({ open, onOpenChange, products, customers }: Props) {
                           >
                             <Minus className="h-3 w-3" />
                           </button>
-                          <span className="w-6 text-center text-sm font-semibold tabular-nums">
-                            {item.quantity}
-                          </span>
+                          <CartQtyInput
+                            quantity={item.quantity}
+                            productId={item.productId}
+                            productName={item.productName}
+                            onCommit={setQtyDirect}
+                            onRemove={removeItem}
+                          />
                           <button
                             type="button"
                             aria-label={`Increase ${item.productName}`}
